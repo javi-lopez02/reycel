@@ -1,6 +1,6 @@
 import Login from "./pages/auth/login";
 function App() {
-  return <Login></Login>;
+  return <Login/>;
 }
 
 export default App;
