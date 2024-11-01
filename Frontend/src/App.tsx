@@ -1,9 +1,6 @@
-
+import Login from "./pages/auth/login";
 function App() {
-
-  return (
-    <h1 className='text-red-500'>hola mundo</h1>
-  )
+  return <Login></Login>;
 }
 
-export default App
+export default App;
