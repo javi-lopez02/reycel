@@ -7,6 +7,7 @@ import Acerca from "./pages/Acerca";
 import Contacto from "./pages/Contacto";
 import Card from "./components/Card";
 
+
 function App() {
   return (
     <BrowserRouter>
