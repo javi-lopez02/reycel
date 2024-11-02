@@ -1,9 +1,11 @@
+import { Link } from "react-router-dom";
+
 export default function login() {
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a
-          href="#"
+        <Link
+          to="/"
           className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
         >
           <img
@@ -12,7 +14,7 @@ export default function login() {
             alt="logo"
           />
           Reycel
-        </a>
+        </Link>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
@@ -27,6 +29,7 @@ export default function login() {
                   type="text"
                   name="user"
                   id="user"
+                  required
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Nombre de Usuario"
                 />
@@ -38,6 +41,7 @@ export default function login() {
                 <input
                   type="password"
                   name="password"
+                  required
                   id="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -51,6 +55,7 @@ export default function login() {
                   type="password"
                   name="confirm-password"
                   id="confirm-password"
+                  required
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
@@ -63,12 +68,12 @@ export default function login() {
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 ¿Ya tienes cuenta?{" "}
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Entrar
-                </a>
+                </Link>
               </p>
             </form>
           </div>
