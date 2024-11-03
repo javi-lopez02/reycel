@@ -4,7 +4,7 @@ export default function login() {
   return (
       <section className="bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <Link to={"/"}
+          <Link to={"/login"}
             className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
           >
             <img
@@ -19,7 +19,7 @@ export default function login() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Accede a tu cuenta
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <form className="space-y-4 md:space-y-6" >
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Usuario
@@ -62,7 +62,7 @@ export default function login() {
                       </label>
                     </div>
                   </div>
-                  <Link to={"/"}
+                  <Link to={"/login"}
                     className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     ¿Olvidaste tu contraseña?
@@ -76,7 +76,7 @@ export default function login() {
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   ¿No tienes cuentas?{" "}
-                  <Link to={"/singin"}
+                  <Link to={"/register"}
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     Regístrate

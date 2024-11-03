@@ -20,7 +20,7 @@ export default function login() {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Regístrate
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <form className="space-y-4 md:space-y-6">
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Usuario
@@ -69,7 +69,7 @@ export default function login() {
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 ¿Ya tienes cuenta?{" "}
                 <Link
-                  to="/"
+                  to="/login"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Entrar

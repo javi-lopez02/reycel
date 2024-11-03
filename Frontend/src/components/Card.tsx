@@ -1,5 +1,5 @@
 // src/components/PhoneCard.tsx
-import React from "react";
+import {FC} from "react";
 
 interface PhoneCardProps {
   image: string;
@@ -9,7 +9,7 @@ interface PhoneCardProps {
   reviews: number;
 }
 
-const Card: React.FC<PhoneCardProps> = ({
+const Card: FC<PhoneCardProps> = ({
   image,
   title,
   price,
