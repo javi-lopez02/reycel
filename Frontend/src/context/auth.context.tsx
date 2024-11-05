@@ -13,12 +13,12 @@ import {
   verifyTokenRequest,
 } from "../services/auth";
 import Cookies from "js-cookie";
-import { User, AuthContextType } from "../types.d";
+import { type User, AuthContextType } from "../types.d";
 import axios, { AxiosError } from "axios";
 
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
+export const AuthContext = createContext<AuthContextType | null>(
+  null
 );
 
 export const useAuth = () => {
@@ -31,7 +31,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isAuth, setIsAuth] = useState(false);
   const [errors, setErrors] = useState<Array<string>>([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +47,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         const axiosError = error as AxiosError;
     
         if (axiosError.response) {
-          
+
           setErrors(axiosError.response.data as Array<string>); 
 
         } else if (axiosError.request) {
@@ -67,8 +67,20 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       setUser(res.data);
       setIsAuth(true);
     } catch (error) {
-      console.log(error);
-      //setErrors(error.response.data);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+    
+        if (axiosError.response) {
+
+          setErrors(axiosError.response.data as Array<string>); 
+
+        } else if (axiosError.request) {
+          console.error('No se recibió respuesta:', axiosError.request);
+        }
+      } else {
+        console.error('Error desconocido:', error);
+      }
+      
     }
   };
 

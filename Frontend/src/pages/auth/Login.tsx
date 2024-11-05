@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import {useAuth} from '../../context/auth.context'
 
 
 export default function Login() {
   const [error, setError] = useState<Array<string>>([]);
-  const {errors ,signIn} = useAuth()
+  const {errors ,signIn, isAuth} = useAuth()
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (error.length > 0) {
@@ -20,13 +22,19 @@ export default function Login() {
     setError(errors)
   },[errors])
 
+  useEffect(() => {
+    if (isAuth) {
+      navigate("/");
+    }
+  }, [isAuth, navigate]);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { elements } = event.currentTarget;
-    const inputUser = elements.namedItem("user") as RadioNodeList;
+    const inputEmail = elements.namedItem("email") as RadioNodeList;
     const inputPassword = elements.namedItem("password") as RadioNodeList;
 
-    if (!inputUser.value) {
+    if (!inputEmail.value) {
       setError([...error, "User name is required"]);
       return;
     }
@@ -36,9 +44,9 @@ export default function Login() {
       return
     }
 
-    await signIn({email: inputUser.value, password:inputPassword.value})
+    await signIn({email: inputEmail.value, password:inputPassword.value})
 
-    inputUser.value = ""
+    inputEmail.value = ""
     inputPassword.value = ""
   };
 
@@ -75,15 +83,15 @@ export default function Login() {
             <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Usuario
+                  Email
                 </label>
 
                 <input
-                  type="text"
-                  name="user"
-                  id="user"
+                  type="email"
+                  name="email"
+                  id="email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Nombre de Usuario"
+                  placeholder="Email ..."
                 //required
                 />
               </div>
