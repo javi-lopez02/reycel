@@ -106,6 +106,10 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(401).json(["Nesecita email y contraseña para logearce"]);
+    }
+
     const user = await prisma.user.findFirst({
       where: {
         email,

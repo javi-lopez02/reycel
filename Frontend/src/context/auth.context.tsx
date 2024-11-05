@@ -14,7 +14,7 @@ import {
 } from "../services/auth";
 import Cookies from "js-cookie";
 import { User, AuthContextType } from "../types.d";
-
+import axios, { AxiosError } from "axios";
 
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -41,9 +41,22 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       const res = await LoginRequest(values);
       setUser(res.data);
       setIsAuth(true);
+
     } catch (error) {
-      console.log(error);
-      //setErrors(error.response.data);
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+    
+        if (axiosError.response) {
+          
+          setErrors(axiosError.response.data); 
+
+        } else if (axiosError.request) {
+          console.error('No se recibió respuesta:', axiosError.request);
+        }
+      } else {
+        console.error('Error desconocido:', error);
+      }
+      
     }
   };
 
