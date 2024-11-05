@@ -1,6 +1,74 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/auth.context";
 
-export default function login() {
+export default function Register() {
+  const [error, setError] = useState<Array<string>>([])
+  const { errors, signUp, isAuth } = useAuth()
+
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    if (error.length > 0) {
+      const time = setTimeout(() => {
+        setError([]);
+      }, 5000);
+      return () => clearTimeout(time);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    setError(errors)
+  }, [errors])
+
+  useEffect(() => {
+    if (isAuth) {
+      navigate("/")
+    }
+  }, [isAuth, navigate])
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const { elements } = event.currentTarget;
+    const inputUser = elements.namedItem("user") as RadioNodeList;
+    const inputEmail = elements.namedItem("email") as RadioNodeList;
+
+    const inputPassword = elements.namedItem("password") as RadioNodeList;
+    const inputPassword_confirm = elements.namedItem("confirm-password") as RadioNodeList;
+
+    if (!inputUser.value) {
+      setError([...error, "User name is required"]);
+      return;
+    }
+
+    if (!inputEmail.value) {
+      setError([...error, "Email name is required"]);
+      return;
+    }
+
+    if (!inputPassword.value) {
+      setError([...error, "Password is required"]);
+      return
+    }
+
+    if (!inputPassword.value || inputPassword.value !== inputPassword_confirm.value) {
+      setError([...error, "Password does not match"]);
+      return;
+    }
+
+    await signUp({
+      email: inputEmail.value,
+      password: inputPassword.value,
+      username: inputUser.value
+    })
+
+    inputUser.value = ""
+    inputEmail.value = ""
+    inputPassword_confirm.value = ""
+    inputPassword.value = ""
+
+  };
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -20,7 +88,18 @@ export default function login() {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Regístrate
             </h1>
-            <form className="space-y-4 md:space-y-6">
+            {error.length > 0 &&
+              error.map((err) => {
+                return (
+                  <div
+                    className=" bg-rose-500  bg-red-400 p-2 rounded-lg mx-auto w-4/5 flex items-center justify-center"
+                    key={err}
+                  >
+                    <h1 className="text-white font-bold">{err}</h1>
+                  </div>
+                );
+              })}
+            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Usuario
@@ -31,7 +110,20 @@ export default function login() {
                   id="user"
                   required
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Nombre de Usuario"
+                  placeholder="Nombre de Usuario ..."
+                />
+              </div>
+              <div>
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  required
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Email ..."
                 />
               </div>
               <div>

@@ -10,7 +10,7 @@ const Navbar = () => {
     <>
       <header className="header sticky top-0 bg-white shadow-md flex justify-between items-center px-4 py-2 sm:px-8 sm:py-4">
         <h1 className="flex items-center space-x-3">
-          <Link to="/nav" className="flex items-center">
+          <Link to="/" className="flex items-center">
             <img
               src="https://img.icons8.com/ios-filled/50/fairytale.png"
               alt="logo"
@@ -62,7 +62,7 @@ const Navbar = () => {
         <nav className="hidden lg:flex font-semibold text-lg space-x-6">
           <ul className="flex items-center space-x-4">
             <li className="p-2 sm:p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer">
-              <Link to="/home">Home</Link>
+              <Link to="/">Home</Link>
             </li>
             <li className="p-2 sm:p-4 border-b-2 border-green-500 border-opacity-0 hover:border-opacity-100 hover:text-green-500 duration-200 cursor-pointer">
               <Link to="/productos">Productos</Link>
