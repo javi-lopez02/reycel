@@ -33,7 +33,7 @@ export const useAuth = () => {
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuth, setIsAuth] = useState(false);
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState<Array<string>>([]);
   const [loading, setLoading] = useState(true);
 
   const signIn = async (values: User) => {
@@ -48,7 +48,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     
         if (axiosError.response) {
           
-          setErrors(axiosError.response.data); 
+          setErrors(axiosError.response.data as Array<string>); 
 
         } else if (axiosError.request) {
           console.error('No se recibió respuesta:', axiosError.request);
