@@ -11,7 +11,15 @@ export type AuthContextType = {
   isAuth: boolean;
   loading: boolean;
   errors: Array<string>;
-  signIn: (value: User) => void;
-  signUp: (value: User) => void;
+  signIn: ({ email, password }: { email: string; password: string }) => void;
+  signUp: ({
+    email,
+    password,
+    username,
+  }: {
+    email: string;
+    password: string;
+    username: string;
+  }) => void;
   logout: () => void;
 };
