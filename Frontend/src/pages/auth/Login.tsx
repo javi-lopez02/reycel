@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate} from "react-router-dom";
-import {useAuth} from '../../context/auth.context'
-
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/auth.context";
 
 export default function Login() {
   const [error, setError] = useState<Array<string>>([]);
-  const {errors ,signIn, isAuth} = useAuth()
+  const { errors, signIn, isAuth } = useAuth();
 
   const navigate = useNavigate();
 
@@ -18,9 +17,9 @@ export default function Login() {
     }
   }, [error]);
 
-  useEffect(()=>{
-    setError(errors)
-  },[errors])
+  useEffect(() => {
+    setError(errors);
+  }, [errors]);
 
   useEffect(() => {
     if (isAuth) {
@@ -41,28 +40,20 @@ export default function Login() {
 
     if (!inputPassword.value) {
       setError([...error, "Password is required"]);
-      return
+      return;
     }
 
-    await signIn({email: inputEmail.value, password:inputPassword.value})
+    await signIn({ email: inputEmail.value, password: inputPassword.value });
 
-    inputEmail.value = ""
-    inputPassword.value = ""
+    inputEmail.value = "";
+    inputPassword.value = "";
   };
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <Link
-          to={"/login"}
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-        >
-          <img
-            className="w-8 h-8 mr-2"
-            src="https://img.icons8.com/ios-filled/50/fairytale.png"
-            alt="logo"
-          />
-          Reycel
+        <Link to={"/login"} className="flex items-center mb-6">
+          <img className="w-28 h-24" src="/public/logo.png" alt="logo" />
         </Link>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -92,7 +83,7 @@ export default function Login() {
                   id="email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Email ..."
-                //required
+                  //required
                 />
               </div>
               <div>
