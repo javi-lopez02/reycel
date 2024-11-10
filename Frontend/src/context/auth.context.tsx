@@ -87,6 +87,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const logout = async () => {
     try {
       await LogoutRequest();
+      console.log("logout")
       setUser(null);
       setIsAuth(false);
     } catch (error) {

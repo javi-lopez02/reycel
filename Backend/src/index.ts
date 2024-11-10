@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import path from "path";
 import login from './Routes/auth.routes'
+import product from './Routes/product.routes'
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 
 app.use("/api/auth", login);
+app.use("/api", product)
 
 app.use(
   "/public",

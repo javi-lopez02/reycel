@@ -154,10 +154,10 @@ export default function Register() {
                 Regístrate
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                ¿Ya tienes cuenta?{" "}
+                ¿Ya tienes cuenta?
                 <Link
                   to="/login"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  className="font-medium ml-3 text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Entrar
                 </Link>
