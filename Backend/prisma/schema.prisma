@@ -41,6 +41,7 @@ model Product {
   description           String
   price                 Float
   categoryId            String
+  imagen                String?
   category              Category               @relation(fields: [categoryId], references: [id])
   inventoryCount        Int                    @default(1)
   inventoryTransactions InventoryTransaction[]

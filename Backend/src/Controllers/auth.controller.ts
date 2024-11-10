@@ -66,7 +66,7 @@ export const confirmEmail = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findUnique({
       where: {
-        id: parseInt(decode.id),
+        id: decode.id,
       },
     });
 
@@ -76,7 +76,7 @@ export const confirmEmail = async (req: Request, res: Response) => {
 
     await prisma.user.update({
       where: {
-        id: parseInt(decode.id),
+        id: decode.id,
       },
       data: {
         status: true,
@@ -153,7 +153,7 @@ export const verifyToken = async (req: Request, res: Response) => {
   if (!decode) return res.status(401);
 
   const userFound = await prisma.user.findUnique({
-    where: { id: parseInt(decode.id) },
+    where: { id: decode.id },
   });
 
   if (!userFound) return res.status(401).json(["User Not found" ]);

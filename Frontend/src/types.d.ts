@@ -6,6 +6,14 @@ export type User = {
   email: string;
 };
 
+export type Products ={
+  id: string,
+  imagen: string
+  name: string
+  price: number
+  description: string
+}
+
 export type AuthContextType = {
   user: User | null;
   isAuth: boolean;
