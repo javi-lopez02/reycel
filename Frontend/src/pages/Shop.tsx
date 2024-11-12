@@ -6,15 +6,13 @@ import { productRequest } from "../services/product";
 import axios, { AxiosError } from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-
 export default function Shop() {
   const [products, setProducts] = useState<Array<Products>>([]);
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState<Array<string> | null>(null);
-  const [isNextPage, setIsNextPage] = useState(true)
+  const [isNextPage, setIsNextPage] = useState(true);
 
-
-  const ref = useRef()
+  const ref = useRef();
 
   useEffect(() => {
     setError(null);
@@ -25,7 +23,7 @@ export default function Shop() {
           setIsNextPage(false);
         }
         setProducts((prev) => {
-          return prev.concat(res.data.data)
+          return prev.concat(res.data.data);
         });
       })
       .catch((error) => {
@@ -41,8 +39,8 @@ export default function Shop() {
           console.error("Error desconocido:", error);
           setError(["Error desconocido"]);
         }
-      })
-  }, [currentPage])
+      });
+  }, [currentPage]);
 
   return (
     <>
@@ -61,22 +59,21 @@ export default function Shop() {
           <p>
             <b>No hay mas elementos q cargar</b>
           </p>
-        }>
+        }
+      >
         <div className="w-full listProduct pt-2 px-2">
-          {
-            products.map((protuct) => {
-              return (
-                <Card
-                  key={protuct.id}
-                  image={protuct.imagen}
-                  title={protuct.name}
-                  price={protuct.price}
-                  description={protuct.description}
-                />
-              )
-            })
-
-          }</div>
+          {products.map((protuct) => {
+            return (
+              <Card
+                key={protuct.id}
+                image={protuct.imagen}
+                title={protuct.name}
+                price={protuct.price}
+                description={protuct.description}
+              />
+            );
+          })}
+        </div>
       </InfiniteScroll>
       <div ref={ref.current}></div>
     </>

@@ -7,7 +7,7 @@ import { useAuth } from "../context/auth.context";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { logout } = useAuth()
+  const { logout } = useAuth();
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -16,11 +16,7 @@ const Navbar = () => {
       <header className="header sticky top-0 bg-white shadow-md py-2 flex justify-between items-center px-4 sm:px-4 sm:py-2">
         <div className="flex items-center space-x-3 w-60">
           <Link to="/" className="flex items-center">
-            <img
-              src="./Logo.jpeg"
-              alt="logo"
-              className="w-8 h-8"
-            />
+            <img src="./Logo.jpeg" alt="logo" className="w-8 h-8" />
             <h1 className="text-xl ml-2 sm:text-2xl font-bold">REYCEL</h1>
           </Link>
         </div>
@@ -71,8 +67,24 @@ const Navbar = () => {
           </div>
         </div>
 
+        {/* Boton Menu */}
+        <div className="lg:hidden flex items-center">
+          <ul className="mr-2">
+            <li className="p-2 text-gray-900 rounded-lg outline-none hover:text-blue-500">
+              <Link to="/shopCar">
+                <FaShoppingCart />
+              </Link>
+            </li>
+          </ul>
+          <ul className="mr-2">
+            <li className="p-2 text-gray-900 rounded-lg outline-none hover:text-blue-500">
+              <MdDensityMedium onClick={toggleMenu} />
+            </li>
+          </ul>
+        </div>
+        {/* <!-- Mobile Menu --> */}
         {isOpen && (
-          <div className="lg:hidden absolute top-20 left-0 right-0 bg-white shadow-md z-20">
+          <div className="lg:hidden absolute top-16 left-0 right-0 bg-white shadow-md z-20">
             <nav className="flex flex-col items-center">
               <Link
                 to="/"
