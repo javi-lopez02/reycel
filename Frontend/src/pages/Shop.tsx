@@ -1,39 +1,70 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Card from "../components/Card";
-import { productRequest } from '../services/product'
-import { Products } from '../types.d'
 import SideBar from "../components/Sidebar/SideBar";
+import { Products } from "../types";
+import { productRequest } from "../services/product";
+import axios, { AxiosError } from "axios";
+import InfiniteScroll from "react-infinite-scroll-component";
+
 
 export default function Shop() {
-  const [protucts, setProtucts] = useState<Array<Products>>([])
-  const [loading, setLoading] = useState(false)
+  const [products, setProducts] = useState<Array<Products>>([]);
+  const [currentPage, setCurrentPage] = useState(1)
+  const [error, setError] = useState<Array<string> | null>(null);
+  const [isNextPage, setIsNextPage] = useState(true)
+
+
+  const ref = useRef()
 
   useEffect(() => {
-    setLoading(true)
-    productRequest()
+    setError(null);
+    productRequest(currentPage)
       .then((res) => {
-        setProtucts(res.data.data)
+        console.log(res.data.data);
+        if (currentPage >= res.data.meta.totalPages) {
+          setIsNextPage(false);
+        }
+        setProducts((prev) => {
+          return prev.concat(res.data.data)
+        });
       })
       .catch((error) => {
-        console.log(error)
+        if (axios.isAxiosError(error)) {
+          const axiosError = error as AxiosError;
+
+          if (axiosError.response) {
+            setError(axiosError.response.data as Array<string>);
+          } else if (axiosError.request) {
+            console.error("No se recibió respuesta:", axiosError.request);
+          }
+        } else {
+          console.error("Error desconocido:", error);
+          setError(["Error desconocido"]);
+        }
       })
-      .finally(() => {
-        setLoading(false)
-      })
-  }, [])
+  }, [currentPage])
 
   return (
-    <div className="flex justify-normal items-start hide-scrollbar overflow-y-scroll ">
+    <>
       <div className="w-2/12 h-full hidden xl:flex flex-col top-0 left-0">
         <div className="fixed">
           <SideBar />
         </div>
       </div>
-
-      <div className="w-full listProduct pt-2 px-2">
-        {
-          !loading && protucts.length >= 1 && (
-            protucts.map((protuct) => {
+      <InfiniteScroll
+        dataLength={products.length}
+        next={() => setCurrentPage(currentPage + 1)}
+        loader={<h1>Loading...</h1>}
+        hasMore={isNextPage}
+        scrollableTarget={ref.current}
+        endMessage={
+          <p>
+            <b>No hay mas elementos q cargar</b>
+          </p>
+        }>
+        <div className="w-full listProduct pt-2 px-2">
+          {
+            products.map((protuct) => {
               return (
                 <Card
                   key={protuct.id}
@@ -44,15 +75,10 @@ export default function Shop() {
                 />
               )
             })
-          )
-        }
-        {
-          loading && (
-            <h1 className="" >Cargando ...</h1>
-          )
-        }
-      </div>
 
-    </div>
+          }</div>
+      </InfiniteScroll>
+      <div ref={ref.current}></div>
+    </>
   );
 }

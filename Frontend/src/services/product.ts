@@ -1,6 +1,6 @@
 import axios from './axios'
 
-export const productRequest = () => {
-  return axios.get(`/products`);
+export const productRequest = (page:number) => {
+  return axios.get(`/products?page=${page}`);
 };
 
