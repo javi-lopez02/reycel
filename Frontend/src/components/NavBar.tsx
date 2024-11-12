@@ -17,7 +17,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-3 w-60">
           <Link to="/" className="flex items-center">
             <img
-              src="https://img.icons8.com/ios-filled/50/fairytale.png"
+              src="./Logo.jpeg"
               alt="logo"
               className="w-8 h-8"
             />
