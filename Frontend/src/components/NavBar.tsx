@@ -1,13 +1,42 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import { MdDensityMedium } from "react-icons/md";
 import { useAuth } from "../context/auth.context";
+import { useProduct } from "../context/product.context";
+import { useDebouncedCallback } from "use-debounce";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { setCurrentPage, searchProduct, setIsNextPage, setErrorSearch } = useProduct()
   const { logout } = useAuth()
+
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const debounced = useDebouncedCallback(
+    (value: string) => {
+      searchProduct(value)
+    },
+    500
+  );
+
+
+  const handleSearch = () => {
+    if (inputRef.current) {
+      const newSearch = inputRef.current.value.trim()
+      if (newSearch.length <= 2 && newSearch !== "") {
+        setErrorSearch(["La busqueda debe tener más de 4 caracteres"])
+        return
+      }
+      setErrorSearch(null)
+      setCurrentPage(1)
+      setIsNextPage(true)
+      debounced(newSearch)
+    }
+  }
+
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -28,7 +57,9 @@ const Navbar = () => {
         <div className="flex justify-between items-center space-x-4 w-full mx-10">
           <input
             type="text"
+            ref={inputRef}
             placeholder="Buscar..."
+            onChange={handleSearch}
             className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <FaSearch className="absolute h-5 w-5 text-gray-800" />
