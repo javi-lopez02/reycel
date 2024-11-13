@@ -6,4 +6,6 @@ const router = Router();
 
 router.get("/products", authMiddleware, getProduct);
 
+
+
 export default router;

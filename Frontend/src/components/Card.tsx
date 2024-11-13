@@ -11,7 +11,7 @@ interface PhoneCardProps {
 const Card: FC<PhoneCardProps> = ({ image, title, price, description }) => {
   return (
     <div className="max-w-64 max-h-96  mx-auto w-auto bg-white rounded-lg shadow-md overflow-hidden">
-      <img className="w-full h-56 object-contain " src={image} alt={title} />
+      <img className="w-64 h-56 object-contain " src={image} alt={title} />
       <div className="p-6">
         <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
         <p className="text-gray-600 text-sm">

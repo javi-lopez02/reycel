@@ -8,6 +8,7 @@ import Navbar from "./components/NavBar";
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
 import { AuthProvider } from "./context/auth.context";
 import CarShop from "./pages/CarShop";
+import Details from "./pages/Details";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path="/acerca" element={<Acerca />} />
               <Route path="/contacto" element={<Contacto />} />
               <Route path="/shopCar" element={<CarShop />} />
+              <Route path="/details" element={<Details />} />
             </Route>
           </Route>
         </Routes>

@@ -5,6 +5,7 @@ import { Products } from "../types";
 import { productRequest } from "../services/product";
 import axios, { AxiosError } from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Loader from "../components/Loader";
 
 export default function Shop() {
   const [products, setProducts] = useState<Array<Products>>([]);
@@ -43,25 +44,26 @@ export default function Shop() {
   }, [currentPage]);
 
   return (
-    <>
-      <div className="w-2/12 h-full hidden xl:flex flex-col top-0 left-0">
+    <div className="flex ">
+      <div className="w-2/12 h-full hidden lg:flex flex-col top-0 left-0">
         <div className="fixed">
           <SideBar />
         </div>
       </div>
       <InfiniteScroll
+        className="scrollbar-hide"
         dataLength={products.length}
         next={() => setCurrentPage(currentPage + 1)}
-        loader={<h1>Loading...</h1>}
+        loader={<Loader />}
         hasMore={isNextPage}
         scrollableTarget={ref.current}
         endMessage={
-          <p>
-            <b>No hay mas elementos q cargar</b>
+          <p className="text-center">
+            <b>No hay mas elementos para mostrar...</b>
           </p>
         }
       >
-        <div className="w-full listProduct pt-2 px-2">
+        <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 p-4">
           {products.map((protuct) => {
             return (
               <Card
@@ -76,6 +78,6 @@ export default function Shop() {
         </div>
       </InfiniteScroll>
       <div ref={ref.current}></div>
-    </>
+    </div>
   );
 }

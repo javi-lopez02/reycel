@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import json from "../Data/moviles.json";
 
 const prisma = new PrismaClient();
 
-export const getProduct = async (req:Request, res: Response)=>{
+export const getProduct = async (req: Request, res: Response) => {
   try {
-
     const page = parseInt(req.query.page as string) || 1;
 
     const pageSize = parseInt(req.query.pageSize as string) || 20;
@@ -16,14 +16,14 @@ export const getProduct = async (req:Request, res: Response)=>{
     const products = await prisma.product.findMany({
       skip: skip,
       take: take,
-      select:{
+      select: {
         id: true,
         imagen: true,
         name: true,
         price: true,
         description: true,
-      }
-    })
+      },
+    });
 
     const totalPost = await prisma.product.count();
     const totalPages = Math.ceil(totalPost / pageSize);
@@ -37,9 +37,9 @@ export const getProduct = async (req:Request, res: Response)=>{
         pageSize,
       },
     });
-
   } catch (error) {
-    console.log(error)
-    res.status(500).json(["Internal server error"])
+    console.log(error);
+    res.status(500).json(["Internal server error"]);
   }
-}
+};
+
