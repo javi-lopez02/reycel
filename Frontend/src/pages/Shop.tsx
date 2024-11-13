@@ -5,10 +5,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { VscError } from "react-icons/vsc";
 import { useProduct } from "../context/product.context";
+import { Spinner } from "@nextui-org/spinner";
 
 
 export default function Shop() {
-  const { products, isNextPage, error, loading ,currentPage, errorSerch, setCurrentPage, searchProduct } = useProduct()
+  const { products, isNextPage, error, loading, currentPage, errorSerch, setCurrentPage, searchProduct } = useProduct()
 
   const ref = useRef()
 
@@ -30,35 +31,37 @@ export default function Shop() {
         )
       }
       {
-        loading &&(
+        loading && (
           <div className="w-full flex justify-center pt-4">
-            <span className="text-gray-700 font-bold text-lg">Cargando ...</span>
+            <Spinner color="primary" />
           </div>
         )
       }
       {
         !loading && products.length === 0 && !errorSerch && (
           <div className="w-full flex justify-center pt-4">
-            <span className="text-gray-700 font-bold text-lg">No se encontraron elemntos</span>
+            <span className="text-gray-700 font-bold text-lg">No se encontraron Prosuctos</span>
           </div>
         )
       }
       {
-        !loading && !errorSerch && (
+        !errorSerch && (
           <InfiniteScroll
             dataLength={products.length}
             next={() => {
-              console.log("is next page", isNextPage)
-              console.log("current page", currentPage)
               setCurrentPage(currentPage + 1)
             }}
-            loader={<h1>Loading...</h1>}
+            loader={
+              <div className="w-full flex justify-center py-4">
+                <Spinner color="primary" size="lg"/>
+              </div>
+            }
             hasMore={isNextPage}
             scrollableTarget={ref.current}
             endMessage={
-              <p>
-                <b>No hay mas elementos q cargar</b>
-              </p>
+              <div className="w-full flex justify-center py-5" >
+                <span className="text-lg text-gray-600 font-bold">No hay más Productos para cargar</span>
+              </div>
             }>
             <div className="w-full listProduct pt-2 px-2">
               {

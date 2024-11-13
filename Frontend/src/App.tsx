@@ -9,27 +9,31 @@ import { ProtectedRoutes } from "./components/ProtectedRoutes";
 import { AuthProvider } from "./context/auth.context";
 import CarShop from "./pages/CarShop";
 import { ProductProvider } from './context/product.context'
-
+import { NextUIProvider } from "@nextui-org/react";
 function App() {
   return (
-    <AuthProvider>
-      <ProductProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route element={<ProtectedRoutes />}>
+    <NextUIProvider>
+      <AuthProvider>
+        <ProductProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+
               <Route element={<Navbar />}>
-                <Route path="/" element={<Shop />} />
-                <Route path="/acerca" element={<Acerca />} />
-                <Route path="/contacto" element={<Contacto />} />
-                <Route path="/shopCar" element={<CarShop />} />
+                <Route element={<ProtectedRoutes />}>
+                  <Route path="/" element={<Shop />} />
+                  <Route path="/acerca" element={<Acerca />} />
+                  <Route path="/contacto" element={<Contacto />} />
+                  <Route path="/shopCar" element={<CarShop />} />
+                </Route>
               </Route>
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </ProductProvider>
-    </AuthProvider>
+            </Routes>
+          </BrowserRouter>
+        </ProductProvider>
+      </AuthProvider>
+    </NextUIProvider>
+
   );
 }
 

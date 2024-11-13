@@ -26,7 +26,7 @@ const Navbar = () => {
     if (inputRef.current) {
       const newSearch = inputRef.current.value.trim()
       if (newSearch.length <= 2 && newSearch !== "") {
-        setErrorSearch(["La busqueda debe tener más de 4 caracteres"])
+        setErrorSearch(["La busqueda debe tener más de 3 caracteres"])
         return
       }
       setErrorSearch(null)
