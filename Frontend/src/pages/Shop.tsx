@@ -7,7 +7,6 @@ import { VscError } from "react-icons/vsc";
 import { useProduct } from "../context/product.context";
 import { Spinner } from "@nextui-org/spinner";
 
-
 export default function Shop() {
   const { products, isNextPage, error, loading, currentPage, errorSerch, setCurrentPage, searchProduct } = useProduct()
 
@@ -53,7 +52,7 @@ export default function Shop() {
             }}
             loader={
               <div className="w-full flex justify-center py-4">
-                <Spinner color="primary" size="lg"/>
+                <Spinner color="primary" size="lg" />
               </div>
             }
             hasMore={isNextPage}
@@ -87,6 +86,7 @@ export default function Shop() {
           error.map((err) => toast(err))
         )
       }
+
       <div ref={ref.current}></div>
       <ToastContainer theme="light" icon={<VscError color="red" />} position="bottom-right" />
     </>

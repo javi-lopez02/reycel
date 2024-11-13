@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import json from "../Data/moviles.json";
 
 const prisma = new PrismaClient();
 
@@ -23,6 +24,7 @@ export const getProduct = async (req: Request, res: Response) => {
         description: true,
       },
     });
+
 
     const totalPost = await prisma.product.count();
     const totalPages = Math.ceil(totalPost / pageSize);
@@ -106,6 +108,8 @@ export const searchProduct = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
+    console.log(error);
+    res.status(500).json(["Internal server error"]);
     console.log(error);
     res.status(500).json(["Internal server error"]);
   }
