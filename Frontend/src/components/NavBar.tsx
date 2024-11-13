@@ -45,11 +45,7 @@ const Navbar = () => {
       <header className="header sticky top-0 bg-white shadow-md py-2 flex justify-between items-center px-4 sm:px-4 sm:py-2">
         <div className="flex items-center space-x-3 w-60">
           <Link to="/" className="flex items-center">
-            <img
-              src="./Logo.jpeg"
-              alt="logo"
-              className="w-8 h-8"
-            />
+            <img src="./Logo.jpeg" alt="logo" className="w-8 h-8" />
             <h1 className="text-xl ml-2 sm:text-2xl font-bold">REYCEL</h1>
           </Link>
         </div>
