@@ -63,15 +63,23 @@ export default function NewShop() {
                 scrollableTarget={ref.current}
                 endMessage={
                   <div className="w-full flex justify-center py-5" >
-                    <span className="text-lg text-gray-600 font-bold">No hay más Productos para cargar</span>
+                    {products.length !== 0 && (
+                      <span className="text-lg text-gray-600 font-bold">No hay más Productos para cargar</span>
+                    )
+                    }
                   </div>
                 }>
                 <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
                   {
-                    products.map((protuct) => {
+                    products.map((product) => {
                       return (
                         <Card
-                          key={protuct.id}
+                          key={product.id}
+                          image={product.imagen}
+                          title={product.name}
+                          price={product.price}
+                          description={product.description}
+                          specs={product.specs}
                         />
                       )
                     })

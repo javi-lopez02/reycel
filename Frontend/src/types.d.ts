@@ -1,4 +1,3 @@
-
 export type User = {
   username?: string;
   userId?: number;
@@ -7,12 +6,22 @@ export type User = {
   email: string;
 };
 
+export type Specs = {
+  id: string;
+  ram: number;
+  storage: number;
+  battery: number | null;
+  mpxCameraFront: number | null;
+  mpxCameraBack: number | null;
+};
+
 export type Products = {
   id: string;
   imagen: string;
   name: string;
   price: number;
   description: string;
+  specs: Specs[]
 };
 
 export type AuthContextType = {
@@ -36,8 +45,8 @@ export type AuthContextType = {
 export type ProductContextType = {
   products: Products[] | [];
   currentPage: number;
-  loading: boolean
-  errorSerch: Array<string> |  null
+  loading: boolean;
+  errorSerch: Array<string> | null;
   isNextPage: boolean;
   error: Array<string> | null;
   setCurrentPage: (value: number) => void;

@@ -6,7 +6,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { VscError } from "react-icons/vsc";
 import { useProduct } from "../context/product.context";
 import { Spinner } from "@nextui-org/spinner";
-import SideBar from "../components/Sidebar/SideBar";
 
 export default function Shop() {
   const { products, isNextPage, error, loading, currentPage, errorSerch, setCurrentPage, searchProduct } = useProduct()
@@ -20,9 +19,6 @@ export default function Shop() {
   return (
     <>
       <div className="flex justify-end h-screen">
-        <div className="w-2/12 pt-16 h-full hidden xl:flex fixed flex-col top-0 left-0 border-r-3 border-gray-200">
-          <SideBar />
-        </div>
 
         <div className="pt-16 xl:w-5/6 w-full scrollbar-hide">
           {
