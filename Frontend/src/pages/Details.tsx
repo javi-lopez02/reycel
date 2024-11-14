@@ -1,6 +1,16 @@
+import { useState } from "react";
+import { VscSend } from "react-icons/vsc";
+
+
 export default function Details() {
+  const [rating, setRating] = useState(0); // Estado para la calificación
+
+  const handleRating = (index) => {
+    setRating(index + 1); // Actualiza la calificación al hacer clic en la estrella
+  };
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md max-w-full max-h-full mx-auto mt-1">
+    <div className="bg-white p-4 rounded-lg max-w-full max-h-full mx-auto mt-1">
       <div className="flex flex-col md:grid md:grid-cols-2 md:justify-evenly">
         <div className="md:w-2/5 md:fixed md:left-20">
           <img
@@ -40,30 +50,29 @@ export default function Details() {
                 {[...Array(5)].map((_, index) => (
                   <svg
                     key={index}
-                    className="h-5 w-5 fill-current"
+                    className={`h-5 w-5 fill-current cursor-pointer ${
+                      rating > index ? "text-yellow-500" : "text-gray-300"
+                    }`}
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
+                    onClick={() => handleRating(index)}
                   >
-                    <path d="M10 15l-5.878 3.09 1.122-6.545L.368 6.91l6.564-.955L10 0l3.068 5.955 6.564.955-4.878 4.635 1.122 6.545z" />{" "}
+                    <path d="M10 15l-5.878 3.09 1.122-6.545L.368 6.91l6.564-.955L10 0l3.068 5.955 6.564.955-4.878 4.635 1.122 6.545z" />
                   </svg>
                 ))}
               </div>
-              <span className="text-gray-600 ml-2">4.5 de 5</span>
+              <span className="text-gray-600 ml-2">{rating} de 5</span>
             </div>
             <div className="mt-4">
               <h3 className="text-lg font-semibold text-gray-800">Reseñas</h3>
-              <div className="mt-2">
-                <p className="text-gray-700 font-medium">Juan Pérez</p>
-                <p className="text-gray-600">
-                  ¡Excelente producto! Superó mis expectativas.
-                </p>
-              </div>
-              <div className="mt-2">
-                <p className="text-gray-700 font-medium">María González</p>
-                <p className="text-gray-600">
-                  Buena calidad, pero el envío fue un poco lento.
-                </p>
-              </div>
+              <div className="mt-2 flex items-center">
+                <input
+                  type="text"
+                  placeholder="Write a comment..."
+                  className="w-full pl-4 pr-12 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <VscSend className="absolute right-14 h-8 w-8 hover:text-blue-500"/>
+              </div> 
             </div>
           </div>
         </div>
