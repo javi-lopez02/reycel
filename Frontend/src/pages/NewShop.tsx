@@ -1,14 +1,14 @@
+import Card from "../components/Shop/Card";
+import HeadingFilters from "../components/Shop/HeadingFilters"
 import { useEffect, useRef } from "react";
-import Card from "../components/Card";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { VscError } from "react-icons/vsc";
 import { useProduct } from "../context/product.context";
 import { Spinner } from "@nextui-org/spinner";
-import SideBar from "../components/Sidebar/SideBar";
 
-export default function Shop() {
+export default function NewShop() {
   const { products, isNextPage, error, loading, currentPage, errorSerch, setCurrentPage, searchProduct } = useProduct()
 
   const ref = useRef()
@@ -16,15 +16,12 @@ export default function Shop() {
   useEffect(() => {
     searchProduct()
   }, [currentPage, searchProduct])
-
   return (
-    <>
-      <div className="flex justify-end h-screen">
-        <div className="w-2/12 pt-16 h-full hidden xl:flex fixed flex-col top-0 left-0 border-r-3 border-gray-200">
-          <SideBar />
-        </div>
-
-        <div className="pt-16 xl:w-5/6 w-full scrollbar-hide">
+    <section className="bg-gray-50 py-8 antialiased dark:bg-gray-900 md:py-12">
+      <div className="mx-auto max-w-screen-xl px-4 pt-5 2xl:px-0">
+        {/* <!-- Heading & Filters --> */}
+        <HeadingFilters />
+        <div>
           {
             !loading && errorSerch && (
               errorSerch.map((err) => {
@@ -69,16 +66,12 @@ export default function Shop() {
                     <span className="text-lg text-gray-600 font-bold">No hay más Productos para cargar</span>
                   </div>
                 }>
-                <div className="w-full listProduct pt-2 px-2">
+                <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
                   {
                     products.map((protuct) => {
                       return (
                         <Card
                           key={protuct.id}
-                          image={protuct.imagen}
-                          title={protuct.name}
-                          price={protuct.price}
-                          description={protuct.description}
                         />
                       )
                     })
@@ -98,6 +91,9 @@ export default function Shop() {
         </div>
         <div ref={ref.current}></div>
       </div>
-    </>
+      {/* <!-- Filter modal --> */}
+
+    </section>
   );
 }
+

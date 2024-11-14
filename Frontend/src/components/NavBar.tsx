@@ -42,7 +42,7 @@ const Navbar = () => {
   };
   return (
     <>
-      <header className="header sticky top-0 bg-white shadow-md py-2 flex justify-between items-center px-4 sm:px-4 sm:py-2">
+      <nav className="bg-white dark:bg-zinc-800 pl-3 h-14 w-full shadow flex flex-row items-center justify-between fixed top-0 z-50 border-b dark:border-neutral-700">
         <div className="flex items-center space-x-3 w-60">
           <Link to="/" className="flex items-center">
             <img src="./Logo.jpeg" alt="logo" className="w-8 h-8" />
@@ -144,7 +144,7 @@ const Navbar = () => {
             </nav>
           </div>
         )}
-      </header>
+      </nav>
       <Outlet />
     </>
   );
