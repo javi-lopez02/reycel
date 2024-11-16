@@ -10,11 +10,11 @@ export default function Details() {
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg max-w-full max-h-full mx-auto mt-1">
+    <div className="bg-white h-screen p-4 pt-20 rounded-lg shadow-md max-w-full max-h-full mx-auto mt-1">
       <div className="flex flex-col md:grid md:grid-cols-2 md:justify-evenly">
         <div className="md:w-2/5 md:fixed md:left-20">
           <img
-            src="https://via.placeholder.com/600x600"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIVLSzhGPgR2ps1Glfd4ki5InOTbQfrZdzZw&s"
             alt="Product"
             className="md:w-11/12 w-full rounded-lg"
           />

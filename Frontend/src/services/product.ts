@@ -1,6 +1,5 @@
-import axios from './axios'
+import axios from "./axios";
 
-export const productRequest = (page:number) => {
-  return axios.get(`/products?page=${page}`);
+export const searchPproductRequest = (query: string, page: number) => {
+  return axios.get(`/products/search?s=${query}&page=${page}`);
 };
-

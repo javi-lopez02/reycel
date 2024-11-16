@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@material-tailwind/react": "^2.1.10",
+    "@nextui-org/react": "^2.4.8",
+    "@nextui-org/spinner": "^2.0.34",
     "axios": "^1.7.7",
+    "framer-motion": "^11.11.15",
     "js-cookie": "^3.0.5",
     "react": "^18.3.1",
     "react-content-loader": "^7.0.2",
@@ -20,6 +22,7 @@
     "react-icons": "^5.3.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "^6.27.0",
+    "react-toastify": "^10.0.6",
     "tailwind-scrollbar-hide": "^1.1.7",
     "use-debounce": "^10.0.4",
     "usehooks-ts": "^3.1.0"

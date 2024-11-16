@@ -18,9 +18,6 @@ const Card: FC<PhoneCardProps> = ({ image, title, price, description }) => {
           Precio: <span className="text-green-600 font-bold">{price}$</span>
         </p>
         <div className="flex items-center mt-2">{description}</div>
-        {/* <button className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg">
-          Add to Cart
-        </button> */}
       </div>
     </div>
   );

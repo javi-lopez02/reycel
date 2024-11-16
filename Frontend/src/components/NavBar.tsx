@@ -1,19 +1,48 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import { MdDensityMedium } from "react-icons/md";
 import { useAuth } from "../context/auth.context";
+import { useProduct } from "../context/product.context";
+import { useDebouncedCallback } from "use-debounce";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { logout } = useAuth();
+  const { setCurrentPage, searchProduct, setIsNextPage, setErrorSearch } = useProduct()
+  const { logout } = useAuth()
+
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const debounced = useDebouncedCallback(
+    (value: string) => {
+      searchProduct(value)
+    },
+    500
+  );
+
+
+  const handleSearch = () => {
+    if (inputRef.current) {
+      const newSearch = inputRef.current.value.trim()
+      if (newSearch.length <= 2 && newSearch !== "") {
+        setErrorSearch(["La busqueda debe tener más de 3 caracteres"])
+        return
+      }
+      setErrorSearch(null)
+      setCurrentPage(1)
+      setIsNextPage(true)
+      debounced(newSearch)
+    }
+  }
+
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
   return (
     <>
-      <header className="header sticky top-0 bg-white shadow-md py-2 flex justify-between items-center px-4 sm:px-4 sm:py-2">
+      <nav className="bg-white dark:bg-zinc-800 pl-3 h-14 w-full shadow flex flex-row items-center justify-between fixed top-0 z-50 border-b dark:border-neutral-700">
         <div className="flex items-center space-x-3 w-60">
           <Link to="/" className="flex items-center">
             <img src="./Logo.jpeg" alt="logo" className="w-8 h-8" />
@@ -24,7 +53,9 @@ const Navbar = () => {
         <div className="flex justify-between items-center space-x-4 w-full mx-10">
           <input
             type="text"
+            ref={inputRef}
             placeholder="Buscar..."
+            onChange={handleSearch}
             className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <FaSearch className="absolute h-5 w-5 text-gray-800" />
@@ -113,7 +144,7 @@ const Navbar = () => {
             </nav>
           </div>
         )}
-      </header>
+      </nav>
       <Outlet />
     </>
   );
