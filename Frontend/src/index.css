@@ -9,6 +9,10 @@
   gap: 16px;
 }
 
+.text_color{
+  text-shadow: 2px 2px 2px #000000;
+}
+
 .hide-scrollbar {
   scrollbar-width: none; /* Firefox */
 }
