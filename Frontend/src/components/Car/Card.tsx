@@ -9,7 +9,7 @@ interface PhoneCardProps {
   especif: string;
 }
 
-const CarCard: FC<PhoneCardProps> = ({ image, title, price, description, especif }) => {
+const Card: FC<PhoneCardProps> = ({ image, title, price, description, especif }) => {
   return (
     <div className="max-w-sm mx-auto bg-white rounded-lg shadow-md overflow-hidden">
       <img className="w-full h-56 object-cover" src={image} alt={title} />
@@ -28,4 +28,4 @@ const CarCard: FC<PhoneCardProps> = ({ image, title, price, description, especif
   );
 };
 
-export default CarCard;
+export default Card;

@@ -43,7 +43,7 @@ export default function NewShop() {
           {
             !loading && products.length === 0 && !errorSerch && (
               <div className="w-full flex justify-center pt-4">
-                <span className="text-gray-700 font-bold text-lg">No se encontraron Prosuctos</span>
+                <span className="text-gray-700 font-bold text-lg">No se encontraron Productos</span>
               </div>
             )
           }
@@ -104,4 +104,3 @@ export default function NewShop() {
     </section>
   );
 }
-

@@ -73,7 +73,7 @@ export default function Login() {
               error.map((err) => {
                 return (
                   <div
-                    className=" bg-rose-500  bg-red-400 p-2 rounded-lg mx-auto w-4/5 flex items-center justify-center"
+                    className="bg-red-400 p-2 rounded-lg mx-auto w-4/5 flex items-center justify-center"
                     key={err}
                   >
                     <h1 className="text-white font-bold">{err}</h1>

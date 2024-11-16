@@ -68,10 +68,10 @@ const Navbar = () => {
                 <Link to="/">Shop</Link>
               </li>
               <li className="p-1  border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
-                <Link to="/acerca">About</Link>
+                <Link to="/aboutUs">About</Link>
               </li>
               <li className="p-1 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
-                <Link to="/contacto">Contact</Link>
+                <Link to="/contactUs">Contact</Link>
               </li>
             </ul>
           </div>
@@ -124,13 +124,13 @@ const Navbar = () => {
                 Shop
               </Link>
               <Link
-                to="/acerca"
+                to="/aboutUs"
                 className="block p-2 text-gray-700 hover:text-blue-500"
               >
                 About Us
               </Link>
               <Link
-                to="/contacto"
+                to="/contactUs"
                 className="block p-2 text-gray-700 hover:text-blue-500"
               >
                 Contact Us

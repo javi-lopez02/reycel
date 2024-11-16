@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import Acerca from "./pages/Acerca";
-import Contacto from "./pages/Contacto";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
 import Navbar from "./components/NavBar";
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
 import { AuthProvider } from "./context/auth.context";
@@ -24,8 +24,8 @@ function App() {
 
               <Route element={<Navbar />}>
                 <Route element={<ProtectedRoutes />}>
-                  <Route path="/acerca" element={<Acerca />} />
-                  <Route path="/contacto" element={<Contacto />} />
+                  <Route path="/aboutUs" element={<AboutUs />} />
+                  <Route path="/contactUs" element={<ContactUs />} />
                   <Route path="/shopCar" element={<CarShop />} />
                   <Route path="/details" element={<Details />} />
                   <Route path="/" element={<NewShop />} />

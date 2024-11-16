@@ -103,9 +103,10 @@ const Card: FC<PhoneCardProps> = ({ image, title, price, specs }) => {
 
         <a
           href="#"
-          className="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white line-clamp-2"
+          className="text-lg overflow-hidden font-semibold leading-tight text-gray-900 hover:underline dark:text-white line-clamp-2"
         >
-          {`${title}, Ram ${specs[0].ram}GB, Almacenamiento ${specs[0].storage}GB`}
+          {`${title}, RAM 4Gb, ALMACENAMIENTO 64GB`}
+          {/* , Ram ${specs[0].ram}GB, Almacenamiento ${specs[0].storage}GB */}
         </a>
 
         <div className="mt-2 flex items-center gap-2">

@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { VscSend } from "react-icons/vsc";
 
-
 export default function Details() {
-  const [rating, setRating] = useState(0); // Estado para la calificación
+  const [rating, setRating] = useState(0);
 
   const handleRating = (index) => {
-    setRating(index + 1); // Actualiza la calificación al hacer clic en la estrella
+    setRating(index + 1);
   };
-
   return (
-    <div className="bg-white h-screen p-4 pt-20 rounded-lg shadow-md max-w-full max-h-full mx-auto mt-1">
+    <div className="bg-white min-h-screen p-4 pt-20 rounded-lg shadow-md max-w-full max-h-full mx-auto mt-1">
       <div className="flex flex-col md:grid md:grid-cols-2 md:justify-evenly">
         <div className="md:w-2/5 md:fixed md:left-20">
           <img
@@ -71,8 +69,20 @@ export default function Details() {
                   placeholder="Write a comment..."
                   className="w-full pl-4 pr-12 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <VscSend className="absolute right-14 h-8 w-8 hover:text-blue-500"/>
-              </div> 
+                <VscSend className="absolute right-14 h-8 w-8 hover:text-blue-500" />
+              </div>
+              <div className="mt-2">
+                <p className="text-gray-700 font-medium">Juan Pérez</p>
+                <p className="text-gray-600">
+                  ¡Excelente producto! Superó mis expectativas.
+                </p>
+              </div>
+              <div className="mt-2">
+                <p className="text-gray-700 font-medium">María González</p>
+                <p className="text-gray-600">
+                  Buena calidad, pero el envío fue un poco lento.
+                </p>
+              </div>
             </div>
           </div>
         </div>
