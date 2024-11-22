@@ -24,6 +24,7 @@ model User {
 
 enum Role {
   USER
+  MODERADOR
   ADMIN
 }
 
@@ -42,26 +43,19 @@ model Product {
   price                 Float
   categoryId            String
   imagen                String?
+  ram                   Int?
+  storage               Int?
+  battery               Int?
+  mpxCameraFront        Int?
+  mpxCameraBack         Int?
   category              Category               @relation(fields: [categoryId], references: [id])
   inventoryCount        Int                    @default(1)
   inventoryTransactions InventoryTransaction[]
   orderItems            OrderItem[]
-  specs                 Specs[]
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 }
 
-model Specs {
-  id             String @id @default(uuid())
-  ram            Int?
-  storage        Int?
-  battery        Int?
-  mpxCameraFront Int?
-  mpxCameraBack  Int?
-
-  Product   Product @relation(fields: [productId], references: [id])
-  productId String
-}
 
 model InventoryTransaction {
   id              String          @id @default(uuid())

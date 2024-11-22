@@ -12,6 +12,7 @@
   "dependencies": {
     "@nextui-org/react": "^2.4.8",
     "@nextui-org/spinner": "^2.0.34",
+    "@smastrom/react-rating": "^1.5.0",
     "axios": "^1.7.7",
     "framer-motion": "^11.11.15",
     "js-cookie": "^3.0.5",
