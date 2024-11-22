@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import json from "../Data/moviles.json";
 
 const prisma = new PrismaClient();
 
@@ -56,47 +55,47 @@ export const searchProduct = async (req: Request, res: Response) => {
     const take = pageSize;
 
     const result = await prisma.product.findMany({
-      where:{
+      where: {
         OR: [
           {
             name: {
               contains: search,
-              mode: "insensitive"
+              mode: "insensitive",
             },
           },
           {
-            description:{
+            description: {
               contains: search,
-              mode: "insensitive"
-            }
-          }
-        ]
+              mode: "insensitive",
+            },
+          },
+        ],
       },
       skip: skip,
       take: take,
-      include:{
-        specs: true
-      }
-    })
+      include: {
+        specs: true,
+      },
+    });
 
     const totalProduct = await prisma.product.count({
-      where:{
+      where: {
         OR: [
           {
             name: {
               contains: search,
-              mode: "insensitive"
+              mode: "insensitive",
             },
           },
           {
-            description:{
+            description: {
               contains: search,
-              mode: "insensitive"
-            }
-          }
-        ]
+              mode: "insensitive",
+            },
+          },
+        ],
       },
-    })
+    });
 
     const totalPages = Math.ceil(totalProduct / pageSize);
 
@@ -109,7 +108,6 @@ export const searchProduct = async (req: Request, res: Response) => {
         pageSize,
       },
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).json(["Internal server error"]);
