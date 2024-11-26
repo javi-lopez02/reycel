@@ -17,16 +17,16 @@ function ModalSorting() {
         newSortOptions = [{ field: "createdAt", order: "asc" }];
         break;
       case "precioCreciente":
-        newSortOptions = [{ field: "price", order: "asc" }];
+        newSortOptions = [{ field: "price", order: "asc" },{ field: "createdAt", order: "asc" }];
         break;
       case "precioDecreciente":
-        newSortOptions = [{ field: "price", order: "desc" }];
+        newSortOptions = [{ field: "price", order: "desc" },{ field: "createdAt", order: "asc" }];
         break;
       case "masPopular":
-        newSortOptions = [{ field: "rating", order: "desc" }];
+        newSortOptions = [{ field: "rating", order: "desc" },{ field: "createdAt", order: "asc" }];
         break;
       case "menosPopular":
-        newSortOptions = [{ field: "rating", order: "asc" }];
+        newSortOptions = [{ field: "rating", order: "asc" },{ field: "createdAt", order: "asc" }];
         break;
       default:
         break;

@@ -50,7 +50,6 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
         if (currentPage >= res.data.meta.totalPages) {
           setIsNextPage(false);
         }
-        console.log(res.data.meta)
         if (reset) {
           setProducts(res.data.data)
         } else {

@@ -21,3 +21,7 @@ export const searchPproductRequest = (
 export const categoryRequest = () => {
   return axios.get(`/products/category`);
 };
+
+export const productIDRequest = (query: string) => {
+  return axios.get(`/products?p=${query}`);
+};

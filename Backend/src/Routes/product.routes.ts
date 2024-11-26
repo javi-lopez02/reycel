@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../Middlewares/middlewares";
-import { searchProduct } from "../Controllers/product.controller";
+import { getProductID, searchProduct } from "../Controllers/product.controller";
 import { getCategory } from "../Controllers/category.controller";
 const router = Router();
 
@@ -32,6 +32,6 @@ router.get("/products/search", authMiddleware, searchProduct);
 
 router.get("/products/category", authMiddleware, getCategory);
 
-
+router.get("/products", authMiddleware, getProductID)
 
 export default router;

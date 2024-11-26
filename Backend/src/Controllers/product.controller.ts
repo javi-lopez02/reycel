@@ -8,38 +8,31 @@ interface SortItem {
   order: "asc" | "desc"; // Los valores permitidos
 }
 
-export const getProduct = async (req: Request, res: Response) => {
+export const getProductID = async (req: Request, res: Response) => {
   try {
-    const page = parseInt(req.query.page as string) || 1;
 
-    const pageSize = parseInt(req.query.pageSize as string) || 20;
+    const productID = (req.query.p || "") as string;
 
-    const skip = (page - 1) * pageSize;
-    const take = pageSize;
-
-    const products = await prisma.product.findMany({
-      skip: skip,
-      take: take,
-      select: {
-        id: true,
-        imagen: true,
-        name: true,
-        price: true,
-        description: true,
-      },
+    const product = await prisma.product.findUnique({
+      where: { id: productID },
+      include: { Rating: true }, // Incluye los ratings asociados
     });
 
-    const totalPost = await prisma.product.count();
-    const totalPages = Math.ceil(totalPost / pageSize);
+    if (!product) {
+      return res.status(404).json({ error: 'Dispositivo no encontrado.' });
+    }
+
+    const averageRating =
+    product?.Rating.length > 0
+      ? product.Rating.reduce((sum, rating) => sum + rating.value, 0) / product.Rating.length
+      : 0;
+
+    //product.rating = averageRating
+
+    console.log(product)
 
     res.status(200).json({
-      data: products,
-      meta: {
-        totalPost,
-        page,
-        totalPages,
-        pageSize,
-      },
+      data: product ,
     });
   } catch (error) {
     console.log(error);
@@ -52,7 +45,7 @@ export const searchProduct = async (req: Request, res: Response) => {
     const search = (req.query.s || "") as string;
 
     const page = parseInt(req.query.page as string) || 1;
-    const pageSize = parseInt(req.query.pageSize as string) || 15;
+    const pageSize = parseInt(req.query.pageSize as string) || 7;
 
     //filters
     const minPrice = parseInt(req.query.minPrice as string) || 0;
@@ -60,8 +53,6 @@ export const searchProduct = async (req: Request, res: Response) => {
     const maxPrice = parseInt(req.query.maxPrice as string) || 2000;
 
     const category = (req.query.category as string) || undefined;
-
-    const rating = parseInt(req.query.rating as string) || undefined;
 
     const color = (req.query.color as string) || undefined;
 
@@ -109,12 +100,11 @@ export const searchProduct = async (req: Request, res: Response) => {
             },
           },
           {
-            rating: rating,
-          },
-          {
             color: color,
           },
         ],
+      },include:{
+        Rating: true
       },
       orderBy,
       skip: skip,
@@ -150,19 +140,24 @@ export const searchProduct = async (req: Request, res: Response) => {
             },
           },
           {
-            rating: rating,
-          },
-          {
             color: color,
           },
         ],
       },
     });;
 
+    const productWithRatings = result.map(product => ({
+      ...product,
+      rating:
+      product.Rating.length > 0
+          ? (product.Rating.reduce((sum, rating) => sum + rating.value, 0) / product.Rating.length).toFixed(2)
+          : 0,
+    }));
+
     const totalPages = Math.ceil(totalProduct / pageSize);
 
     res.status(200).json({
-      data: result,
+      data: productWithRatings,
       meta: {
         totalProduct,
         page,

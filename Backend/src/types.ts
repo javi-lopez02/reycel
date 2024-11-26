@@ -18,7 +18,7 @@ export interface File {
 declare global {
   namespace Express {
     interface Request {
-      userId: number
+      userId: string
       userName: string
     }
   }
