@@ -109,9 +109,10 @@ const Card: FC<Products> = (product) => {
 
         <a
           href="#"
-          className="text-lg font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
+          className="text-lg overflow-hidden font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
         >
-          {`${product.name}, Ram ${product.ram}GB, Almacenamiento ${product.storage}GB`}
+          {`${product.name}, RAM 4Gb, ALMACENAMIENTO 64GB`}
+          {/* , Ram ${product.ram}GB, Almacenamiento ${product.storage}GB */}
         </a>
 
         <div className="mt-2 flex items-center gap-2">

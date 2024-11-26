@@ -4,7 +4,7 @@ import bcryptjs from "bcryptjs";
 import { createToken } from "../Libs/jwt";
 import { TOKEN_SECRET } from "../conf";
 import jwt from "jsonwebtoken";
-import { TokenPayload } from "../types";
+import { type TokenPayload } from "../types";
 import { sendEmail } from "../Libs/mail.conf";
 
 const prisma = new PrismaClient();
