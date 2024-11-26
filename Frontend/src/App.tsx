@@ -10,7 +10,7 @@ import CarShop from "./pages/CarShop";
 import { ProductProvider } from './context/product.context'
 import { NextUIProvider } from "@nextui-org/react";
 import Details from "./pages/Details";
-import NewShop from "./pages/NewShop";
+import Shop from "./pages/Shop";
 
 function App() {
   return (
@@ -28,7 +28,7 @@ function App() {
                   <Route path="/contacto" element={<Contacto />} />
                   <Route path="/shopCar" element={<CarShop />} />
                   <Route path="/details" element={<Details />} />
-                  <Route path="/" element={<NewShop />} />
+                  <Route path="/" element={<Shop />} />
                 </Route>
               </Route>
             </Routes>

@@ -26,7 +26,6 @@ export const authMiddleware = async (
           console.log(err);
           return res.status(401).json(["Token is not valid"]);
         }
-        console.log((decoded as JwtPayload).id)
         req.userId = parseInt((decoded as TokenPayload).id);
         next();
       }

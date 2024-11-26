@@ -30,7 +30,7 @@ enum Role {
 
 model Category {
   id        String    @id @default(uuid())
-  name      String
+  name      String    @unique
   products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -42,20 +42,21 @@ model Product {
   description           String
   price                 Float
   categoryId            String
+  rating                Int                    @default(1)
   imagen                String?
+  color                 String?
   ram                   Int?
   storage               Int?
   battery               Int?
   mpxCameraFront        Int?
   mpxCameraBack         Int?
-  category              Category               @relation(fields: [categoryId], references: [id])
   inventoryCount        Int                    @default(1)
+  category              Category               @relation(fields: [categoryId], references: [id])
   inventoryTransactions InventoryTransaction[]
   orderItems            OrderItem[]
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 }
-
 
 model InventoryTransaction {
   id              String          @id @default(uuid())

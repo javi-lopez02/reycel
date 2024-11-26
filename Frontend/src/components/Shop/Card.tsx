@@ -1,33 +1,39 @@
 
 import { FC } from "react";
-import { type Specs } from "../../types";
+import { type Products } from '../../types'
 
-interface PhoneCardProps {
-  image: string;
-  title: string;
-  price: number;
-  description: string;
-  specs: Specs[]
-}
-
-const Card: FC<PhoneCardProps> = ({ image, title, price, specs }) => {
+const Card: FC<Products> = (product) => {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm ">
       <div className="h-56 w-full">
         <a href="#">
           <img
             className="mx-auto h-full"
-            src={image}
-            alt={title}
+            src={product.imagen}
+            alt={product.name}
           />
         </a>
       </div>
       <div className="pt-6">
         <div className="mb-4 flex items-center justify-between gap-4">
-          <span className="me-2 rounded bg-emerald-300 px-2.5 py-0.5 text-xs font-medium text-neutral-700 dark:bg-primary-900 dark:text-primary-300">
-            {" "}
-            En Stock{" "}
-          </span>
+          {
+            product.inventoryCount !== 0 && (
+              <span className="me-2 rounded bg-emerald-300 px-2.5 py-0.5 text-xs font-medium text-neutral-700">
+                {" "}
+                En Stock{" "}
+              </span>
+            )
+
+          }
+          {
+            product.inventoryCount === 0 && (
+              <span className="me-2 rounded bg-red-400 px-2.5 py-0.5 text-xs font-medium text-zinc-100">
+                {" "}
+                No hay uniddades{" "}
+              </span>
+            )
+          }
+
 
           <div className="flex items-center justify-end gap-1">
             <button
@@ -103,9 +109,9 @@ const Card: FC<PhoneCardProps> = ({ image, title, price, specs }) => {
 
         <a
           href="#"
-          className="text-lg font-semibold leading-tight text-gray-900 hover:underline dark:text-white line-clamp-2"
+          className="text-lg font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
         >
-          {`${title}, Ram ${specs[0].ram}GB, Almacenamiento ${specs[0].storage}GB`}
+          {`${product.name}, Ram ${product.ram}GB, Almacenamiento ${product.storage}GB`}
         </a>
 
         <div className="mt-2 flex items-center gap-2">
@@ -172,7 +178,7 @@ const Card: FC<PhoneCardProps> = ({ image, title, price, specs }) => {
 
         <div className="mt-4 flex items-center justify-between gap-4">
           <p className="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
-            ${price}
+            ${product.price}
           </p>
 
           <button

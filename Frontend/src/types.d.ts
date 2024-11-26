@@ -15,14 +15,21 @@ export type Specs = {
   mpxCameraBack: number | null;
 };
 
-export type Products = {
+export interface Products {
   id: string;
-  imagen: string;
   name: string;
-  price: number;
   description: string;
-  specs: Specs[]
-};
+  price: number;
+  rating: number;
+  imagen: string;
+  color?: string;
+  ram: number;
+  storage: number;
+  battery?: number;
+  mpxCameraFront?: number;
+  mpxCameraBack?: number;
+  inventoryCount: number;
+}
 
 export type AuthContextType = {
   user: User | null;
@@ -42,15 +49,37 @@ export type AuthContextType = {
   logout: () => void;
 };
 
+export interface Category {
+  id: string;
+  name: string;
+}
+
+export interface FiltersType {
+  minPrice?: string;
+  maxPrice?: string;
+  categoriy?: string;
+  rating?: string;
+  color?: string;
+}
+
+export type SortOption = {
+  field: "createdAt" | "price" | "rating"; // Campos permitidos
+  order: "asc" | "desc"; // Órdenes permitidas
+};
+
 export type ProductContextType = {
   products: Products[] | [];
   currentPage: number;
   loading: boolean;
+  categories: Array<Category>;
   errorSerch: Array<string> | null;
   isNextPage: boolean;
   error: Array<string> | null;
+  filters: FiltersType;
+  setSortParmas: (value: Array<SortOption>) => void;
+  setFilters: (value: FiltersType) => void;
   setCurrentPage: (value: number) => void;
   setIsNextPage: (vaule: boolean) => void;
   setErrorSearch: (value: Array<string> | null) => void;
-  searchProduct: (query?: string) => void;
+  setQuerySeach: (value: string) => void;
 };

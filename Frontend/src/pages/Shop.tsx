@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
-import Card from "../components/Card";
+import Card from "../components/Shop/Card";
+import HeadingFilters from "../components/Shop/HeadingFilters"
+import { useRef } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
@@ -8,19 +9,16 @@ import { useProduct } from "../context/product.context";
 import { Spinner } from "@nextui-org/spinner";
 
 export default function Shop() {
-  const { products, isNextPage, error, loading, currentPage, errorSerch, setCurrentPage, searchProduct } = useProduct()
+  const { products, isNextPage, error, loading, currentPage, errorSerch, setCurrentPage } = useProduct()
 
   const ref = useRef()
 
-  useEffect(() => {
-    searchProduct()
-  }, [currentPage, searchProduct])
-
   return (
-    <>
-      <div className="flex justify-end h-screen">
-
-        <div className="pt-16 xl:w-5/6 w-full scrollbar-hide">
+    <section className="bg-gray-50 py-8 antialiased dark:bg-gray-900 md:py-12">
+      <div className="mx-auto max-w-screen-xl px-4 pt-5 2xl:px-0">
+        {/* <!-- Heading & Filters --> */}
+        <HeadingFilters />
+        <div>
           {
             !loading && errorSerch && (
               errorSerch.map((err) => {
@@ -62,19 +60,27 @@ export default function Shop() {
                 scrollableTarget={ref.current}
                 endMessage={
                   <div className="w-full flex justify-center py-5" >
-                    <span className="text-lg text-gray-600 font-bold">No hay más Productos para cargar</span>
+                    {products.length !== 0 && (
+                      <span className="text-lg text-gray-600 font-bold">No hay más Productos para cargar</span>
+                    )
+                    }
                   </div>
                 }>
-                <div className="w-full listProduct pt-2 px-2">
+                <div className="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
                   {
-                    products.map((protuct) => {
+                    products.map((product) => {
                       return (
                         <Card
-                          key={protuct.id}
-                          image={protuct.imagen}
-                          title={protuct.name}
-                          price={protuct.price}
-                          description={protuct.description}
+                          key={product.id}
+                          name={product.name}
+                          imagen={product.imagen}
+                          price={product.price}
+                          ram={product.price}
+                          inventoryCount={product.inventoryCount}
+                          rating={product.rating}
+                          storage={product.storage}
+                          description={product.description}
+                          id={product.id}
                         />
                       )
                     })
@@ -94,6 +100,9 @@ export default function Shop() {
         </div>
         <div ref={ref.current}></div>
       </div>
-    </>
+      {/* <!-- Filter modal --> */}
+
+    </section>
   );
 }
+

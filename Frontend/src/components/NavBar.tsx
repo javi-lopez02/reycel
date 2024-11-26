@@ -9,14 +9,14 @@ import { useDebouncedCallback } from "use-debounce";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { setCurrentPage, searchProduct, setIsNextPage, setErrorSearch } = useProduct()
+  const { setCurrentPage, setQuerySeach, setIsNextPage, setErrorSearch } = useProduct()
   const { logout } = useAuth()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
   const debounced = useDebouncedCallback(
     (value: string) => {
-      searchProduct(value)
+      setQuerySeach(value)
     },
     500
   );
