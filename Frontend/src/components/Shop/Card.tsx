@@ -1,16 +1,14 @@
 
 import { FC } from "react";
-import { type Specs } from "../../types";
 
 interface PhoneCardProps {
   image: string;
   title: string;
   price: number;
   description: string;
-  specs: Specs[]
 }
 
-const Card: FC<PhoneCardProps> = ({ image, title, price, specs }) => {
+const Card: FC<PhoneCardProps> = ({ image, title, price }) => {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <div className="h-56 w-full">

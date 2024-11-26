@@ -4,7 +4,7 @@ import { VscSend } from "react-icons/vsc";
 export default function Details() {
   const [rating, setRating] = useState(0);
 
-  const handleRating = (index) => {
+  const handleRating = (index: number) => {
     setRating(index + 1);
   };
   return (
@@ -69,7 +69,7 @@ export default function Details() {
                   placeholder="Write a comment..."
                   className="w-full pl-4 pr-12 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <VscSend className="absolute right-14 h-8 w-8 hover:text-blue-500" />
+                <VscSend className="absolute right-6 lg:right-14 h-8 w-8 hover:text-blue-500" />
               </div>
               <div className="mt-2">
                 <p className="text-gray-700 font-medium">Juan Pérez</p>
