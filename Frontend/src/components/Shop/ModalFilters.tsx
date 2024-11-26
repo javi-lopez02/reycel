@@ -1,41 +1,47 @@
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Autocomplete, AutocompleteItem, Input, Button, CheckboxGroup, Checkbox, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
-import { useMemo, useState } from "react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Autocomplete, AutocompleteItem, Input, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
+import { Key, useEffect, useState } from "react";
 import { Rating, RoundedStar } from '@smastrom/react-rating'
-import type { Selection } from "@nextui-org/react";
+import type { SharedSelection } from "@nextui-org/react";
 
 import '@smastrom/react-rating/style.css'
+import { useProduct } from "../../context/product.context";
 
 function ModalFilters() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [rating, setRating] = useState(3)
+  const [selectedColor, setSelectedColor] = useState<SharedSelection>();
+  const [categoria, setCategoria] = useState<Key | null>()
+  const [minPrice, setMinPrice] = useState("")
+  const [maxPrice, setMaxPrice] = useState("")
 
-  const [categorias, setCategorias] = useState([
-    "Smartphones",
-    "Fundas y Protectores",
-    "Cargadores y Adaptadores",
-    "Cables USB",
-    "Soportes y Monturas",
-    "Baterías Externas (Power Banks)",
-    "Relojes Deportivos",
-    "Relojes de Lujo Inteligentes",
-    "Pulseras de Actividad",
-    "Audífonos Inalámbricos (Bluetooth)",
-    "Audífonos Alámbricos",
-    "Audífonos con Cancelación de Ruido",
-    "Manos Libres",
-    "Parlantes Portátiles",
-    "Bocinas Inteligentes"])
+  const { categories, filters, setFilters, setCurrentPage, setIsNextPage, setSortParmas } = useProduct()
 
   const handleOpen = () => {
     onOpen();
   }
 
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set(["Blanco"]));
+  const handleResult = () => {
+    setCurrentPage(1)
+    setIsNextPage(true)
+    setFilters({ rating: rating.toString(), color: selectedColor?.currentKey, categoriy: categoria?.toString(), minPrice, maxPrice })
+    onClose()
+  }
 
-  const selectedValue = useMemo(() => {
-    return Array.from(selectedKeys).join(", ").replaceAll("_", " ")
-  }, [selectedKeys]
-  );
+  const handleReset = () => {
+    setCurrentPage(1)
+    setIsNextPage(true)
+    setSortParmas([])
+    setFilters({})
+    onClose()
+  }
+
+  useEffect(() => {
+    setMinPrice((filters.minPrice) as string)
+    setMaxPrice((filters.maxPrice) as string)
+    setCategoria(filters.categoriy)
+    //setSelectedColor(new Set([filters.color || "Selecciona un color"]))
+
+  }, [filters])
 
   return (
     <>
@@ -117,6 +123,8 @@ function ModalFilters() {
                                   placeholder="0.00"
                                   labelPlacement="outside"
                                   color="primary"
+                                  value={minPrice}
+                                  onValueChange={setMinPrice}
                                   startContent={
                                     <div className="pointer-events-none flex items-center">
                                       <span className="text-default-400 text-small">$</span>
@@ -147,6 +155,8 @@ function ModalFilters() {
                                   placeholder="2000.00"
                                   labelPlacement="outside"
                                   color="primary"
+                                  value={maxPrice}
+                                  onValueChange={setMaxPrice}
                                   startContent={
                                     <div className="pointer-events-none flex items-center">
                                       <span className="text-default-400 text-small">$</span>
@@ -181,11 +191,13 @@ function ModalFilters() {
                               label="Seleccionar categoría"
                               className=" w-full"
                               color="primary"
+                              defaultSelectedKey={categoria?.toString()}
+                              onSelectionChange={setCategoria}
                               size="sm"
                             >
-                              {categorias.map((categoria) => (
-                                <AutocompleteItem key={categoria} value={categoria}>
-                                  {categoria}
+                              {categories.map((categoria) => (
+                                <AutocompleteItem key={categoria.id} value={categoria.name}>
+                                  {categoria.name}
                                 </AutocompleteItem>
                               ))}
                             </Autocomplete>
@@ -201,14 +213,23 @@ function ModalFilters() {
                               }} />
                             </div>
                             <div className="w-full">
-                            <h6 className="mb-2 text-sm font-medium text-black dark:text-white ">Color</h6>
+                              <h6 className="mb-2 text-sm font-medium text-black dark:text-white ">Color</h6>
                               <Dropdown>
                                 <DropdownTrigger>
                                   <Button
                                     variant="bordered"
                                     className="capitalize w-full"
                                   >
-                                    {selectedValue}
+                                    {selectedColor && (
+                                      selectedColor
+                                    )}
+
+                                    {
+                                      !selectedColor && (
+                                        <h1>Color</h1>
+                                      )
+                                    }
+
                                   </Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
@@ -216,8 +237,8 @@ function ModalFilters() {
                                   variant="flat"
                                   disallowEmptySelection
                                   selectionMode="single"
-                                  selectedKeys={selectedKeys}
-                                  onSelectionChange={setSelectedKeys}
+                                  selectedKeys={selectedColor}
+                                  onSelectionChange={setSelectedColor}
                                 >
                                   <DropdownItem key="Blanco">Blanco</DropdownItem>
                                   <DropdownItem key="Negro" >Negro</DropdownItem>
@@ -236,11 +257,11 @@ function ModalFilters() {
                     </ModalBody>
                     <ModalFooter>
                       <div className="flex items-center space-x-4 rounded-b p-4 dark:border-gray-600 md:p-5">
-                        <Button color="primary">
+                        <Button color="primary" onClick={handleResult}>
                           Mostrar Resultados
                         </Button>
                         <button
-                          onClick={onClose}
+                          onClick={handleReset}
                           type="reset"
                           className="rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">Reiniciar</button>
                       </div>

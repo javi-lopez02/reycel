@@ -1,14 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   createContext,
   useState,
   useContext,
   PropsWithChildren,
   FC,
-  useCallback
+  useEffect
 } from "react";
-import { searchPproductRequest } from '../services/product'
-import { type Products, type ProductContextType } from "../types.d";
+import { categoryRequest, searchPproductRequest } from '../services/product'
+import { type Products, type ProductContextType, Category, FiltersType, SortOption } from "../types.d";
 import axios, { AxiosError } from "axios";
+import { useAuth } from "./auth.context";
 
 
 export const ProductContext = createContext<ProductContextType | null>(
@@ -31,25 +33,32 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
   const [error, setError] = useState<Array<string> | null>(null);
   const [errorSerch, setErrorSearch] = useState<Array<string> | null>(null);
   const [isNextPage, setIsNextPage] = useState(true);
+  const [querySeach, setQuerySeach] = useState("")
+  const [categories, setCategories] = useState<Array<Category>>([])
 
-  const searchProduct = useCallback((query?: string) => {
+  const [filters, setFilters] = useState<FiltersType>({})
+  const [sortParmas, setSortParmas] = useState<SortOption[] >([])
+  const { isAuth } = useAuth()
+
+
+
+  const searchProduct = (reset = false) => {
     setError(null);
     setLoading(true)
-    if (query === undefined) {
-      query = ""
-    }
-    searchPproductRequest(query, currentPage)
+    searchPproductRequest(querySeach, reset ? 1 : currentPage, filters, sortParmas)
       .then((res) => {
         if (currentPage >= res.data.meta.totalPages) {
           setIsNextPage(false);
         }
-        console.log(res.data.data)
-        if (currentPage === 1) {
-          return setProducts(res.data.data)
+        console.log(res.data.meta)
+        if (reset) {
+          setProducts(res.data.data)
+        } else {
+          setProducts((prev) => {
+            return prev.concat(res.data.data);
+          });
         }
-        setProducts((prev) => {
-          return prev.concat(res.data.data);
-        });
+
       })
       .catch((error) => {
         if (axios.isAxiosError(error)) {
@@ -67,7 +76,34 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
       }).finally(() => {
         setLoading(false)
       });
-  }, [currentPage]);
+  };
+
+
+  useEffect(() => {
+    if (!isAuth) {
+      return
+    }
+    categoryRequest()
+      .then((res) => {
+        setCategories(res.data.data)
+      }).catch(() => {
+        setError(["Error al cargar las Categorias"])
+      })
+  }, [isAuth])
+
+  useEffect(() => {
+    if (!isAuth) {
+      return
+    }
+    searchProduct(true);
+  }, [querySeach, isAuth, filters, sortParmas]);
+
+  useEffect(() => {
+    if (!isAuth) {
+      return
+    }
+    if (currentPage > 1) searchProduct(false);
+  }, [currentPage, isAuth]);
 
   return (
     <ProductContext.Provider
@@ -76,9 +112,13 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
         currentPage,
         error,
         loading,
+        categories,
         errorSerch,
         isNextPage,
-        searchProduct,
+        filters,
+        setSortParmas,
+        setFilters,
+        setQuerySeach,
         setIsNextPage,
         setErrorSearch,
         setCurrentPage
@@ -89,6 +129,3 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-// AuthProvider.propTypes = {
-//   children: PropTypes.node,
-// };

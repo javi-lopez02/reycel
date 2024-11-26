@@ -3,6 +3,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+interface SortItem {
+  field: "createdAt" | "price" | "rating"; // Los campos permitidos
+  order: "asc" | "desc"; // Los valores permitidos
+}
+
 export const getProduct = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
@@ -24,7 +29,6 @@ export const getProduct = async (req: Request, res: Response) => {
       },
     });
 
-
     const totalPost = await prisma.product.count();
     const totalPages = Math.ceil(totalPost / pageSize);
 
@@ -45,17 +49,39 @@ export const getProduct = async (req: Request, res: Response) => {
 
 export const searchProduct = async (req: Request, res: Response) => {
   try {
-    const search = req.query.s as string;
+    const search = (req.query.s || "") as string;
 
     const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 15;
 
-    const pageSize = parseInt(req.query.pageSize as string) || 20;
+    //filters
+    const minPrice = parseInt(req.query.minPrice as string) || 0;
+
+    const maxPrice = parseInt(req.query.maxPrice as string) || 2000;
+
+    const category = (req.query.category as string) || undefined;
+
+    const rating = parseInt(req.query.rating as string) || undefined;
+
+    const color = (req.query.color as string) || undefined;
+
+    
+    //sort
+    const sortQuery = req.query.sort && typeof req.query.sort === "string" ? req.query.sort : "[]";
+
+    const sortArray: SortItem[] = JSON.parse(sortQuery);
+
+    // Validar y construir el objeto orderBy para Prisma
+    const orderBy = sortArray.map((sortItem: SortItem) => {
+      const { field, order } = sortItem;
+      return { [field]: order }; // Formato esperado por Prisma
+    });
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
     const result = await prisma.product.findMany({
-      where: {
+      where:  {
         OR: [
           {
             name: {
@@ -64,35 +90,74 @@ export const searchProduct = async (req: Request, res: Response) => {
             },
           },
           {
-            description: {
+            description:  {
               contains: search,
               mode: "insensitive",
             },
           },
         ],
+        AND: [
+          {
+            price: {
+              gte: minPrice,
+              lte: maxPrice,
+            },
+          },
+          {
+            category: {
+              id: category,
+            },
+          },
+          {
+            rating: rating,
+          },
+          {
+            color: color,
+          },
+        ],
       },
+      orderBy,
       skip: skip,
       take: take,
     });
 
     const totalProduct = await prisma.product.count({
-      where: {
+      where:  {
         OR: [
           {
             name: {
               contains: search,
-              mode: "insensitive",
+              mode: "insensitive"
             },
           },
           {
-            description: {
+            description:  {
               contains: search,
               mode: "insensitive",
             },
           },
         ],
+        AND: [
+          {
+            price: {
+              gte: minPrice,
+              lte: maxPrice,
+            },
+          },
+          {
+            category: {
+              id: category,
+            },
+          },
+          {
+            rating: rating,
+          },
+          {
+            color: color,
+          },
+        ],
       },
-    });
+    });;
 
     const totalPages = Math.ceil(totalProduct / pageSize);
 
@@ -106,8 +171,6 @@ export const searchProduct = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json(["Internal server error"]);
     console.log(error);
     res.status(500).json(["Internal server error"]);
   }
