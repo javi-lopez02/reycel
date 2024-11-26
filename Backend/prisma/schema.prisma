@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   username  String
   email     String   @unique
   password  String
@@ -20,38 +20,58 @@ model User {
   orders    Order[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Rating    Rating[]
 }
 
 enum Role {
   USER
+  MODERADOR
   ADMIN
 }
 
 model Category {
-  id        Int       @id @default(autoincrement())
-  name      String
+  id        String    @id @default(uuid())
+  name      String    @unique
   products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
 
 model Product {
-  id                    Int                    @id @default(autoincrement())
+  id                    String                 @id @default(uuid())
   name                  String
   description           String
   price                 Float
-  categoryId            Int
+  categoryId            String
+  imagen                String?
+  color                 String?
+  ram                   Int?
+  storage               Int?
+  battery               Int?
+  mpxCameraFront        Int?
+  mpxCameraBack         Int?
+  inventoryCount        Int                    @default(1)
   category              Category               @relation(fields: [categoryId], references: [id])
-  inventoryCount        Int                    @default(0)
   inventoryTransactions InventoryTransaction[]
   orderItems            OrderItem[]
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
+  Rating                Rating[]
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  value     Int      @default(1) // Rango: 1-5
+  productID String
+  product   Product  @relation(fields: [productID], references: [id])
+  userID    String
+  user      User     @relation(fields: [userID], references: [id])
+  createdAt DateTime @default(now())
 }
 
 model InventoryTransaction {
-  id              Int             @id @default(autoincrement())
-  productId       Int
+  id              String          @id @default(uuid())
+  productId       String
   product         Product         @relation(fields: [productId], references: [id])
   quantity        Int
   transactionType TransactionType
@@ -64,8 +84,8 @@ enum TransactionType {
 }
 
 model Order {
-  id          Int         @id @default(autoincrement())
-  userId      Int
+  id          String      @id @default(uuid())
+  userId      String
   user        User        @relation(fields: [userId], references: [id])
   orderItems  OrderItem[]
   totalAmount Float
@@ -74,18 +94,18 @@ model Order {
 }
 
 model OrderItem {
-  id        Int     @id @default(autoincrement())
-  orderId   Int
+  id        String  @id @default(uuid())
+  orderId   String
   order     Order   @relation(fields: [orderId], references: [id])
-  productId Int
+  productId String
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   price     Float
 }
 
 model Payment {
-  id            Int           @id @default(autoincrement())
-  orderId       Int           @unique
+  id            String        @id @default(uuid())
+  orderId       String        @unique
   order         Order         @relation(fields: [orderId], references: [id])
   amount        Float
   paymentMethod String

@@ -73,7 +73,7 @@ export default function Login() {
               error.map((err) => {
                 return (
                   <div
-                    className=" bg-rose-500  bg-red-400 p-2 rounded-lg mx-auto w-4/5 flex items-center justify-center"
+                    className="bg-red-400 p-2 rounded-lg mx-auto w-4/5 flex items-center justify-center"
                     key={err}
                   >
                     <h1 className="text-white font-bold">{err}</h1>
@@ -92,7 +92,7 @@ export default function Login() {
                   id="email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Email ..."
-                //required
+                required
                 />
               </div>
               <div>
@@ -104,7 +104,7 @@ export default function Login() {
                   name="password"
                   id="password"
                   placeholder="••••••••"
-                  //required
+                  required
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
               </div>
@@ -138,10 +138,10 @@ export default function Login() {
                 Entrar
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                ¿No tienes cuentas?{" "}
+                ¿No tienes cuentas?
                 <Link
                   to={"/register"}
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  className="font-medium ml-3 text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Regístrate
                 </Link>

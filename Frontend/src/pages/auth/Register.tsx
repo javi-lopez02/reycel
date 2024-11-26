@@ -3,11 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 
 export default function Register() {
-  const [error, setError] = useState<Array<string>>([])
-  const { errors, signUp, isAuth } = useAuth()
+  const [error, setError] = useState<Array<string>>([]);
+  const { errors, signUp, isAuth } = useAuth();
 
   const navigate = useNavigate();
-
 
   useEffect(() => {
     if (error.length > 0) {
@@ -19,14 +18,14 @@ export default function Register() {
   }, [error]);
 
   useEffect(() => {
-    setError(errors)
-  }, [errors])
+    setError(errors);
+  }, [errors]);
 
   useEffect(() => {
     if (isAuth) {
-      navigate("/")
+      navigate("/");
     }
-  }, [isAuth, navigate])
+  }, [isAuth, navigate]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -35,7 +34,9 @@ export default function Register() {
     const inputEmail = elements.namedItem("email") as RadioNodeList;
 
     const inputPassword = elements.namedItem("password") as RadioNodeList;
-    const inputPassword_confirm = elements.namedItem("confirm-password") as RadioNodeList;
+    const inputPassword_confirm = elements.namedItem(
+      "confirm-password"
+    ) as RadioNodeList;
 
     if (!inputUser.value) {
       setError([...error, "User name is required"]);
@@ -49,10 +50,13 @@ export default function Register() {
 
     if (!inputPassword.value) {
       setError([...error, "Password is required"]);
-      return
+      return;
     }
 
-    if (!inputPassword.value || inputPassword.value !== inputPassword_confirm.value) {
+    if (
+      !inputPassword.value ||
+      inputPassword.value !== inputPassword_confirm.value
+    ) {
       setError([...error, "Password does not match"]);
       return;
     }
@@ -60,14 +64,13 @@ export default function Register() {
     await signUp({
       email: inputEmail.value,
       password: inputPassword.value,
-      username: inputUser.value
-    })
+      username: inputUser.value,
+    });
 
-    inputUser.value = ""
-    inputEmail.value = ""
-    inputPassword_confirm.value = ""
-    inputPassword.value = ""
-
+    inputUser.value = "";
+    inputEmail.value = "";
+    inputPassword_confirm.value = "";
+    inputPassword.value = "";
   };
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -92,7 +95,7 @@ export default function Register() {
               error.map((err) => {
                 return (
                   <div
-                    className=" bg-rose-500  bg-red-400 p-2 rounded-lg mx-auto w-4/5 flex items-center justify-center"
+                    className="bg-red-400 p-2 rounded-lg mx-auto w-4/5 flex items-center justify-center"
                     key={err}
                   >
                     <h1 className="text-white font-bold">{err}</h1>
@@ -159,10 +162,10 @@ export default function Register() {
                 Regístrate
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                ¿Ya tienes cuenta?{" "}
+                ¿Ya tienes cuenta?
                 <Link
                   to="/login"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  className="font-medium ml-3 text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Entrar
                 </Link>

@@ -36,6 +36,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [errors, setErrors] = useState<Array<string>>([]);
   const [loading, setLoading] = useState(true);
 
+
   const signIn = async (values: User) => {
     try {
       const res = await LoginRequest(values);
@@ -87,6 +88,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const logout = async () => {
     try {
       await LogoutRequest();
+      console.log("logout")
       setUser(null);
       setIsAuth(false);
     } catch (error) {

@@ -4,7 +4,7 @@ import bcryptjs from "bcryptjs";
 import { createToken } from "../Libs/jwt";
 import { TOKEN_SECRET } from "../conf";
 import jwt from "jsonwebtoken";
-import { TokenPayload } from "../types";
+import { type TokenPayload } from "../types";
 import { sendEmail } from "../Libs/mail.conf";
 
 const prisma = new PrismaClient();
@@ -66,7 +66,7 @@ export const confirmEmail = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findUnique({
       where: {
-        id: parseInt(decode.id),
+        id: decode.id,
       },
     });
 
@@ -76,7 +76,7 @@ export const confirmEmail = async (req: Request, res: Response) => {
 
     await prisma.user.update({
       where: {
-        id: parseInt(decode.id),
+        id: decode.id,
       },
       data: {
         status: true,
@@ -107,7 +107,9 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(401).json(["Nesecita email y contraseña para logearce"]);
+      return res
+        .status(401)
+        .json(["Nesecita email y contraseña para logearce"]);
     }
 
     const user = await prisma.user.findFirst({
@@ -146,24 +148,29 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const verifyToken = async (req: Request, res: Response) => {
-  const { token } = req.cookies;
-  if (!token) return res.send(false);
+  try {
+    const { token } = req.cookies;
+    if (!token) return res.send(false);
 
-  const decode = jwt.verify(token, TOKEN_SECRET) as TokenPayload;
-  if (!decode) return res.status(401);
+    const decode = jwt.verify(token, TOKEN_SECRET) as TokenPayload;
+    if (!decode) return res.status(401);
 
-  const userFound = await prisma.user.findUnique({
-    where: { id: parseInt(decode.id) },
-  });
+    const userFound = await prisma.user.findUnique({
+      where: { id: decode.id },
+    });
 
-  if (!userFound) return res.status(401).json(["User Not found" ]);
+    if (!userFound) return res.status(401).json(["User Not found"]);
 
-  return res.json({
-    userId: userFound.id,
-    username: userFound.username,
-    status: userFound.status,
-    email: userFound.email,
-  });
+    return res.json({
+      userId: userFound.id,
+      username: userFound.username,
+      status: userFound.status,
+      email: userFound.email,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(["Error del servidor"]);
+  }
 };
 
 export const logout = (req: Request, res: Response) => {
