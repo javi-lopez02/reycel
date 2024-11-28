@@ -29,10 +29,9 @@ export const getProductID = async (req: Request, res: Response) => {
 
     //product.rating = averageRating
 
-    console.log(product)
-
     res.status(200).json({
-      data: product ,
+      data: product,
+      averageRating,
     });
   } catch (error) {
     console.log(error);

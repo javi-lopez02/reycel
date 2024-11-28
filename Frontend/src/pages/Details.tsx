@@ -9,10 +9,11 @@ import { toast, ToastContainer } from "react-toastify";
 
 export default function Details() {
   const [rating, setRating] = useState(0)
+  const [ratingAverage, setRatingAverage] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Array<string> | null>(null);
   const [product, setProduct] = useState<Products | null>(null)
-  const [query, setQuery] = useState(() => {
+  const [query] = useState(() => {
     const searchParams = new URLSearchParams(window.location.search)
     return searchParams.get('p') ?? ''
   })
@@ -21,7 +22,10 @@ export default function Details() {
     setError(null)
     setLoading(true)
     productIDRequest(query)
-      .then((res) => setProduct(res.data.data))
+      .then((res) =>{
+        setRatingAverage(res.data.averageRating) 
+        setProduct(res.data.data)
+      })
       .catch((error) => {
         if (axios.isAxiosError(error)) {
           const axiosError = error as AxiosError;
@@ -72,7 +76,7 @@ export default function Details() {
                       </svg>
                     ))}
                   </div>
-                  <span className="text-gray-600 ml-2">{product.rating} de 5</span>
+                  <span className="text-gray-600 ml-2">{ratingAverage} de 5</span>
 
                 </div>
               </div>
