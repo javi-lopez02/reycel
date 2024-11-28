@@ -13,13 +13,11 @@ export const ratingProductCreate = (async (req: Request, res: Response) => {
   }
 
   try {
-    // Verificar si el dispositivo existe
     const product = await prisma.product.findUnique({ where: { id: id } });
     if (!product) {
       return res.status(404).json({ error: 'Dispositivo no encontrado.' });
     }
 
-    // Crear el rating
     const rating = await prisma.rating.create({
       data: {
         value,

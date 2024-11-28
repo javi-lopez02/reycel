@@ -44,6 +44,15 @@ export default function Details() {
       });
   }, [query])
 
+  const handleRating = async (value: number) =>{
+    try {
+      setRating(value)
+    } catch (error) {
+      setError(["Error con la peticion... "])
+      console.log(error)
+    }
+  }
+
   return (
     <div className="bg-white min-h-screen p-4 pt-20 rounded-lg shadow-md max-w-full max-h-full mx-auto mt-1">
       {
@@ -102,7 +111,7 @@ export default function Details() {
                   Valoraciones y Reseñas
                 </h2>
                 <div className="flex items-center mt-2">
-                  <Rating style={{ maxWidth: 200 }} value={rating} onChange={setRating} itemStyles={{
+                  <Rating style={{ maxWidth: 200 }} value={rating} onChange={handleRating} itemStyles={{
                     itemShapes: RoundedStar,
                     activeFillColor: '#ffb700',
                     inactiveFillColor: '#fbf1a9'

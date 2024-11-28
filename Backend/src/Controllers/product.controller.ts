@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { SortItem } from "../types";
 
 const prisma = new PrismaClient();
 
-interface SortItem {
-  field: "createdAt" | "price" | "rating"; // Los campos permitidos
-  order: "asc" | "desc"; // Los valores permitidos
-}
 
 export const getProductID = async (req: Request, res: Response) => {
   try {
@@ -44,7 +41,7 @@ export const searchProduct = async (req: Request, res: Response) => {
     const search = (req.query.s || "") as string;
 
     const page = parseInt(req.query.page as string) || 1;
-    const pageSize = parseInt(req.query.pageSize as string) || 7;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
 
     //filters
     const minPrice = parseInt(req.query.minPrice as string) || 0;
