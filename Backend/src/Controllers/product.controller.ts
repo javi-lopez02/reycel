@@ -146,7 +146,7 @@ export const searchProduct = async (req: Request, res: Response) => {
       ...product,
       rating:
       product.Rating.length > 0
-          ? (product.Rating.reduce((sum, rating) => sum + rating.value, 0) / product.Rating.length).toFixed(2)
+          ? (product.Rating.reduce((sum, rating) => sum + rating.value, 0) / product.Rating.length).toFixed(1)
           : 0,
     }));
 

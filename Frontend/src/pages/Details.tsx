@@ -6,25 +6,47 @@ import { Products } from "../types";
 import axios, { AxiosError } from "axios";
 import { Spinner } from "@nextui-org/spinner";
 import { toast, ToastContainer } from "react-toastify";
+import { useAuth } from "../context/auth.context";
+import { ratingRequest } from '../services/rating'
+interface Rating {
+  createdAt: string;
+  id: number;
+  productID: string;
+  userID: string;
+  value: number;
+}
+
+interface Product extends Products {
+  Rating: Rating[];
+}
 
 export default function Details() {
   const [rating, setRating] = useState(0)
   const [ratingAverage, setRatingAverage] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Array<string> | null>(null);
-  const [product, setProduct] = useState<Products | null>(null)
+  const [product, setProduct] = useState<Product | null>(null)
   const [query] = useState(() => {
     const searchParams = new URLSearchParams(window.location.search)
     return searchParams.get('p') ?? ''
   })
 
+  const { user } = useAuth()
+
   useEffect(() => {
     setError(null)
     setLoading(true)
     productIDRequest(query)
-      .then((res) =>{
-        setRatingAverage(res.data.averageRating) 
+      .then((res) => {
+        setRatingAverage(res.data.averageRating)
         setProduct(res.data.data)
+
+        const userRating = res.data.data.Rating.find(
+          (r: Rating) => r.userID === user?.userId
+        );
+        if (userRating) {
+          setRating(userRating.value);
+        }
       })
       .catch((error) => {
         if (axios.isAxiosError(error)) {
@@ -42,10 +64,13 @@ export default function Details() {
       }).finally(() => {
         setLoading(false)
       });
-  }, [query])
+  }, [query, user?.userId])
 
-  const handleRating = async (value: number) =>{
+  const handleRating = (value: number) => {
     try {
+      if (product?.id) {
+        ratingRequest(product.id, value).then(res => setRatingAverage(res.data.ratingAverage))
+      }
       setRating(value)
     } catch (error) {
       setError(["Error con la peticion... "])
@@ -69,14 +94,14 @@ export default function Details() {
               <h1 className="text-4xl font-semibold text-gray-800">
                 {`${product.name},  Ram ${product.ram}GB, Almacenamiento ${product.storage}GB `}
               </h1>
-              <p className="text-2xl text-gray-600 mt-2">$999.99</p>
+              <p className="text-2xl text-gray-600 mt-2">${product.price}</p>
               <div className="mt-2 flex items-center gap-2">
                 <div className="flex items-center">
                   <div className="flex text-yellow-500">
                     {[...Array(5)].map((_, index) => (
                       <svg
                         key={index}
-                        className={`h-5 w-5 fill-current ${product.rating > index ? "text-yellow-500" : "text-gray-300"
+                        className={`h-5 w-5 fill-current ${ratingAverage > index ? "text-yellow-500" : "text-gray-300"
                           }`}
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"

@@ -6,6 +6,7 @@ import * as dotenv from "dotenv";
 import path from "path";
 import auth from "./Routes/auth.routes";
 import product from "./Routes/product.routes";
+import rating from './Routes/rating.routes'
 import { Markup, Telegraf } from "telegraf";
 
 const bot = new Telegraf("7824510445:AAF8C2hIxuJY6iDPfyBs2YySCLiMCy4hwSA");
@@ -31,6 +32,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", auth);
 app.use("/api", product);
+app.use("/api", rating)
 
 app.use("/public", express.static(path.join(__dirname, "/upload")));
 
