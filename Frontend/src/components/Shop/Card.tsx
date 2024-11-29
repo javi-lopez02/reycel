@@ -16,7 +16,7 @@ const Card: FC<Products> = (product) => {
         </Link>
       </div>
       <div className="pt-6">
-        <div className="mb-4 flex items-center justify-between gap-4">
+        <div className=" flex items-center justify-between gap-4">
           {
             product.inventoryCount !== 0 && (
               <span className="me-2 rounded bg-emerald-300 px-2.5 py-0.5 text-xs font-medium text-neutral-700">
@@ -34,7 +34,6 @@ const Card: FC<Products> = (product) => {
               </span>
             )
           }
-
 
           <div className="flex items-center justify-end gap-1">
             <button
@@ -108,6 +107,16 @@ const Card: FC<Products> = (product) => {
           </div>
         </div>
 
+        <div className="w-full h-8 flex items-center">
+          {
+            product.inventoryCount <= 4 && product.inventoryCount !== 0 && (
+              <span className="me-2 py-3 text-sm font-medium text-red-400">
+                {`Queda(n) ${product.inventoryCount}, hay más unidades en camino.`}
+              </span>
+
+            )
+          }
+        </div>
         <Link
           to={`/details?p=${product.id}`}
           className="text-lg overflow-hidden font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
