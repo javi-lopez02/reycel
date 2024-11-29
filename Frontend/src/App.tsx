@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import AboutUs from "./pages/AboutUs";
@@ -13,28 +13,33 @@ import Details from "./pages/Details";
 import Shop from "./pages/Shop";
 
 function App() {
+  const ProductProviderOutlet = () => {
+    return (
+      <ProductProvider>
+        <Outlet />
+      </ProductProvider>
+    )
+  }
+
   return (
     <NextUIProvider>
       <BrowserRouter>
         <AuthProvider>
-          <ProductProvider>
-
-            <Routes >
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route element={<Navbar />}>
-                <Route element={<ProtectedRoutes />}>
+          <Routes >
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route element={<ProtectedRoutes />}>
+              <Route element={<ProductProviderOutlet />}>
+                <Route element={<Navbar />}>
                   <Route path="/aboutUs" element={<AboutUs />} />
                   <Route path="/contactUs" element={<ContactUs />} />
                   <Route path="/shopCar" element={<CarShop />} />
-
                   <Route path="/" element={<Shop />} />
                   <Route path="/details" element={<Details />} />
                 </Route>
               </Route>
-            </Routes>
-
-          </ProductProvider>
+            </Route>
+          </Routes>
         </AuthProvider>
       </BrowserRouter>
     </NextUIProvider >

@@ -111,7 +111,7 @@ const Card: FC<Products> = (product) => {
           {
             product.inventoryCount <= 4 && product.inventoryCount !== 0 && (
               <span className="me-2 py-3 text-sm font-medium text-red-400">
-                {`Queda(n) ${product.inventoryCount}, hay más unidades en camino.`}
+                {`Queda(n) ${product.inventoryCount}, más unidades en camino.`}
               </span>
 
             )
