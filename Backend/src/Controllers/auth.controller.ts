@@ -174,7 +174,6 @@ export const verifyToken = async (req: Request, res: Response) => {
 };
 
 export const logout = (req: Request, res: Response) => {
-  console.log("hola");
   res.cookie("token", "", {
     httpOnly: false,
     secure: true,

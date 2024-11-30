@@ -4,25 +4,24 @@ import { SortItem } from "../types";
 
 const prisma = new PrismaClient();
 
-
 export const getProductID = async (req: Request, res: Response) => {
   try {
-
     const productID = (req.query.p || "") as string;
 
     const product = await prisma.product.findUnique({
       where: { id: productID },
-      include: { Rating: true }, // Incluye los ratings asociados
+      include: { Rating: true, comment: true }, // Incluye los ratings asociados
     });
 
     if (!product) {
-      return res.status(404).json({ error: 'Dispositivo no encontrado.' });
+      return res.status(404).json(["Dispositivo no encontrado." ]);
     }
 
     const averageRating =
-    product?.Rating.length > 0
-      ? product.Rating.reduce((sum, rating) => sum + rating.value, 0) / product.Rating.length
-      : 0;
+      product?.Rating.length > 0
+        ? product.Rating.reduce((sum, rating) => sum + rating.value, 0) /
+          product.Rating.length
+        : 0;
 
     //product.rating = averageRating
 
@@ -52,9 +51,11 @@ export const searchProduct = async (req: Request, res: Response) => {
 
     const color = (req.query.color as string) || undefined;
 
-    
     //sort
-    const sortQuery = req.query.sort && typeof req.query.sort === "string" ? req.query.sort : "[]";
+    const sortQuery =
+      req.query.sort && typeof req.query.sort === "string"
+        ? req.query.sort
+        : "[]";
 
     const sortArray: SortItem[] = JSON.parse(sortQuery);
 
@@ -68,7 +69,7 @@ export const searchProduct = async (req: Request, res: Response) => {
     const take = pageSize;
 
     const result = await prisma.product.findMany({
-      where:  {
+      where: {
         OR: [
           {
             name: {
@@ -77,7 +78,7 @@ export const searchProduct = async (req: Request, res: Response) => {
             },
           },
           {
-            description:  {
+            description: {
               contains: search,
               mode: "insensitive",
             },
@@ -99,8 +100,9 @@ export const searchProduct = async (req: Request, res: Response) => {
             color: color,
           },
         ],
-      },include:{
-        Rating: true
+      },
+      include: {
+        Rating: true,
       },
       orderBy,
       skip: skip,
@@ -108,16 +110,16 @@ export const searchProduct = async (req: Request, res: Response) => {
     });
 
     const totalProduct = await prisma.product.count({
-      where:  {
+      where: {
         OR: [
           {
             name: {
               contains: search,
-              mode: "insensitive"
+              mode: "insensitive",
             },
           },
           {
-            description:  {
+            description: {
               contains: search,
               mode: "insensitive",
             },
@@ -140,13 +142,16 @@ export const searchProduct = async (req: Request, res: Response) => {
           },
         ],
       },
-    });;
+    });
 
-    const productWithRatings = result.map(product => ({
+    const productWithRatings = result.map((product) => ({
       ...product,
       rating:
-      product.Rating.length > 0
-          ? (product.Rating.reduce((sum, rating) => sum + rating.value, 0) / product.Rating.length).toFixed(1)
+        product.Rating.length > 0
+          ? (
+              product.Rating.reduce((sum, rating) => sum + rating.value, 0) /
+              product.Rating.length
+            ).toFixed(1)
           : 0,
     }));
 

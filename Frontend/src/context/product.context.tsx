@@ -10,7 +10,6 @@ import {
 import { categoryRequest, searchPproductRequest } from '../services/product'
 import { type Products, type ProductContextType, Category, FiltersType, SortOption } from "../types.d";
 import axios, { AxiosError } from "axios";
-import { useAuth } from "./auth.context";
 
 
 export const ProductContext = createContext<ProductContextType | null>(
@@ -37,9 +36,7 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
   const [categories, setCategories] = useState<Array<Category>>([])
 
   const [filters, setFilters] = useState<FiltersType>({})
-  const [sortParmas, setSortParmas] = useState<SortOption[] >([])
-  const { isAuth } = useAuth()
-
+  const [sortParmas, setSortParmas] = useState<SortOption[]>([])
 
 
   const searchProduct = (reset = false) => {
@@ -77,32 +74,25 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
       });
   };
 
-
   useEffect(() => {
-    if (!isAuth) {
-      return
-    }
+
     categoryRequest()
       .then((res) => {
         setCategories(res.data.data)
       }).catch(() => {
         setError(["Error al cargar las Categorias"])
       })
-  }, [isAuth])
+  }, [])
 
   useEffect(() => {
-    if (!isAuth) {
-      return
-    }
+
     searchProduct(true);
-  }, [querySeach, isAuth, filters, sortParmas]);
+  }, [querySeach, filters, sortParmas]);
 
   useEffect(() => {
-    if (!isAuth) {
-      return
-    }
+
     if (currentPage > 1) searchProduct(false);
-  }, [currentPage, isAuth]);
+  }, [currentPage]);
 
   return (
     <ProductContext.Provider

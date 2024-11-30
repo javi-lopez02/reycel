@@ -31,7 +31,7 @@ export default function Details() {
     return searchParams.get('p') ?? ''
   })
 
-  const { user } = useAuth()
+  const { user, isAuth } = useAuth()
 
   useEffect(() => {
     setError(null)
@@ -67,6 +67,10 @@ export default function Details() {
   }, [query, user?.userId])
 
   const handleRating = (value: number) => {
+    if (!isAuth) {
+      alert("debe iniciar secion ")
+      return
+    }
     try {
       if (product?.id) {
         ratingRequest(product.id, value).then(res => setRatingAverage(res.data.ratingAverage))
