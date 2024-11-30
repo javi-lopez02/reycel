@@ -41,6 +41,14 @@ export interface Comment {
   };
 }
 
+export interface orderItems {
+  id: string;
+  orderId: string;
+  quantity: number;
+  price: number;
+  product: Products;
+}
+
 export interface Rating {
   createdAt: string;
   id: number;

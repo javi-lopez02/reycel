@@ -28,6 +28,11 @@ export const register = async (req: Request, res: Response) => {
         email,
         password: hashedPassword,
         status: false,
+        orders:{
+          create: {
+            totalAmount: 0
+          }
+        }
       },
     });
 

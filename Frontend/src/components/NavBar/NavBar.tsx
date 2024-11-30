@@ -3,8 +3,8 @@ import { Link, Outlet } from "react-router-dom";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import { MdDensityMedium } from "react-icons/md";
-import { useAuth } from "../context/auth.context";
-import { useProduct } from "../context/product.context";
+import { useAuth } from "../../context/auth.context";
+import { useProduct } from "../../context/product.context";
 import { useDebouncedCallback } from "use-debounce";
 
 const Navbar = () => {

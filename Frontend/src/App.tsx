@@ -3,7 +3,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
-import Navbar from "./components/NavBar";
+import Navbar from "./components/NavBar/NavBar";
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
 import { AuthProvider } from "./context/auth.context";
 import CarShop from "./pages/CarShop";

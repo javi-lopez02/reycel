@@ -99,6 +99,7 @@ enum TransactionType {
 model Order {
   id          String      @id @default(uuid())
   userId      String
+  pending     Boolean     @default(true)
   user        User        @relation(fields: [userId], references: [id])
   orderItems  OrderItem[]
   totalAmount Float

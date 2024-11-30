@@ -9,6 +9,7 @@ import { Spinner } from "@nextui-org/spinner";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/auth.context";
 import { ratingRequest } from '../services/rating'
+import { addItemOrderRequest } from "../services/order";
 
 
 interface Product extends Products {
@@ -22,6 +23,7 @@ export default function Details() {
   const [error, setError] = useState<Array<string> | null>(null);
   const [product, setProduct] = useState<Product | null>(null)
   const [comments, setComments] = useState<Comment[] | null>(null)
+  const [quantity, setQuantity] = useState(1)
   const [query] = useState(() => {
     const searchParams = new URLSearchParams(window.location.search)
     return searchParams.get('p') ?? ''
@@ -104,7 +106,19 @@ export default function Details() {
       input.value = ""
     }
 
+  }
 
+  const handleAddCorShop = async()=>{
+    if (!isAuth) {
+      alert("debe registrarce")
+      return
+    }
+    try {
+      await addItemOrderRequest(query, quantity)
+    } catch (error) {
+      console.log(error)
+      setError(["Error al añadir el producto"])
+    }
   }
 
   return (
@@ -170,7 +184,7 @@ export default function Details() {
                 }
 
                 <div className="mt-4">
-                  <button className="bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-700">
+                  <button onClick={handleAddCorShop} className="bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-700">
                     Agregar al carrito
                   </button>
                 </div>
@@ -239,7 +253,7 @@ export default function Details() {
           )
         }
 
-        <ToastContainer theme="light" icon={<VscError color="red" />} position="bottom-right" />
+        <ToastContainer theme="light" key={"hola"} icon={<VscError color="red" />} position="bottom-right" />
 
       </div>
     </>
