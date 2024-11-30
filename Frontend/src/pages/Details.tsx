@@ -1,20 +1,15 @@
-import { Rating, RoundedStar } from "@smastrom/react-rating";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Rating as RetingStart, RoundedStar } from "@smastrom/react-rating";
 import { useEffect, useState } from "react";
 import { VscError, VscSend } from "react-icons/vsc";
-import { productIDRequest } from '../services/product'
-import { Products } from "../types";
+import { createCommentRequest, productIDRequest } from '../services/product'
+import { Products, type Rating, Comment } from "../types";
 import axios, { AxiosError } from "axios";
 import { Spinner } from "@nextui-org/spinner";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/auth.context";
 import { ratingRequest } from '../services/rating'
-interface Rating {
-  createdAt: string;
-  id: number;
-  productID: string;
-  userID: string;
-  value: number;
-}
+
 
 interface Product extends Products {
   Rating: Rating[];
@@ -26,6 +21,7 @@ export default function Details() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Array<string> | null>(null);
   const [product, setProduct] = useState<Product | null>(null)
+  const [comments, setComments] = useState<Comment[] | null>(null)
   const [query] = useState(() => {
     const searchParams = new URLSearchParams(window.location.search)
     return searchParams.get('p') ?? ''
@@ -40,6 +36,7 @@ export default function Details() {
       .then((res) => {
         setRatingAverage(res.data.averageRating)
         setProduct(res.data.data)
+        setComments(res.data.data.comment)
 
         const userRating = res.data.data.Rating.find(
           (r: Rating) => r.userID === user?.userId
@@ -64,7 +61,8 @@ export default function Details() {
       }).finally(() => {
         setLoading(false)
       });
-  }, [query, user?.userId])
+
+  }, [query])
 
   const handleRating = (value: number) => {
     if (!isAuth) {
@@ -80,6 +78,33 @@ export default function Details() {
       setError(["Error con la peticion... "])
       console.log(error)
     }
+  }
+
+  const handleFormComment = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!isAuth) {
+      alert("debe registrarce")
+      return
+    }
+
+    const { elements } = event.currentTarget
+    const input = elements.namedItem("comment") as RadioNodeList
+
+    try {
+      if (input.value.length > 0) {
+        const newComment = await createCommentRequest(input.value as string, query)
+        setComments((prevComment) =>{
+          return prevComment?.concat(newComment.data.data) as Comment[]
+        })
+      }
+    } catch (error) {
+      console.log(error)
+      setError(["Error al crear el comentario"])
+    } finally {
+      input.value = ""
+    }
+
+
   }
 
   return (
@@ -162,7 +187,7 @@ export default function Details() {
                     Valoraciones y Reseñas
                   </h2>
                   <div className="flex items-center mt-2">
-                    <Rating style={{ maxWidth: 200 }} value={rating} onChange={handleRating} itemStyles={{
+                    <RetingStart style={{ maxWidth: 200 }} value={rating} onChange={handleRating} itemStyles={{
                       itemShapes: RoundedStar,
                       activeFillColor: '#ffb700',
                       inactiveFillColor: '#fbf1a9'
@@ -171,26 +196,30 @@ export default function Details() {
                   </div>
                   <div className="mt-4">
                     <h3 className="text-lg font-semibold text-gray-800">Reseñas</h3>
-                    <div className="mt-2 flex items-center">
+                    <form className="mt-2 flex items-center pb-3" onSubmit={handleFormComment}>
                       <input
                         type="text"
+                        name="comment"
                         placeholder="Write a comment..."
                         className="w-full pl-4 pr-12 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
-                      <VscSend className="absolute right-14 h-8 w-8 hover:text-blue-500" />
-                    </div>
-                    <div className="mt-2">
-                      <p className="text-gray-700 font-medium">Juan Pérez</p>
-                      <p className="text-gray-600">
-                        ¡Excelente producto! Superó mis expectativas.
-                      </p>
-                    </div>
-                    <div className="mt-2">
-                      <p className="text-gray-700 font-medium">María González</p>
-                      <p className="text-gray-600">
-                        Buena calidad, pero el envío fue un poco lento.
-                      </p>
-                    </div>
+                      <button className="absolute right-14">
+                        <VscSend className=" h-8 w-8 hover:text-blue-500" />
+                      </button>
+                    </form>
+                    <strong className="pt-2">{comments?.length} reseñas de este producto.</strong>
+                    {
+                      comments !== null && comments.length > 0 && comments.map((comment) => {
+                        return (
+                          <div key={comment.id} className="mt-2">
+                            <p className="text-gray-700 font-medium">{comment.User.username}</p>
+                            <p className="text-gray-600">
+                              {comment.content}
+                            </p>
+                          </div>
+                        )
+                      })
+                    }
                   </div>
                 </div>
               </div>

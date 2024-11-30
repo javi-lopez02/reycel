@@ -31,6 +31,24 @@ export interface Products {
   inventoryCount: number;
 }
 
+export interface Comment {
+  id: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  User: {
+    username: string;
+  };
+}
+
+export interface Rating {
+  createdAt: string;
+  id: number;
+  productID: string;
+  userID: string;
+  value: number;
+}
+
 export type AuthContextType = {
   user: User | null;
   isAuth: boolean;

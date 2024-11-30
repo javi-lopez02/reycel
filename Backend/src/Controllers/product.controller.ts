@@ -10,11 +10,26 @@ export const getProductID = async (req: Request, res: Response) => {
 
     const product = await prisma.product.findUnique({
       where: { id: productID },
-      include: { Rating: true, comment: true }, // Incluye los ratings asociados
+      include: {
+        Rating: true,
+        comment: {
+          select: {
+            content: true,
+            createdAt: true,
+            updatedAt: true,
+            id: true,
+            User: {
+              select: {
+                username: true,
+              },
+            },
+          },
+        },
+      }, // Incluye los ratings asociados
     });
 
     if (!product) {
-      return res.status(404).json(["Dispositivo no encontrado." ]);
+      return res.status(404).json(["Dispositivo no encontrado."]);
     }
 
     const averageRating =

@@ -7,24 +7,38 @@ export const createComment = async (req: Request, res: Response) => {
   try {
     const productId = (req.query.p || "") as string;
 
-    const content = req.body.content as string
-    const userId = req.userId
-
-    if (content.length <= 3) {
-      return res.status(400).json(["Debe tener más de 4 caracteres"])
+    const content = req.body.content as string;
+    const userId = req.userId;
+    console.log(content);
+    if (content.length <= 3 || content === undefined) {
+      return res.status(400).json(["Debe tener más de 4 caracteres"]);
     }
 
-    await prisma.comment.create({
-      data:{
+    const newComment = await prisma.comment.create({
+      data: {
         content,
         productId,
-        userId
-      }
-    })
+        userId,
+      },
+      select: {
+        id: true,
+        content: true,
+        updatedAt: true,
+        createdAt: true,
+        User: {
+          select: {
+            username: true,
+          },
+        },
+      },
+    });
 
-    res.status(200)
+    res.status(200).json({
+      data: newComment,
+      message: "Commentario creado",
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json(["Error al agregar el comentario." ]);
+    res.status(500).json(["Error al agregar el comentario."]);
   }
 };

@@ -10,7 +10,7 @@ import { useDebouncedCallback } from "use-debounce";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { setCurrentPage, setQuerySeach, setIsNextPage, setErrorSearch } = useProduct()
-  const { logout } = useAuth()
+  const { logout, isAuth } = useAuth()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -86,14 +86,26 @@ const Navbar = () => {
                 </li>
               </ul>
             </div>
-            <div className="hidden lg:flex font-semibold text-lg">
-              <ul className="mx-1">
-                <li className="sm:p-4 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
-                  <div onClick={logout}>
-                    <IoLogOut />
-                  </div>
-                </li>
-              </ul>
+            <div className="hidden lg:flex lg:items-center font-semibold text-lg">
+              {
+                isAuth && (
+                  <ul className="mx-1">
+                    <li className="sm:p-4 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
+                      <div onClick={logout}>
+                        <IoLogOut />
+                      </div>
+                    </li>
+                  </ul>
+                )
+              }
+              {
+                !isAuth && (
+                  <Link className="mr-5 ml-5 px-3 rounded-md bg-blue-600 text-white font-bold" to={"/login"}>
+                    Registrate
+                  </Link>
+                )
+              }
+
             </div>
           </div>
         </div>
@@ -135,12 +147,27 @@ const Navbar = () => {
               >
                 Contact Us
               </Link>
-              <button
-                onClick={logout}
-                className="block p-2 text-gray-700 hover:text-blue-500"
-              >
-                Log Out
-              </button>
+              {
+                isAuth && (
+                  <button
+                    onClick={logout}
+                    className="block p-2 text-gray-700 hover:text-blue-500"
+                  >
+                    Log Out
+                  </button>
+                )
+              }
+              {
+                !isAuth && (
+                  <Link
+                    to="/login"
+                    className="block p-2 text-gray-700 hover:text-blue-500"
+                  >
+                    Registrate
+                  </Link>
+                )
+              }
+
             </nav>
           </div>
         )}
