@@ -28,10 +28,10 @@ const router = Router();
   }
 }); */
 
-router.get("/products/search", authMiddleware, searchProduct);
+router.get("/products/search", searchProduct);
 
-router.get("/products/category", authMiddleware, getCategory);
+router.get("/products/category", getCategory);
 
-router.get("/products", authMiddleware, getProductID)
+router.get("/products", getProductID)
 
 export default router;

@@ -2,8 +2,29 @@
 import { FC } from "react";
 import { type Products } from '../../types'
 import { Link } from "react-router-dom";
+import { addItemOrderRequest } from "../../services/order";
+import { useAuth } from "../../context/auth.context";
+import ModalLogin from "../../pages/auth/ModalLogin";
+import { useDisclosure } from "@nextui-org/react";
 
 const Card: FC<Products> = (product) => {
+
+  const { isAuth } = useAuth()
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const handleClikAddProduct = async () => {
+    if (!isAuth) {
+      onOpen()
+      return
+    }
+    try {
+      await addItemOrderRequest(product.id, 1)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm ">
       <div className="h-56 w-full">
@@ -16,7 +37,7 @@ const Card: FC<Products> = (product) => {
         </Link>
       </div>
       <div className="pt-6">
-        <div className="mb-4 flex items-center justify-between gap-4">
+        <div className=" flex items-center justify-between gap-4">
           {
             product.inventoryCount !== 0 && (
               <span className="me-2 rounded bg-emerald-300 px-2.5 py-0.5 text-xs font-medium text-neutral-700">
@@ -34,7 +55,6 @@ const Card: FC<Products> = (product) => {
               </span>
             )
           }
-
 
           <div className="flex items-center justify-end gap-1">
             <button
@@ -108,6 +128,16 @@ const Card: FC<Products> = (product) => {
           </div>
         </div>
 
+        <div className="w-full h-8 flex items-center">
+          {
+            product.inventoryCount <= 4 && product.inventoryCount !== 0 && (
+              <span className="me-2 py-3 text-sm font-medium text-red-400">
+                {`Queda(n) ${product.inventoryCount}, más unidades en camino.`}
+              </span>
+
+            )
+          }
+        </div>
         <Link
           to={`/details?p=${product.id}`}
           className="text-lg overflow-hidden font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
@@ -141,7 +171,8 @@ const Card: FC<Products> = (product) => {
 
           <button
             type="button"
-            className="inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            onClick={handleClikAddProduct}
+            className="inline-flex items-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
           >
             <svg
               className="-ms-2 me-2 h-5 w-5"
@@ -160,10 +191,11 @@ const Card: FC<Products> = (product) => {
                 d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6"
               />
             </svg>
-            Add to cart
+            Añadir 
           </button>
         </div>
       </div>
+      <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange}></ModalLogin>
     </div>
   )
 }

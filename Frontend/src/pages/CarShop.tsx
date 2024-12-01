@@ -1,20 +1,37 @@
+import React from "react";
 import Card from "../components/Car/Card";
 
-export default function CarShop() {
+const App: React.FC = () => {
+  const product = {
+    image: "https://via.placeholder.com/150",
+    title: "Gaming Headset XYZ",
+    price: 59.99,
+    storage: 128,
+    ram: 8,
+    mpxfront: 16,
+    mpxback: 48,
+    rating: 4,
+    reviews: 120,
+  };
   return (
-    <div className="w-full pt-20 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 p-4">
-      {[...Array(20)].map((_, index) => {
-        return (
-          <Card
-            key={index}
-            image="https://via.placeholder.com/400"
-            title="Celular Ejemplo"
-            price="$299.99"
-            description="Propiedades"
-            especif="Especificaciones"
-          />
-        );
-      })}
+    <div className="bg-gray-100 min-h-screen p-20">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">Carrito de Compras</h1>
+        <Card
+          image={product.image}
+          title={product.title}
+          price={product.price}
+          storage={product.storage}
+          ram={product.ram}
+          mpxfront={product.mpxfront}
+          mpxback={product.mpxback}
+          rating={product.rating}
+          reviews={product.reviews}
+          onRemove={() => alert("Producto eliminado")}
+          onConfirm={() => alert("Producto añadido al carrito")}
+        />
+      </div>
     </div>
   );
-}
+};
+export default App;

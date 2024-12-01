@@ -4,6 +4,6 @@ import { ratingProductCreate } from "../Controllers/rating.controller";
 
 const router = Router();
 
-router.post("/products/rating/:id", authMiddleware, ratingProductCreate);
+router.post("/products/rating/:id", authMiddleware,ratingProductCreate);
 
 export default router;

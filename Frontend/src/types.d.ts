@@ -1,6 +1,6 @@
 export type User = {
   username?: string;
-  userId?: number;
+  userId: string;
   password?: string;
   status?: boolean;
   email: string;
@@ -29,6 +29,32 @@ export interface Products {
   mpxCameraFront?: number;
   mpxCameraBack?: number;
   inventoryCount: number;
+}
+
+export interface Comment {
+  id: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  User: {
+    username: string;
+  };
+}
+
+export interface orderItems {
+  id: string;
+  orderId: string;
+  quantity: number;
+  price: number;
+  product: Products;
+}
+
+export interface Rating {
+  createdAt: string;
+  id: number;
+  productID: string;
+  userID: string;
+  value: number;
 }
 
 export type AuthContextType = {
