@@ -7,8 +7,11 @@ import { useProduct } from "../customHooks/useProduct";
 import Comment from "../components/Details/Comment";
 import FormComment from "../components/Details/FormComment";
 import Star from "../components/Details/Star";
+import { useDisclosure } from "@nextui-org/react";
+import ModalLogin from "./auth/ModalLogin";
 
 export default function Details() {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const [quantity, setQuantity] = useState(1)
   const [query] = useState(() => {
@@ -32,7 +35,7 @@ export default function Details() {
 
   const handleRating = (value: number) => {
     if (!isAuth) {
-      alert("debe iniciar secion ")
+      onOpen()
       return
     }
     updateRating(value)
@@ -41,7 +44,7 @@ export default function Details() {
   const handleFormComment = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!isAuth) {
-      alert("debe registrarce")
+      onOpen()
       return
     }
     const { elements } = event.currentTarget
@@ -54,7 +57,7 @@ export default function Details() {
 
   const handleAddCorShop = async () => {
     if (!isAuth) {
-      alert("debe registrarce")
+      onOpen()
       return
     }
     await addItemCarShop(quantity)
@@ -176,6 +179,7 @@ export default function Details() {
         }
 
         <ToastContainer theme="light" key={"hola"} icon={<VscError color="red" />} position="bottom-right" />
+        <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange}></ModalLogin>
 
       </div>
     </>

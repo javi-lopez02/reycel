@@ -6,11 +6,15 @@ import { MdDensityMedium } from "react-icons/md";
 import { useAuth } from "../../context/auth.context";
 import { useProduct } from "../../context/product.context";
 import { useDebouncedCallback } from "use-debounce";
+import ModalLogin from "../../pages/auth/ModalLogin";
+import { useDisclosure } from "@nextui-org/react";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenMenu, setIsOpenMenu] = useState(false);
   const { setCurrentPage, setQuerySeach, setIsNextPage, setErrorSearch } = useProduct()
   const { logout, isAuth } = useAuth()
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -38,7 +42,7 @@ const Navbar = () => {
 
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
+    setIsOpenMenu(!isOpenMenu);
   };
   return (
     <>
@@ -76,16 +80,22 @@ const Navbar = () => {
             </ul>
           </div>
 
+
           <div className="flex w-auto">
-            <div className="hidden lg:flex font-semibold text-lg">
-              <ul className="mx-1">
-                <li className="sm:p-4 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
-                  <Link to="/shopCar">
-                    <FaShoppingCart />
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            {
+              isAuth && (
+
+                <div className="hidden lg:flex font-semibold text-lg">
+                  <ul className="mx-1">
+                    <li className="sm:p-4 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
+                      <Link to="/shopCar">
+                        <FaShoppingCart />
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )
+            }
             <div className="hidden lg:flex lg:items-center font-semibold text-lg">
               {
                 isAuth && (
@@ -100,9 +110,7 @@ const Navbar = () => {
               }
               {
                 !isAuth && (
-                  <Link className="mr-5 ml-5 px-3 rounded-md bg-blue-600 text-white font-bold" to={"/login"}>
-                    Registrate
-                  </Link>
+                  <button onClick={onOpen} className="mr-5 ml-5 px-3 rounded-md bg-blue-600 text-white font-bold"> Registrate</button>
                 )
               }
 
@@ -126,7 +134,7 @@ const Navbar = () => {
           </ul>
         </div>
         {/* <!-- Mobile Menu --> */}
-        {isOpen && (
+        {isOpenMenu && (
           <div className="lg:hidden absolute top-16 left-0 right-0 bg-white shadow-md z-20">
             <nav className="flex flex-col items-center">
               <Link
@@ -159,18 +167,14 @@ const Navbar = () => {
               }
               {
                 !isAuth && (
-                  <Link
-                    to="/login"
-                    className="block p-2 text-gray-700 hover:text-blue-500"
-                  >
-                    Registrate
-                  </Link>
+                  <button onClick={onOpen} className="block p-2 text-gray-700 hover:text-blue-500"> Registrate</button>
                 )
               }
 
             </nav>
           </div>
         )}
+        <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange}></ModalLogin>
       </nav>
       <Outlet />
     </>

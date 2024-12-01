@@ -2,8 +2,29 @@
 import { FC } from "react";
 import { type Products } from '../../types'
 import { Link } from "react-router-dom";
+import { addItemOrderRequest } from "../../services/order";
+import { useAuth } from "../../context/auth.context";
+import ModalLogin from "../../pages/auth/ModalLogin";
+import { useDisclosure } from "@nextui-org/react";
 
 const Card: FC<Products> = (product) => {
+
+  const { isAuth } = useAuth()
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const handleClikAddProduct = async () => {
+    if (!isAuth) {
+      onOpen()
+      return
+    }
+    try {
+      await addItemOrderRequest(product.id, 1)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm ">
       <div className="h-56 w-full">
@@ -150,6 +171,7 @@ const Card: FC<Products> = (product) => {
 
           <button
             type="button"
+            onClick={handleClikAddProduct}
             className="inline-flex items-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
           >
             <svg
@@ -169,10 +191,11 @@ const Card: FC<Products> = (product) => {
                 d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6"
               />
             </svg>
-            Add to cart
+            Añadir 
           </button>
         </div>
       </div>
+      <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange}></ModalLogin>
     </div>
   )
 }
