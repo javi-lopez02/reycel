@@ -1,85 +1,41 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { Rating as RetingStart, RoundedStar } from "@smastrom/react-rating";
-import { useEffect, useState } from "react";
-import { VscError, VscSend } from "react-icons/vsc";
-import { createCommentRequest, productIDRequest } from '../services/product'
-import { Products, type Rating, Comment } from "../types";
-import axios, { AxiosError } from "axios";
+import { useState } from "react";
+import { VscError } from "react-icons/vsc";
 import { Spinner } from "@nextui-org/spinner";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/auth.context";
-import { ratingRequest } from '../services/rating'
-import { addItemOrderRequest } from "../services/order";
-
-
-interface Product extends Products {
-  Rating: Rating[];
-}
+import { useProduct } from "../customHooks/useProduct";
+import Comment from "../components/Details/Comment";
+import FormComment from "../components/Details/FormComment";
+import Star from "../components/Details/Star";
 
 export default function Details() {
-  const [rating, setRating] = useState(0)
-  const [ratingAverage, setRatingAverage] = useState(0)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<Array<string> | null>(null);
-  const [product, setProduct] = useState<Product | null>(null)
-  const [comments, setComments] = useState<Comment[] | null>(null)
+
   const [quantity, setQuantity] = useState(1)
   const [query] = useState(() => {
     const searchParams = new URLSearchParams(window.location.search)
     return searchParams.get('p') ?? ''
   })
 
-  const { user, isAuth } = useAuth()
+  const {
+    rating,
+    ratingAverage,
+    loading,
+    error,
+    product,
+    comments,
+    updateRating,
+    createComment,
+    addItemCarShop
+  } = useProduct(query)
 
-  useEffect(() => {
-    setError(null)
-    setLoading(true)
-    productIDRequest(query)
-      .then((res) => {
-        setRatingAverage(res.data.averageRating)
-        setProduct(res.data.data)
-        setComments(res.data.data.comment)
-
-        const userRating = res.data.data.Rating.find(
-          (r: Rating) => r.userID === user?.userId
-        );
-        if (userRating) {
-          setRating(userRating.value);
-        }
-      })
-      .catch((error) => {
-        if (axios.isAxiosError(error)) {
-          const axiosError = error as AxiosError;
-
-          if (axiosError.response) {
-            setError(axiosError.response.data as Array<string>);
-          } else if (axiosError.request) {
-            console.error("No se recibió respuesta:", axiosError.request);
-          }
-        } else {
-          console.error("Error desconocido:", error);
-          setError(["Error con la peticion al servidor"]);
-        }
-      }).finally(() => {
-        setLoading(false)
-      });
-
-  }, [query])
+  const { isAuth } = useAuth()
 
   const handleRating = (value: number) => {
     if (!isAuth) {
       alert("debe iniciar secion ")
       return
     }
-    try {
-      if (product?.id) {
-        ratingRequest(product.id, value).then(res => setRatingAverage(res.data.ratingAverage))
-      }
-      setRating(value)
-    } catch (error) {
-      setError(["Error con la peticion... "])
-      console.log(error)
-    }
+    updateRating(value)
   }
 
   const handleFormComment = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -88,37 +44,20 @@ export default function Details() {
       alert("debe registrarce")
       return
     }
-
     const { elements } = event.currentTarget
     const input = elements.namedItem("comment") as RadioNodeList
 
-    try {
-      if (input.value.length > 0) {
-        const newComment = await createCommentRequest(input.value as string, query)
-        setComments((prevComment) =>{
-          return prevComment?.concat(newComment.data.data) as Comment[]
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      setError(["Error al crear el comentario"])
-    } finally {
-      input.value = ""
-    }
+    await createComment(input.value)
 
+    input.value = ""
   }
 
-  const handleAddCorShop = async()=>{
+  const handleAddCorShop = async () => {
     if (!isAuth) {
       alert("debe registrarce")
       return
     }
-    try {
-      await addItemOrderRequest(query, quantity)
-    } catch (error) {
-      console.log(error)
-      setError(["Error al añadir el producto"])
-    }
+    await addItemCarShop(quantity)
   }
 
   return (
@@ -200,37 +139,20 @@ export default function Details() {
                   <h2 className="text-2xl font-semibold text-gray-800">
                     Valoraciones y Reseñas
                   </h2>
-                  <div className="flex items-center mt-2">
-                    <RetingStart style={{ maxWidth: 200 }} value={rating} onChange={handleRating} itemStyles={{
-                      itemShapes: RoundedStar,
-                      activeFillColor: '#ffb700',
-                      inactiveFillColor: '#fbf1a9'
-                    }} />
-                    <span className="text-gray-600 ml-2">{rating} de 5</span>
-                  </div>
+                  <Star value={rating} onChange={handleRating}/>
                   <div className="mt-4">
                     <h3 className="text-lg font-semibold text-gray-800">Reseñas</h3>
-                    <form className="mt-2 flex items-center pb-3" onSubmit={handleFormComment}>
-                      <input
-                        type="text"
-                        name="comment"
-                        placeholder="Write a comment..."
-                        className="w-full pl-4 pr-12 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <button className="absolute right-14">
-                        <VscSend className=" h-8 w-8 hover:text-blue-500" />
-                      </button>
-                    </form>
+                    <FormComment onSubmit={handleFormComment} />
                     <strong className="pt-2">{comments?.length} reseñas de este producto.</strong>
                     {
                       comments !== null && comments.length > 0 && comments.map((comment) => {
                         return (
-                          <div key={comment.id} className="mt-2">
-                            <p className="text-gray-700 font-medium">{comment.User.username}</p>
-                            <p className="text-gray-600">
-                              {comment.content}
-                            </p>
-                          </div>
+                          <Comment
+                            key={comment.id}
+                            content={comment.content}
+                            User={comment.User}
+                            createdAt={comment.createdAt}
+                          ></Comment>
                         )
                       })
                     }
