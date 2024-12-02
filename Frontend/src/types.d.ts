@@ -20,7 +20,7 @@ export interface Products {
   name: string;
   description: string;
   price: number;
-  rating: number;
+  ratingAverage: number;
   imagen: string;
   color?: string;
   ram: number;
@@ -29,6 +29,10 @@ export interface Products {
   mpxCameraFront?: number;
   mpxCameraBack?: number;
   inventoryCount: number;
+  category: {
+    name: string;
+    id: string;
+  };
 }
 
 export interface Comment {
@@ -89,7 +93,7 @@ export interface FiltersType {
 }
 
 export type SortOption = {
-  field: "createdAt" | "price" | "rating"; // Campos permitidos
+  field: "createdAt" | "price" | "ratingAverage"; // Campos permitidos
   order: "asc" | "desc"; // Órdenes permitidas
 };
 
@@ -102,6 +106,7 @@ export type ProductContextType = {
   isNextPage: boolean;
   error: Array<string> | null;
   filters: FiltersType;
+  sortParmas: SortOption[];
   setSortParmas: (value: Array<SortOption>) => void;
   setFilters: (value: FiltersType) => void;
   setCurrentPage: (value: number) => void;

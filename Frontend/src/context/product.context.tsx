@@ -105,6 +105,7 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
         errorSerch,
         isNextPage,
         filters,
+        sortParmas,
         setSortParmas,
         setFilters,
         setQuerySeach,
