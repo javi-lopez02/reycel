@@ -59,6 +59,15 @@ export const ratingProductCreate = async (req: Request, res: Response) => {
     );
     const ratingAverage = ratingSum / updatedProduct.Rating.length;
 
+    await prisma.product.update({
+      where: {
+        id: id
+      },
+      data:{
+        ratingAverage: ratingAverage
+      }
+    })
+
     return res.status(200).json({ ratingAverage });
   } catch (error) {
     console.error(error);

@@ -79,7 +79,21 @@ export default function Details() {
               </div>
               <div className="md:w-full md:pr-8 mt-4 md:mt-0 md:col-start-2">
                 <h1 className="text-4xl font-semibold text-gray-800">
-                  {`${product.name},  Ram ${product.ram}GB, Almacenamiento ${product.storage}GB `}
+                  {
+                    product.category.name === "Moviles" && (
+                      <>
+                        {`${product.name},  Ram ${product.ram}GB, Almacenamiento ${product.storage}GB `}
+                      </>
+                    )
+                  }
+
+                  {
+                    product.category.name !== "Moviles" && (
+                      <>
+                        {`${product.name} `}
+                      </>
+                    )
+                  }
                 </h1>
                 <p className="text-2xl text-gray-600 mt-2">${product.price}</p>
                 <div className="mt-2 flex items-center gap-2">
@@ -143,7 +157,7 @@ export default function Details() {
                   <h2 className="text-2xl font-semibold text-gray-800">
                     Valoraciones y Reseñas
                   </h2>
-                  <Star value={rating} onChange={handleRating}/>
+                  <Star value={rating} onChange={handleRating} />
                   <div className="mt-4">
                     <h3 className="text-lg font-semibold text-gray-800">Reseñas</h3>
                     <FormComment onSubmit={handleFormComment} />

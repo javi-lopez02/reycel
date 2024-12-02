@@ -2,7 +2,7 @@ import { FiltersType } from "../types";
 import axios from "./axios";
 
 export type SortOption = {
-  field: "createdAt" | "price" | "rating"; // Campos permitidos
+  field: "createdAt" | "price" | "ratingAverage"; // Campos permitidos
   order: "asc" | "desc"; // Órdenes permitidas
 };
 

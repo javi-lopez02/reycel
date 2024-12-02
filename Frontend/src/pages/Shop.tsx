@@ -71,13 +71,14 @@ export default function Shop() {
                     products.map((product) => {
                       return (
                         <Card
+                          category={product.category}
                           key={product.id}
                           name={product.name}
                           imagen={product.imagen}
                           price={product.price}
                           ram={product.ram}
                           inventoryCount={product.inventoryCount}
-                          rating={product.rating}
+                          ratingAverage={product.ratingAverage}
                           storage={product.storage}
                         />
                       )

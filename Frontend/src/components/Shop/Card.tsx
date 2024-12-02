@@ -6,6 +6,7 @@ import { useAuth } from "../../context/auth.context";
 import ModalLogin from "../../pages/auth/ModalLogin";
 import { useDisclosure } from "@nextui-org/react";
 
+
 const Card: FC<Products> = (product) => {
 
   const { isAuth } = useAuth()
@@ -128,7 +129,7 @@ const Card: FC<Products> = (product) => {
           {
             product.inventoryCount <= 4 && product.inventoryCount !== 0 && (
               <span className="me-2 py-3 text-sm font-medium text-red-400">
-                {`Queda(n) ${product.inventoryCount}, más unidades en camino.`}
+                {`Queda(n) ${product.inventoryCount}, más en camino.`}
               </span>
 
             )
@@ -138,7 +139,22 @@ const Card: FC<Products> = (product) => {
           to={`/details?p=${product.id}`}
           className="text-lg overflow-hidden font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
         >
-          {`${product.name},  Ram ${product.ram}GB, Almacenamiento ${product.storage}GB `}
+          {
+            product.category?.name === "Moviles" && (
+              <>
+                {`${product.name},  Ram ${product.ram}GB, Almacenamiento ${product.storage}GB `}
+              </>
+            )
+          }
+
+          {
+            product.category?.name !== "Moviles" && (
+              <>
+                {`${product.name} `}
+              </>
+            )
+          }
+
         </Link>
 
         <div className="mt-2 flex items-center gap-2">
@@ -147,7 +163,7 @@ const Card: FC<Products> = (product) => {
               {[...Array(5)].map((_, index) => (
                 <svg
                   key={index}
-                  className={`h-5 w-5 fill-current ${product.rating > index ? "text-yellow-500" : "text-gray-300"
+                  className={`h-5 w-5 fill-current ${product.ratingAverage > index ? "text-yellow-500" : "text-gray-300"
                     }`}
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
@@ -156,7 +172,7 @@ const Card: FC<Products> = (product) => {
                 </svg>
               ))}
             </div>
-            <span className="text-gray-600 ml-2">{product.rating} de 5</span>
+            <span className="text-gray-600 ml-2">{product.ratingAverage} de 5</span>
           </div>
         </div>
 
@@ -186,7 +202,7 @@ const Card: FC<Products> = (product) => {
                 d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6"
               />
             </svg>
-            Añadir 
+            Añadir
           </button>
         </div>
       </div>
