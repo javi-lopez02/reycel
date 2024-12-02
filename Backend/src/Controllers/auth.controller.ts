@@ -28,6 +28,11 @@ export const register = async (req: Request, res: Response) => {
         email,
         password: hashedPassword,
         status: false,
+        orders:{
+          create: {
+            totalAmount: 0
+          }
+        }
       },
     });
 
@@ -174,7 +179,6 @@ export const verifyToken = async (req: Request, res: Response) => {
 };
 
 export const logout = (req: Request, res: Response) => {
-  console.log("hola");
   res.cookie("token", "", {
     httpOnly: false,
     secure: true,

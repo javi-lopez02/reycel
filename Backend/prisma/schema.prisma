@@ -11,15 +11,17 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   username  String
-  email     String   @unique
+  email     String    @unique
   password  String
   status    Boolean
-  role      Role     @default(USER)
+  role      Role      @default(USER)
   orders    Order[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Rating    Rating[]
+  comment   Comment[]
 }
 
 enum Role {
@@ -42,7 +44,6 @@ model Product {
   description           String
   price                 Float
   categoryId            String
-  rating                Int                    @default(1)
   imagen                String?
   color                 String?
   ram                   Int?
@@ -56,6 +57,29 @@ model Product {
   orderItems            OrderItem[]
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
+  Rating                Rating[]
+  comment               Comment[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Product   Product  @relation(fields: [productId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  value     Int      @default(1) // Rango: 1-5
+  productID String
+  product   Product  @relation(fields: [productID], references: [id])
+  userID    String
+  user      User     @relation(fields: [userID], references: [id])
+  createdAt DateTime @default(now())
 }
 
 model InventoryTransaction {
@@ -75,6 +99,7 @@ enum TransactionType {
 model Order {
   id          String      @id @default(uuid())
   userId      String
+  pending     Boolean     @default(true)
   user        User        @relation(fields: [userId], references: [id])
   orderItems  OrderItem[]
   totalAmount Float

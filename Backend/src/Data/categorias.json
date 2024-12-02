@@ -1,0 +1,121 @@
+[
+  {
+    "id": "b3f18618-4c0c-4c6d-b0a7-43e1e3c29f11",
+    "name": "Watch Accessories",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "17f1a8bb-c8a3-4fa9-8c39-7ef9834a3c88",
+    "name": "Chargers",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "6b6a9bb6-2d6d-43d6-bfbb-2c18d4c8c7e3",
+    "name": "Earphones",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "a3c5e9f4-9e4b-4b48-9d5c-0c42b657d3bb",
+    "name": "Mice",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "c7e0b34b-4d41-47d0-9824-3e6d1e8e946c",
+    "name": "Controllers",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "1d0e3bb2-6c72-4df1-9a3f-1e6e9d0c2f77",
+    "name": "Phone Cases",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "e3b6d4b8-8c0d-4b4a-9048-4e1c0b5c7a1e",
+    "name": "Memory Storage",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "ba3e7e68-7c5a-4c0f-8245-8d5a6b8e5f55",
+    "name": "Adapters",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "d2a8f3c7-3c4b-4a1b-9d7c-1e9f2d3a5b6c",
+    "name": "Car Chargers",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "f4b7c8d9-6e5d-4c0a-8f3c-2d1b0e5f7a8c",
+    "name": "Phone Accessories",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "b1c2d3e4-5f6a-7b8c-9d0e-1f2a3b4c5d6e",
+    "name": "Cables",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+    "name": "Power Banks",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "c1d2e3f4-5a6b-7c8d-9e0f-1a2b3c4d5e6f",
+    "name": "Smart Watches",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "e1f2a3b4-5c6d-7e8f-9a0b-1c2d3e4f5a6b",
+    "name": "Batteries",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "a5b6c7d8-9e0f-1a2b-3c4d-5e6f7a8b9c0d",
+    "name": "Keyboards",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "d5e6f7a8-9b0c-1d2e-3f4a-5b6c7d8e9f0a",
+    "name": "Wireless Earphones",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  },
+  {
+    "id": "e6f7a8b9-0c1d-2e3f-4a5b-6c7d8e9f0a1b",
+    "name": "Headphones",
+    "products": [],
+    "createdAt": "2023-10-07T00:00:00Z",
+    "updatedAt": "2023-10-07T00:00:00Z"
+  }
+]

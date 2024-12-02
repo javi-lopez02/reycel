@@ -6,6 +6,9 @@ import * as dotenv from "dotenv";
 import path from "path";
 import auth from "./Routes/auth.routes";
 import product from "./Routes/product.routes";
+import rating from "./Routes/rating.routes";
+import comment from "./Routes/comment.routes";
+import order from "./Routes/order.routes";
 import { Markup, Telegraf } from "telegraf";
 
 const bot = new Telegraf("7824510445:AAF8C2hIxuJY6iDPfyBs2YySCLiMCy4hwSA");
@@ -31,9 +34,11 @@ app.use(cookieParser());
 
 app.use("/api/auth", auth);
 app.use("/api", product);
+app.use("/api", rating);
+app.use("/api", comment);
+app.use("/api", order);
 
 app.use("/public", express.static(path.join(__dirname, "/upload")));
-
 
 //Con esto mandamos el mensaje hola automaticamente cada vez que se accede a la ruta /send-message en el backend esta es una prueba que estuve haciendo....
 app.use("/send-message", async (req, res) => {

@@ -1,9 +1,9 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
-import Navbar from "./components/NavBar";
+import Navbar from "./components/NavBar/NavBar";
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
 import { AuthProvider } from "./context/auth.context";
 import CarShop from "./pages/CarShop";
@@ -13,30 +13,39 @@ import Details from "./pages/Details";
 import Shop from "./pages/Shop";
 
 function App() {
+  const ProductProviderOutlet = () => {
+    return (
+      <ProductProvider>
+        <Outlet />
+      </ProductProvider>
+    )
+  }
+
   return (
     <NextUIProvider>
-      <AuthProvider>
-        <ProductProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes >
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
+            <Route element={< ProductProviderOutlet />}>
               <Route element={<Navbar />}>
-                <Route element={<ProtectedRoutes />}>
-                  <Route path="/aboutUs" element={<AboutUs />} />
-                  <Route path="/contactUs" element={<ContactUs />} />
-                  <Route path="/shopCar" element={<CarShop />} />
-                  <Route path="/details" element={<Details />} />
-                  <Route path="/" element={<Shop />} />
-                </Route>
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </ProductProvider>
-      </AuthProvider>
-    </NextUIProvider>
+                <Route path="/aboutUs" element={<AboutUs />} />
+                <Route path="/contactUs" element={<ContactUs />} />
+                <Route path="/" element={<Shop />} />
+                <Route path="/details" element={<Details />} />
 
+                <Route element={<ProtectedRoutes />}>
+                  <Route path="/shopCar" element={<CarShop />} />
+                </Route>
+
+              </Route>
+            </Route>
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </NextUIProvider >
   );
 }
 

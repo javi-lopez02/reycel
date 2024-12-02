@@ -21,3 +21,11 @@ export const searchPproductRequest = (
 export const categoryRequest = () => {
   return axios.get(`/products/category`);
 };
+
+export const productIDRequest = (query: string) => {
+  return axios.get(`/products?p=${query}`);
+};
+
+export const createCommentRequest = (content : string, query: string) => {
+  return axios.post(`/products/comment?p=${query}`, {content});
+}

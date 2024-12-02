@@ -1,37 +1,59 @@
 import { FC } from "react";
+import { type Products } from '../../types'
+import { Link } from "react-router-dom";
+import { addItemOrderRequest } from "../../services/order";
+import { useAuth } from "../../context/auth.context";
+import ModalLogin from "../../pages/auth/ModalLogin";
+import { useDisclosure } from "@nextui-org/react";
 
-interface PhoneCardProps {
-  name: string;
-  imagen: string;
-  price: number;
-  ram: number;
-  inventoryCount: number;
-  rating: number;
-  storage: number;
-}
+const Card: FC<Products> = (product) => {
 
-const Card: FC<PhoneCardProps> = ({ imagen, name, price, ram, inventoryCount, rating, storage }) => {
+  const { isAuth } = useAuth()
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const handleClikAddProduct = async () => {
+    if (!isAuth) {
+      onOpen()
+      return
+    }
+    try {
+      await addItemOrderRequest(product.id, 1)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm ">
       <div className="h-56 w-full">
-        <a href="#">
-          <img className="mx-auto h-full" src={imagen} alt={name} />
-        </a>
+        <Link to={`/details?p=${product.id}`}>
+          <img
+            className="mx-auto h-full"
+            src={product.imagen}
+            alt={product.name}
+          />
+        </Link>
       </div>
       <div className="pt-6">
-        <div className="mb-4 flex items-center justify-between gap-4">
-          {inventoryCount !== 0 && (
-            <span className="me-2 rounded bg-emerald-300 px-2.5 py-0.5 text-xs font-medium text-neutral-700">
-              {" "}
-              En Stock{" "}
-            </span>
-          )}
-          {inventoryCount === 0 && (
-            <span className="me-2 rounded bg-red-400 px-2.5 py-0.5 text-xs font-medium text-zinc-100">
-              {" "}
-              No hay uniddades{" "}
-            </span>
-          )}
+        <div className=" flex items-center justify-between gap-4">
+          {
+            product.inventoryCount !== 0 && (
+              <span className="me-2 rounded bg-emerald-300 px-2.5 py-0.5 text-xs font-medium text-neutral-700">
+                {" "}
+                En Stock{" "}
+              </span>
+            )
+
+          }
+          {
+            product.inventoryCount === 0 && (
+              <span className="me-2 rounded bg-red-400 px-2.5 py-0.5 text-xs font-medium text-zinc-100">
+                {" "}
+                No hay uniddades{" "}
+              </span>
+            )
+          }
 
           <div className="flex items-center justify-end gap-1">
             <button
@@ -102,36 +124,40 @@ const Card: FC<PhoneCardProps> = ({ imagen, name, price, ram, inventoryCount, ra
           </div>
         </div>
 
-        <a
-          href="#"
+        <div className="w-full h-8 flex items-center">
+          {
+            product.inventoryCount <= 4 && product.inventoryCount !== 0 && (
+              <span className="me-2 py-3 text-sm font-medium text-red-400">
+                {`Queda(n) ${product.inventoryCount}, más unidades en camino.`}
+              </span>
+
+            )
+          }
+        </div>
+        <Link
+          to={`/details?p=${product.id}`}
           className="text-lg overflow-hidden font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
         >
-          {`${name}, RAM ${ram}GB, ALMACENAMIENTO ${storage}GB`}
-        </a>
+          {`${product.name},  Ram ${product.ram}GB, Almacenamiento ${product.storage}GB `}
+        </Link>
 
         <div className="mt-2 flex items-center gap-2">
-        <div className="flex items-center">
-          {[...Array(5)].map((_, index) => (
-            <svg
-              key={index}
-              className={`h-5 w-5 ${
-                index < rating ? "text-yellow-500" : "text-gray-300"
-              }`}
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M12 .288l2.833 8.718h9.167l-7.4 5.37 2.833 8.718-7.4-5.37-7.4 5.37L5.4 14.375.288 9.006h9.167z" />
-            </svg>
-          ))}
-        </div>
-
-          <p className="text-sm font-medium text-gray-900 dark:text-white">
-            {rating.toFixed(1)}
-          </p>
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            (455)
-          </p>
+          <div className="flex items-center mt-2">
+            <div className="flex text-yellow-500">
+              {[...Array(5)].map((_, index) => (
+                <svg
+                  key={index}
+                  className={`h-5 w-5 fill-current ${product.rating > index ? "text-yellow-500" : "text-gray-300"
+                    }`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M10 15l-5.878 3.09 1.122-6.545L.368 6.91l6.564-.955L10 0l3.068 5.955 6.564.955-4.878 4.635 1.122 6.545z" />
+                </svg>
+              ))}
+            </div>
+            <span className="text-gray-600 ml-2">{product.rating} de 5</span>
+          </div>
         </div>
 
         <div className="mt-4 flex items-center justify-between gap-4">
@@ -141,7 +167,8 @@ const Card: FC<PhoneCardProps> = ({ imagen, name, price, ram, inventoryCount, ra
 
           <button
             type="button"
-            className="inline-flex items-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            onClick={handleClikAddProduct}
+            className="inline-flex items-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
           >
             <svg
               className="-ms-2 me-2 h-5 w-5"
@@ -159,10 +186,11 @@ const Card: FC<PhoneCardProps> = ({ imagen, name, price, ram, inventoryCount, ra
                 d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6"
               />
             </svg>
-            Add to cart
+            Añadir 
           </button>
         </div>
       </div>
+      <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange}></ModalLogin>
     </div>
   );
 };

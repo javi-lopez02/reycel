@@ -18,8 +18,13 @@ export interface File {
 declare global {
   namespace Express {
     interface Request {
-      userId: number
+      userId: string
       userName: string
     }
   }
+}
+
+export interface SortItem {
+  field: "createdAt" | "price" | "rating"; // Los campos permitidos
+  order: "asc" | "desc"; // Los valores permitidos
 }

@@ -1,0 +1,737 @@
+[
+  {
+    "id": "1e4b5f6a-7c8d-4e5f-9a0b-1c2d3e4f5a6b",
+    "name": "Manillas de relojes Miban",
+    "description": "Correas para relojes Miban.",
+    "price": 7.0,
+    "categoryId": "cat-1"
+  },
+  {
+    "id": "2a3b4c5d-6e7f-8a9b-0c1d-2e3f4a5b6c7d",
+    "name": "Cargadores de relojes Miban",
+    "description": "Cargadores para relojes Miban.",
+    "price": 7.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+    "name": "Cargadores de reloj redondo",
+    "description": "Cargadores para relojes redondos.",
+    "price": 8.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
+    "name": "Cargador fly (micro y tipo C) completo",
+    "description": "Cargador fly con micro y tipo C completo.",
+    "price": 12.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b",
+    "name": "Cargador fly piña sola",
+    "description": "Adaptador (piña) del cargador fly.",
+    "price": 7.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c",
+    "name": "Cargador fly cable solo",
+    "description": "Cable del cargador fly.",
+    "price": 5.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
+    "name": "Cargador Harvic (tipo C y micro) completo",
+    "description": "Cargador Harvic con tipo C y micro completo.",
+    "price": 10.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+    "name": "Cargador Harvic piña sola",
+    "description": "Adaptador (piña) del cargador Harvic.",
+    "price": 5.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f",
+    "name": "Cargador Harvic cable solo",
+    "description": "Cable del cargador Harvic.",
+    "price": 5.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a",
+    "name": "Cargador Xiaomi 67W completo",
+    "description": "Cargador completo Xiaomi de 67W.",
+    "price": 20.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b",
+    "name": "Cargador Xiaomi 67W piña sola",
+    "description": "Adaptador (piña) del cargador Xiaomi 67W.",
+    "price": 13.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c",
+    "name": "Cargador Xiaomi 67W cable solo",
+    "description": "Cable del cargador Xiaomi 67W.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d",
+    "name": "Cargador de iPhone 5W completo",
+    "description": "Cargador completo de iPhone 5W.",
+    "price": 12.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e",
+    "name": "Cargador de iPhone 5W piña sola",
+    "description": "Adaptador (piña) del cargador de iPhone 5W.",
+    "price": 7.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f",
+    "name": "Cargador de iPhone 5W cable solo",
+    "description": "Cable del cargador de iPhone 5W.",
+    "price": 5.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "6d7e8f9a-0b1c-2d3e-4f5a-6b7c8d9e0f1a",
+    "name": "Cargador iPhone tipo C a Lightning de 20W completo",
+    "description": "Cargador de iPhone tipo C a Lightning de 20W completo.",
+    "price": 20.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b",
+    "name": "Cargador iPhone 20W piña sola",
+    "description": "Adaptador (piña) del cargador iPhone 20W.",
+    "price": 13.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "8f9a0b1c-2d3e-4f5a-6b7c-8d9e0f1a2b3c",
+    "name": "Cargador iPhone 20W cable solo",
+    "description": "Cable del cargador iPhone 20W.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "9a0b1c2d-3e4f-5a6b-7c8d-9e0f1a2b3c4d",
+    "name": "Cargador Samsung tipo C a tipo C 25W completo",
+    "description": "Cargador Samsung tipo C a tipo C de 25W completo.",
+    "price": 25.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "0b1c2d3e-4f5a-6b7c-8d9e-0f1a2b3c4d5e",
+    "name": "Cargador Samsung 25W piña sola",
+    "description": "Adaptador (piña) del cargador Samsung 25W.",
+    "price": 18.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "1c2d3e4f-5a6b-7c8d-9e0f-1a2b3c4d5e6f",
+    "name": "Cargador Samsung 25W cable solo",
+    "description": "Cable del cargador Samsung 25W.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a",
+    "name": "Cargador tipo C a tipo C 20W",
+    "description": "Cargador tipo C a tipo C de 20W, carga en 1 hora.",
+    "price": 20.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "3e4f5a6b-7c8d-9e0f-1a2b-3c4d5e6f7a8b",
+    "name": "Cargador tipo C a tipo C 30W",
+    "description": "Cargador tipo C a tipo C de 30W, carga en 1 hora.",
+    "price": 25.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c",
+    "name": "Cargador Samsung tipo C a tipo C 45W completo",
+    "description": "Cargador Samsung tipo C a tipo C de 45W completo.",
+    "price": 30.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "5a6b7c8d-9e0f-1a2b-3c4d-5e6f7a8b9c0d",
+    "name": "Cargador Samsung 45W piña sola",
+    "description": "Adaptador (piña) del cargador Samsung 45W.",
+    "price": 23.0,
+    "categoryId": "cat-2"
+  },
+  {
+    "id": "6b7c8d9e-0f1a-2b3c-4d5e-6f7a8b9c0d1e",
+    "name": "Cargador Samsung 45W cable solo",
+    "description": "Cable del cargador Samsung 45W.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "7c8d9e0f-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+    "name": "Manos libres AKG",
+    "description": "Auriculares AKG.",
+    "price": 4.0,
+    "categoryId": "cat-3"
+  },
+  {
+    "id": "8d9e0f1a-2b3c-4d5e-6f7a-8b9c0d1e2f3a",
+    "name": "Manos libres MI",
+    "description": "Auriculares MI.",
+    "price": 3.0,
+    "categoryId": "cat-3"
+  },
+  {
+    "id": "9e0f1a2b-3c4d-5e6f-7a8b-9c0d1e2f3a4b",
+    "name": "Manos libres de colores plásticos",
+    "description": "Auriculares de colores de plástico.",
+    "price": 3.0,
+    "categoryId": "cat-3"
+  },
+  {
+    "id": "0f1a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c",
+    "name": "Manos libres Mulazon",
+    "description": "Auriculares Mulazon.",
+    "price": 5.0,
+    "categoryId": "cat-3"
+  },
+  {
+    "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+    "name": "Manos libres Zuga",
+    "description": "Auriculares Zuga.",
+    "price": 6.0,
+    "categoryId": "cat-3"
+  },
+  {
+    "id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+    "name": "Manos libres Buytiti",
+    "description": "Auriculares Buytiti.",
+    "price": 5.0,
+    "categoryId": "cat-3"
+  },
+  {
+    "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+    "name": "Manos libres blanco S6 y J5",
+    "description": "Auriculares blancos para S6 y J5.",
+    "price": 2.0,
+    "categoryId": "cat-3"
+  },
+  {
+    "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
+    "name": "Mouse inalámbrico",
+    "description": "Ratón inalámbrico.",
+    "price": 15.0,
+    "categoryId": "cat-4"
+  },
+  {
+    "id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b",
+    "name": "Mouse gamer",
+    "description": "Ratón para gaming.",
+    "price": 24.0,
+    "categoryId": "cat-4"
+  },
+  {
+    "id": "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c",
+    "name": "Mandos universales",
+    "description": "Controles universales.",
+    "price": 12.0,
+    "categoryId": "cat-5"
+  },
+  {
+    "id": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
+    "name": "Cover robóticos, argolla, accesorios o con pulsos",
+    "description": "Fundas robóticas, con argolla, accesorios o con pulsos.",
+    "price": 10.0,
+    "categoryId": "cat-6"
+  },
+  {
+    "id": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+    "name": "Covers S",
+    "description": "Todos los covers S.",
+    "price": 10.0,
+    "categoryId": "cat-6"
+  },
+  {
+    "id": "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f",
+    "name": "Covers de iPhone",
+    "description": "Fundas para iPhone.",
+    "price": 10.0,
+    "categoryId": "cat-6"
+  },
+  {
+    "id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a",
+    "name": "Covers de iPhone con carga inalámbrica",
+    "description": "Fundas de iPhone con carga inalámbrica.",
+    "price": 12.0,
+    "categoryId": "cat-6"
+  },
+  {
+    "id": "1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b",
+    "name": "Cover gamuza silicona",
+    "description": "Fundas de gamuza de silicona.",
+    "price": 8.0,
+    "categoryId": "cat-6"
+  },
+  {
+    "id": "2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c",
+    "name": "Cover acuático",
+    "description": "Fundas acuáticas.",
+    "price": 10.0,
+    "categoryId": "cat-6"
+  },
+  {
+    "id": "3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d",
+    "name": "Cover de goma y plástico",
+    "description": "Fundas de goma y plástico.",
+    "price": 7.0,
+    "categoryId": "cat-6"
+  },
+  {
+    "id": "4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e",
+    "name": "Cover de brazo",
+    "description": "Fundas de brazo.",
+    "price": 10.0,
+    "categoryId": "cat-6"
+  },
+  {
+    "id": "5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f",
+    "name": "Cover de librito",
+    "description": "Fundas tipo libro.",
+    "price": 10.0,
+    "categoryId": "cat-6"
+  },
+  {
+    "id": "6d7e8f9a-0b1c-2d3e-4f5a-6b7c8d9e0f1a",
+    "name": "Micro SD de 32 GB",
+    "description": "Tarjeta Micro SD de 32 GB.",
+    "price": 12.0,
+    "categoryId": "cat-7"
+  },
+  {
+    "id": "7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b",
+    "name": "USB de 32 GB",
+    "description": "Memoria USB de 32 GB.",
+    "price": 12.0,
+    "categoryId": "cat-7"
+  },
+  {
+    "id": "8f9a0b1c-2d3e-4f5a-6b7c-8d9e0f1a2b3c",
+    "name": "USB de 64 GB",
+    "description": "Memoria USB de 64 GB.",
+    "price": 15.0,
+    "categoryId": "cat-7"
+  },
+  {
+    "id": "9a0b1c2d-3e4f-5a6b-7c8d-9e0f1a2b3c4d",
+    "name": "Micro SD de 128 GB",
+    "description": "Tarjeta Micro SD de 128 GB.",
+    "price": 20.0,
+    "categoryId": "cat-7"
+  },
+  {
+    "id": "0b1c2d3e-4f5a-6b7c-8d9e-0f1a2b3c4d5e",
+    "name": "Micro SD de 256 GB",
+    "description": "Tarjeta Micro SD de 256 GB.",
+    "price": 23.0,
+    "categoryId": "cat-7"
+  },
+  {
+    "id": "1c2d3e4f-5a6b-7c8d-9e0f-1a2b3c4d5e6f",
+    "name": "Micro SD de 512 GB",
+    "description": "Tarjeta Micro SD de 512 GB.",
+    "price": 26.0,
+    "categoryId": "cat-7"
+  },
+  {
+    "id": "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a",
+    "name": "Adaptador para Micro SD",
+    "description": "Adaptador para tarjeta Micro SD.",
+    "price": 7.0,
+    "categoryId": "cat-8"
+  },
+  {
+    "id": "3e4f5a6b-7c8d-9e0f-1a2b-3c4d5e6f7a8b",
+    "name": "Adaptador de Bluetooth",
+    "description": "Adaptador Bluetooth que parece memoria.",
+    "price": 7.0,
+    "categoryId": "cat-8"
+  },
+  {
+    "id": "4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c",
+    "name": "Adaptador Bluetooth con mando",
+    "description": "Adaptador Bluetooth con control remoto.",
+    "price": 15.0,
+    "categoryId": "cat-8"
+  },
+  {
+    "id": "5a6b7c8d-9e0f-1a2b-3c4d-5e6f7a8b9c0d",
+    "name": "Cargador de celular para el carro 1 entrada",
+    "description": "Cargador de auto con 1 entrada.",
+    "price": 7.0,
+    "categoryId": "cat-9"
+  },
+  {
+    "id": "6b7c8d9e-0f1a-2b3c-4d5e-6f7a8b9c0d1e",
+    "name": "Cargador de celular para el carro 2 entradas con cable",
+    "description": "Cargador de auto con 2 entradas y cable.",
+    "price": 10.0,
+    "categoryId": "cat-9"
+  },
+  {
+    "id": "7c8d9e0f-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+    "name": "Cargador de celular para el carro 5 entradas",
+    "description": "Cargador de auto con 5 entradas.",
+    "price": 15.0,
+    "categoryId": "cat-9"
+  },
+  {
+    "id": "8d9e0f1a-2b3c-4d5e-6f7a-8b9c0d1e2f3a",
+    "name": "PopSocket redonditos",
+    "description": "Soportes PopSocket redondos.",
+    "price": 1.0,
+    "categoryId": "cat-10"
+  },
+  {
+    "id": "9e0f1a2b-3c4d-5e6f-7a8b-9c0d1e2f3a4b",
+    "name": "PopSocket muñecos",
+    "description": "Soportes PopSocket con muñecos.",
+    "price": 3.0,
+    "categoryId": "cat-10"
+  },
+  {
+    "id": "0f1a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c",
+    "name": "PopSocket Astronauta",
+    "description": "Soporte PopSocket de astronauta.",
+    "price": 5.0,
+    "categoryId": "cat-10"
+  },
+  {
+    "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+    "name": "PopSocket de espejo",
+    "description": "Soporte PopSocket con espejo.",
+    "price": 7.0,
+    "categoryId": "cat-10"
+  },
+  {
+    "id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+    "name": "Adornos de teléfonos (pulsos)",
+    "description": "Adornos para teléfonos tipo pulsera.",
+    "price": 4.0,
+    "categoryId": "cat-10"
+  },
+  {
+    "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+    "name": "Collares de teléfono",
+    "description": "Collares para teléfono.",
+    "price": 5.0,
+    "categoryId": "cat-10"
+  },
+  {
+    "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
+    "name": "Cable HDMI 1.5 m",
+    "description": "Cable HDMI de 1.5 metros.",
+    "price": 8.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b",
+    "name": "Cable HDMI 3 m",
+    "description": "Cable HDMI de 3 metros.",
+    "price": 10.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c",
+    "name": "Cable de disco duro externo",
+    "description": "Cable para disco duro externo.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
+    "name": "Extensión USB",
+    "description": "Extensión de cable USB.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+    "name": "Cables DVD y cajita",
+    "description": "Cables para DVD y cajita digital.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f",
+    "name": "Cables plus a plus",
+    "description": "Cables de plug a plug.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a",
+    "name": "Cables RCA x mini plus",
+    "description": "Cables RCA a mini plug.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b",
+    "name": "Protector de cámara iPhone 13 Pro Max y 14 Pro Max",
+    "description": "Protector de cámara para iPhone 13 Pro Max y 14 Pro Max.",
+    "price": 5.0,
+    "categoryId": "cat-12"
+  },
+  {
+    "id": "2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c",
+    "name": "Cable tipo C a Lightning",
+    "description": "Cable tipo C a Lightning sin caja.",
+    "price": 8.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d",
+    "name": "Cable tipo C a Lightning en caja",
+    "description": "Cable tipo C a Lightning con caja.",
+    "price": 10.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e",
+    "name": "Cables micro o tipo C sueltos",
+    "description": "Cables micro USB o tipo C sin caja.",
+    "price": 4.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f",
+    "name": "Cables micro o tipo C en caja",
+    "description": "Cables micro USB o tipo C con caja.",
+    "price": 5.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "6d7e8f9a-0b1c-2d3e-4f5a-6b7c8d9e0f1a",
+    "name": "Cables iPhone sueltos",
+    "description": "Cables de iPhone sin caja.",
+    "price": 5.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b",
+    "name": "Cables iPhone en caja",
+    "description": "Cables de iPhone con caja.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "8f9a0b1c-2d3e-4f5a-6b7c-8d9e0f1a2b3c",
+    "name": "Cables fly en bolsita",
+    "description": "Cables fly en bolsa.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "9a0b1c2d-3e4f-5a6b-7c8d-9e0f1a2b3c4d",
+    "name": "Cable suelto tipo C a tipo C",
+    "description": "Cable tipo C a tipo C sin caja.",
+    "price": 7.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "0b1c2d3e-4f5a-6b7c-8d9e-0f1a2b3c4d5e",
+    "name": "Cable tipo C a tipo C en caja",
+    "description": "Cable tipo C a tipo C con caja.",
+    "price": 20.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "1c2d3e4f-5a6b-7c8d-9e0f-1a2b3c4d5e6f",
+    "name": "Powerbank de 20000mAh",
+    "description": "Powerbank de 20000mAh, precio según marca.",
+    "price": 40.0,
+    "categoryId": "cat-13"
+  },
+  {
+    "id": "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a",
+    "name": "Powerbank de 20000mAh",
+    "description": "Powerbank de 20000mAh, precio según marca.",
+    "price": 50.0,
+    "categoryId": "cat-13"
+  },
+  {
+    "id": "3e4f5a6b-7c8d-9e0f-1a2b-3c4d5e6f7a8b",
+    "name": "Powerbank de 20000mAh",
+    "description": "Powerbank de 20000mAh, precio según marca.",
+    "price": 60.0,
+    "categoryId": "cat-13"
+  },
+  {
+    "id": "4f5a6b7c-8d9e-0f1a-2b3c-4d5e6f7a8b9c",
+    "name": "Powerbank de 20000mAh",
+    "description": "Powerbank de 20000mAh, precio según marca.",
+    "price": 70.0,
+    "categoryId": "cat-13"
+  },
+  {
+    "id": "5a6b7c8d-9e0f-1a2b-3c4d-5e6f7a8b9c0d",
+    "name": "Powerbank de 10000mAh",
+    "description": "Powerbank de 10000mAh.",
+    "price": 30.0,
+    "categoryId": "cat-13"
+  },
+  {
+    "id": "6b7c8d9e-0f1a-2b3c-4d5e-6f7a8b9c0d1e",
+    "name": "Reloj Inteligente",
+    "description": "Smartwatch.",
+    "price": 50.0,
+    "categoryId": "cat-14"
+  },
+  {
+    "id": "7c8d9e0f-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+    "name": "Reloj Inteligente",
+    "description": "Smartwatch.",
+    "price": 40.0,
+    "categoryId": "cat-14"
+  },
+  {
+    "id": "8d9e0f1a-2b3c-4d5e-6f7a-8b9c0d1e2f3a",
+    "name": "Pilas AA y AAA (par)",
+    "description": "Pilas AA y AAA, precio por par.",
+    "price": 500.0,
+    "categoryId": "cat-15"
+  },
+  {
+    "id": "9e0f1a2b-3c4d-5e6f-7a8b-9c0d1e2f3a4b",
+    "name": "Pilas Alkaline para linterna",
+    "description": "Pilas alcalinas para linterna.",
+    "price": 2000.0,
+    "categoryId": "cat-15"
+  },
+  {
+    "id": "0f1a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c",
+    "name": "OTG",
+    "description": "Adaptador OTG.",
+    "price": 4.0,
+    "categoryId": "cat-8"
+  },
+  {
+    "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+    "name": "Teclado DK500",
+    "description": "Teclado modelo DK500.",
+    "price": 24.0,
+    "categoryId": "cat-16"
+  },
+  {
+    "id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e",
+    "name": "Extensión USB para laptop",
+    "description": "Extensión USB para laptop.",
+    "price": 15.0,
+    "categoryId": "cat-11"
+  },
+  {
+    "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+    "name": "Manos libres inalámbricos negros",
+    "description": "Auriculares inalámbricos negros.",
+    "price": 15.0,
+    "categoryId": "cat-17"
+  },
+  {
+    "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
+    "name": "Manos libres inalámbricos X10",
+    "description": "Auriculares inalámbricos modelo X10.",
+    "price": 20.0,
+    "categoryId": "cat-17"
+  },
+  {
+    "id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b",
+    "name": "Inalámbricos Pure Bass, CZU, M59",
+    "description": "Auriculares inalámbricos Pure Bass, CZU, M59.",
+    "price": 30.0,
+    "categoryId": "cat-17"
+  },
+  {
+    "id": "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c",
+    "name": "Inalámbrico 1 Hora",
+    "description": "Auriculares inalámbricos con 1 hora de carga.",
+    "price": 24.0,
+    "categoryId": "cat-17"
+  },
+  {
+    "id": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d",
+    "name": "Inalámbricos JBL",
+    "description": "Auriculares inalámbricos JBL.",
+    "price": 30.0,
+    "categoryId": "cat-17"
+  },
+  {
+    "id": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e",
+    "name": "Inalámbricos Probus",
+    "description": "Auriculares inalámbricos Probus.",
+    "price": 30.0,
+    "categoryId": "cat-17"
+  },
+  {
+    "id": "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f",
+    "name": "Manilla de reloj con mica",
+    "description": "Manilla de reloj con mica protectora.",
+    "price": 8.0,
+    "categoryId": "cat-1"
+  },
+  {
+    "id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a",
+    "name": "Soporte de celular para el carro - calidad baja",
+    "description": "Soporte de celular para el carro de calidad baja.",
+    "price": 8.0,
+    "categoryId": "cat-10"
+  },
+  {
+    "id": "1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b",
+    "name": "Soporte de celular para el carro - calidad media",
+    "description": "Soporte de celular para el carro de calidad media.",
+    "price": 15.0,
+    "categoryId": "cat-10"
+  },
+  {
+    "id": "2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c",
+    "name": "Soporte de celular para el carro - calidad alta",
+    "description": "Soporte de celular para el carro de calidad alta.",
+    "price": 20.0,
+    "categoryId": "cat-10"
+  },
+  {
+    "id": "3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d",
+    "name": "Manos libres inalámbricos orejón (gatico y Sony)",
+    "description": "Auriculares inalámbricos orejón modelos gatico y Sony.",
+    "price": 30.0,
+    "categoryId": "cat-17"
+  },
+  {
+    "id": "4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e",
+    "name": "Audífonos orejón para PC",
+    "description": "Audífonos orejón para PC.",
+    "price": 30.0,
+    "categoryId": "cat-18"
+  },
+  {
+    "id": "5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f",
+    "name": "Orejones iPhone",
+    "description": "Audífonos orejón para iPhone.",
+    "price": 80.0,
+    "categoryId": "cat-18"
+  }
+]
