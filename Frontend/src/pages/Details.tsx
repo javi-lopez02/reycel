@@ -1,12 +1,11 @@
+import { Rating, RoundedStar } from "@smastrom/react-rating";
 import { useState } from "react";
+import { TiShoppingCart } from "react-icons/ti";
 import { VscSend } from "react-icons/vsc";
 
 export default function Details() {
   const [rating, setRating] = useState(0);
 
-  const handleRating = (index: number) => {
-    setRating(index + 1);
-  };
   return (
     <div className="bg-white min-h-screen p-4 pt-20 rounded-lg shadow-md max-w-full max-h-full mx-auto mt-1">
       <div className="flex flex-col md:grid md:grid-cols-2 md:justify-evenly">
@@ -21,13 +20,16 @@ export default function Details() {
           <h1 className="text-4xl font-semibold text-gray-800">
             Nombre del Producto
           </h1>
-          <p className="text-2xl text-gray-600 mt-2">$999.99</p>
-          <div className="mt-4">
-            <span className="text-green-600 font-medium">En stock</span>
+          <div className="flex gap-5">
+            <p className="text-2xl text-gray-600 mt-2">$999.99</p>
+            <div className="mt-4">
+              <span className="text-green-600 font-medium">En stock</span>
+            </div>
           </div>
           <div className="mt-4">
-            <button className="bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-700">
+            <button className="flex items-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-700">
               Agregar al carrito
+              {<TiShoppingCart className="w-7 h-7" />}
             </button>
           </div>
           <div className="mt-6">
@@ -45,19 +47,16 @@ export default function Details() {
             </h2>
             <div className="flex items-center mt-2">
               <div className="flex text-yellow-500">
-                {[...Array(5)].map((_, index) => (
-                  <svg
-                    key={index}
-                    className={`h-5 w-5 fill-current cursor-pointer ${
-                      rating > index ? "text-yellow-500" : "text-gray-300"
-                    }`}
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    onClick={() => handleRating(index)}
-                  >
-                    <path d="M10 15l-5.878 3.09 1.122-6.545L.368 6.91l6.564-.955L10 0l3.068 5.955 6.564.955-4.878 4.635 1.122 6.545z" />
-                  </svg>
-                ))}
+                <Rating
+                  style={{ maxWidth: 150 }}
+                  value={rating}
+                  onChange={setRating}
+                  itemStyles={{
+                    itemShapes: RoundedStar,
+                    activeFillColor: "#ffb700",
+                    inactiveFillColor: "#fbf1a9",
+                  }}
+                />
               </div>
               <span className="text-gray-600 ml-2">{rating} de 5</span>
             </div>

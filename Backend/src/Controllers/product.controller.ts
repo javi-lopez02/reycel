@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient();
 
@@ -65,9 +67,11 @@ export const searchProduct = async (req: Request, res: Response) => {
 
     const color = (req.query.color as string) || undefined;
 
-    
     //sort
-    const sortQuery = req.query.sort && typeof req.query.sort === "string" ? req.query.sort : "[]";
+    const sortQuery =
+      req.query.sort && typeof req.query.sort === "string"
+        ? req.query.sort
+        : "[]";
 
     const sortArray: SortItem[] = JSON.parse(sortQuery);
 
@@ -81,7 +85,7 @@ export const searchProduct = async (req: Request, res: Response) => {
     const take = pageSize;
 
     const result = await prisma.product.findMany({
-      where:  {
+      where: {
         OR: [
           {
             name: {
@@ -90,7 +94,7 @@ export const searchProduct = async (req: Request, res: Response) => {
             },
           },
           {
-            description:  {
+            description: {
               contains: search,
               mode: "insensitive",
             },
@@ -122,16 +126,16 @@ export const searchProduct = async (req: Request, res: Response) => {
     });
 
     const totalProduct = await prisma.product.count({
-      where:  {
+      where: {
         OR: [
           {
             name: {
               contains: search,
-              mode: "insensitive"
+              mode: "insensitive",
             },
           },
           {
-            description:  {
+            description: {
               contains: search,
               mode: "insensitive",
             },
@@ -157,7 +161,7 @@ export const searchProduct = async (req: Request, res: Response) => {
           },
         ],
       },
-    });;
+    });
 
     const totalPages = Math.ceil(totalProduct / pageSize);
 

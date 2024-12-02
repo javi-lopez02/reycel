@@ -1,45 +1,37 @@
-
 import { FC } from "react";
 
 interface PhoneCardProps {
-  image: string;
-  title: string;
+  name: string;
+  imagen: string;
   price: number;
-  description: string;
+  ram: number;
+  inventoryCount: number;
+  rating: number;
+  storage: number;
 }
 
-const Card: FC<PhoneCardProps> = ({ image, title, price }) => {
+const Card: FC<PhoneCardProps> = ({ imagen, name, price, ram, inventoryCount, rating, storage }) => {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm ">
       <div className="h-56 w-full">
         <a href="#">
-          <img
-            className="mx-auto h-full"
-            src={product.imagen}
-            alt={product.name}
-          />
+          <img className="mx-auto h-full" src={imagen} alt={name} />
         </a>
       </div>
       <div className="pt-6">
         <div className="mb-4 flex items-center justify-between gap-4">
-          {
-            product.inventoryCount !== 0 && (
-              <span className="me-2 rounded bg-emerald-300 px-2.5 py-0.5 text-xs font-medium text-neutral-700">
-                {" "}
-                En Stock{" "}
-              </span>
-            )
-
-          }
-          {
-            product.inventoryCount === 0 && (
-              <span className="me-2 rounded bg-red-400 px-2.5 py-0.5 text-xs font-medium text-zinc-100">
-                {" "}
-                No hay uniddades{" "}
-              </span>
-            )
-          }
-
+          {inventoryCount !== 0 && (
+            <span className="me-2 rounded bg-emerald-300 px-2.5 py-0.5 text-xs font-medium text-neutral-700">
+              {" "}
+              En Stock{" "}
+            </span>
+          )}
+          {inventoryCount === 0 && (
+            <span className="me-2 rounded bg-red-400 px-2.5 py-0.5 text-xs font-medium text-zinc-100">
+              {" "}
+              No hay uniddades{" "}
+            </span>
+          )}
 
           <div className="flex items-center justify-end gap-1">
             <button
@@ -59,12 +51,10 @@ const Card: FC<PhoneCardProps> = ({ image, title, price }) => {
               >
                 <path
                   stroke="currentColor"
-
                   d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"
                 />
                 <path
                   stroke="currentColor"
-
                   d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
                 />
               </svg>
@@ -96,7 +86,6 @@ const Card: FC<PhoneCardProps> = ({ image, title, price }) => {
                   stroke="currentColor"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-
                   d="M12 6C6.5 1 1 8 5.8 13l6.2 7 6.2-7C23 8 17.5 1 12 6Z"
                 />
               </svg>
@@ -117,75 +106,37 @@ const Card: FC<PhoneCardProps> = ({ image, title, price }) => {
           href="#"
           className="text-lg overflow-hidden font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
         >
-          {`${product.name}, RAM 4Gb, ALMACENAMIENTO 64GB`}
-          {/* , Ram ${product.ram}GB, Almacenamiento ${product.storage}GB */}
+          {`${name}, RAM ${ram}GB, ALMACENAMIENTO ${storage}GB`}
         </a>
 
         <div className="mt-2 flex items-center gap-2">
-          <div className="flex items-center">
+        <div className="flex items-center">
+          {[...Array(5)].map((_, index) => (
             <svg
-              className="h-4 w-4 text-yellow-400"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
+              key={index}
+              className={`h-5 w-5 ${
+                index < rating ? "text-yellow-500" : "text-gray-300"
+              }`}
               fill="currentColor"
               viewBox="0 0 24 24"
-            >
-              <path d="M13.8 4.2a2 2 0 0 0-3.6 0L8.4 8.4l-4.6.3a2 2 0 0 0-1.1 3.5l3.5 3-1 4.4c-.5 1.7 1.4 3 2.9 2.1l3.9-2.3 3.9 2.3c1.5 1 3.4-.4 3-2.1l-1-4.4 3.4-3a2 2 0 0 0-1.1-3.5l-4.6-.3-1.8-4.2Z" />
-            </svg>
-
-            <svg
-              className="h-4 w-4 text-yellow-400"
-              aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 24 24"
             >
-              <path d="M13.8 4.2a2 2 0 0 0-3.6 0L8.4 8.4l-4.6.3a2 2 0 0 0-1.1 3.5l3.5 3-1 4.4c-.5 1.7 1.4 3 2.9 2.1l3.9-2.3 3.9 2.3c1.5 1 3.4-.4 3-2.1l-1-4.4 3.4-3a2 2 0 0 0-1.1-3.5l-4.6-.3-1.8-4.2Z" />
+              <path d="M12 .288l2.833 8.718h9.167l-7.4 5.37 2.833 8.718-7.4-5.37-7.4 5.37L5.4 14.375.288 9.006h9.167z" />
             </svg>
-
-            <svg
-              className="h-4 w-4 text-yellow-400"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M13.8 4.2a2 2 0 0 0-3.6 0L8.4 8.4l-4.6.3a2 2 0 0 0-1.1 3.5l3.5 3-1 4.4c-.5 1.7 1.4 3 2.9 2.1l3.9-2.3 3.9 2.3c1.5 1 3.4-.4 3-2.1l-1-4.4 3.4-3a2 2 0 0 0-1.1-3.5l-4.6-.3-1.8-4.2Z" />
-            </svg>
-
-            <svg
-              className="h-4 w-4 text-yellow-400"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M13.8 4.2a2 2 0 0 0-3.6 0L8.4 8.4l-4.6.3a2 2 0 0 0-1.1 3.5l3.5 3-1 4.4c-.5 1.7 1.4 3 2.9 2.1l3.9-2.3 3.9 2.3c1.5 1 3.4-.4 3-2.1l-1-4.4 3.4-3a2 2 0 0 0-1.1-3.5l-4.6-.3-1.8-4.2Z" />
-            </svg>
-
-            <svg
-              className="h-4 w-4 text-yellow-400"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M13.8 4.2a2 2 0 0 0-3.6 0L8.4 8.4l-4.6.3a2 2 0 0 0-1.1 3.5l3.5 3-1 4.4c-.5 1.7 1.4 3 2.9 2.1l3.9-2.3 3.9 2.3c1.5 1 3.4-.4 3-2.1l-1-4.4 3.4-3a2 2 0 0 0-1.1-3.5l-4.6-.3-1.8-4.2Z" />
-            </svg>
-          </div>
+          ))}
+        </div>
 
           <p className="text-sm font-medium text-gray-900 dark:text-white">
-            5.0
+            {rating.toFixed(1)}
           </p>
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
             (455)
           </p>
         </div>
 
-
         <div className="mt-4 flex items-center justify-between gap-4">
           <p className="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
-            ${product.price}
+            ${price}
           </p>
 
           <button
@@ -205,7 +156,6 @@ const Card: FC<PhoneCardProps> = ({ image, title, price }) => {
                 stroke="currentColor"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-
                 d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6"
               />
             </svg>
@@ -214,7 +164,7 @@ const Card: FC<PhoneCardProps> = ({ image, title, price }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Card
+export default Card;

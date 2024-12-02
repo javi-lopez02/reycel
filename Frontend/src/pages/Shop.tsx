@@ -40,7 +40,7 @@ export default function Shop() {
           {
             !loading && products.length === 0 && !errorSerch && (
               <div className="w-full flex justify-center pt-4">
-                <span className="text-gray-700 font-bold text-lg">No se encontraron Prosuctos</span>
+                <span className="text-gray-700 font-bold text-lg">No se encontraron Productos</span>
               </div>
             )
           }
@@ -75,12 +75,10 @@ export default function Shop() {
                           name={product.name}
                           imagen={product.imagen}
                           price={product.price}
-                          ram={product.price}
+                          ram={product.ram}
                           inventoryCount={product.inventoryCount}
                           rating={product.rating}
                           storage={product.storage}
-                          description={product.description}
-                          id={product.id}
                         />
                       )
                     })
