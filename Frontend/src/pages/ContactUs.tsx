@@ -4,6 +4,7 @@ import {
   FaPhoneVolume,
   FaEnvelopeOpenText,
 } from "react-icons/fa6";
+import Card from "../components/ContactUs/Card";
 
 export default function ContactUs() {
   return (
@@ -58,7 +59,7 @@ export default function ContactUs() {
               <textarea
                 placeholder="Mensaje"
                 rows={6}
-                className="w-full bg-gray-100 rounded-lg px-6 text-sm pt-3 outline-none"
+                className="w-full bg-gray-100 rounded-lg px-6 resize-none text-sm pt-3 outline-none"
               ></textarea>
               <button
                 type="button"
@@ -85,6 +86,7 @@ export default function ContactUs() {
           </form>
         </div>
       </div>
+      <Card/>
     </div>
   );
 }

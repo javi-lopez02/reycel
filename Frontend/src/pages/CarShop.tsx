@@ -61,7 +61,7 @@ const App: React.FC = () => {
 
 
   return (
-    <div className="font-[sans-serif] bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 pt-16 " >
+    <div className="font-[sans-serif] min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 pt-16">
       <div className="max-w-7xl max-lg:max-w-4xl mx-auto p-6">
         <h2 className="text-2xl font-extrabold text-gray-800">
           Tu carrito de compras

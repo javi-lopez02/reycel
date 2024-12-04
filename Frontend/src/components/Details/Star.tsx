@@ -1,11 +1,11 @@
-import { RatingChange, Rating as RetingStart, RoundedStar } from "@smastrom/react-rating";
+import { RatingChange, Rating as RatingStart, RoundedStar } from "@smastrom/react-rating";
 
 
 function Star({ value, onChange }: { value: number, onChange: RatingChange }) {
 
   return (
     <div className="flex items-center mt-2">
-      <RetingStart style={{ maxWidth: 200 }} value={value} onChange={onChange} itemStyles={{
+      <RatingStart style={{ maxWidth: 200 }} value={value} onChange={onChange} itemStyles={{
         itemShapes: RoundedStar,
         activeFillColor: '#ffb700',
         inactiveFillColor: '#fbf1a9'

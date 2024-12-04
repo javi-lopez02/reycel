@@ -1,60 +1,72 @@
-import { useRef, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
-import { FaShoppingCart, FaSearch } from "react-icons/fa";
-import { IoLogOut } from "react-icons/io5";
-import { MdDensityMedium } from "react-icons/md";
+import { useRef } from "react";
+import { Link, useNavigate, Outlet } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
+import { TiShoppingCart } from "react-icons/ti";
+import { MdMenuOpen, MdLogout } from "react-icons/md";
 import { useAuth } from "../../context/auth.context";
 import { useProduct } from "../../context/product.context";
 import { useDebouncedCallback } from "use-debounce";
 import ModalLogin from "../../pages/auth/ModalLogin";
 import { useDisclosure } from "@nextui-org/react";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/react";
 
 const Navbar = () => {
-  const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const { setCurrentPage, setQuerySeach, setIsNextPage, setErrorSearch } = useProduct()
-  const { logout, isAuth } = useAuth()
+  const { setCurrentPage, setQuerySeach, setIsNextPage, setErrorSearch } =
+    useProduct();
+  const { logout, isAuth } = useAuth();
+
+  const navigate = useNavigate();
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const inputRef = useRef<HTMLInputElement>(null)
+  const handleClick = (key: string | number | undefined) => {
+    if (key === "Logout") {
+      logout();
+    } else if (key === "Registro") {
+      onOpen();
+    } else {
+      navigate(`/${key}`);
+    }
+  };
 
-  const debounced = useDebouncedCallback(
-    (value: string) => {
-      setQuerySeach(value)
-    },
-    500
-  );
+  const inputRef = useRef<HTMLInputElement>(null);
 
+  const debounced = useDebouncedCallback((value: string) => {
+    setQuerySeach(value);
+  }, 500);
 
   const handleSearch = () => {
     if (inputRef.current) {
-      const newSearch = inputRef.current.value.trim()
+      const newSearch = inputRef.current.value.trim();
       if (newSearch.length <= 2 && newSearch !== "") {
-        setErrorSearch(["La busqueda debe tener más de 3 caracteres"])
-        return
+        setErrorSearch(["La busqueda debe tener más de 3 caracteres"]);
+        return;
       }
-      setErrorSearch(null)
-      setCurrentPage(1)
-      setIsNextPage(true)
-      debounced(newSearch)
+      setErrorSearch(null);
+      setCurrentPage(1);
+      setIsNextPage(true);
+      debounced(newSearch);
     }
-  }
-
-
-  const toggleMenu = () => {
-    setIsOpenMenu(!isOpenMenu);
   };
+
   return (
     <>
       <nav className="bg-white dark:bg-zinc-800 pl-3 h-14 w-full shadow flex flex-row items-center justify-between fixed top-0 z-50 border-b dark:border-neutral-700">
-        <div className="flex items-center space-x-3 w-60">
+        <div className="flex items-center space-x-3 md:w-60">
           <Link to="/" className="flex items-center">
-            <img src="./Logo.jpeg" alt="logo" className="w-8 h-8" />
-            <h1 className="text-xl ml-2 sm:text-2xl font-bold">REYCEL</h1>
+            <img src="./Logo.jpeg" alt="logo" className="min-w-12 md:w-8 h-8" />
+            <h1 className="hidden md:inline text-xl ml-2 sm:text-2xl font-bold">
+              REYCEL
+            </h1>
           </Link>
         </div>
 
-        <div className="flex justify-between items-center space-x-4 w-full mx-10">
+        <div className="flex justify-between items-center space-x-4 w-full ml-5 mr-2">
           <input
             type="text"
             ref={inputRef}
@@ -69,44 +81,46 @@ const Navbar = () => {
           <div className="hidden lg:flex font-semibold text-lg pr-6">
             <ul className="flex items-center space-x-4">
               <li className="p-1 s border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
-                <Link to="/">Shop</Link>
+                <Link to="/">Tienda</Link>
               </li>
               <li className="p-1  border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
-                <Link to="/aboutUs">About</Link>
+                <Link to="/aboutUs">Sedes</Link>
               </li>
               <li className="p-1 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
-                <Link to="/contactUs">Contact</Link>
+                <Link to="/contactUs">Contactanos</Link>
               </li>
             </ul>
           </div>
 
-
-          <div className="flex w-auto">
-            {
-              isAuth && (
-
-                <div className="hidden lg:flex font-semibold text-lg">
-
-                  <Link to="/shopCar" className="sm:p-4 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
-                    <FaShoppingCart />
-                  </Link>
-                </div>
-              )
-            }
+          <div className="flex w-auto gap-1">
+            {isAuth && (
+              <div className="hidden lg:flex font-semibold text-lg">
+                <Link
+                  to="/shopCar"
+                  className="sm:p-3 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer"
+                >
+                  <TiShoppingCart className="min-h-6 min-w-6"/>
+                </Link>
+              </div>
+            )}
             <div className="hidden lg:flex lg:items-center font-semibold text-lg">
-              {
-                isAuth && (
-                  <div onClick={logout} className="sm:p-4 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
-                    <IoLogOut />
-                  </div>
-                )
-              }
-              {
-                !isAuth && (
-                  <button onClick={onOpen} className="mr-5 ml-5 px-3 rounded-md bg-blue-600 text-white font-bold"> Registrate</button>
-                )
-              }
-
+              {isAuth && (
+                <div
+                  onClick={logout}
+                  className="sm:p-3 border-b-2 border-red-500 border-opacity-0 hover:border-opacity-100 hover:text-red-500 duration-200 cursor-pointer"
+                >
+                  <MdLogout className="min-h-6 min-w-6"/>
+                </div>
+              )}
+              {!isAuth && (
+                <button
+                  onClick={onOpen}
+                  className="mr-5 ml-5 px-3 rounded-md bg-blue-600 text-white font-bold"
+                >
+                  {" "}
+                  Registrate
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -116,57 +130,69 @@ const Navbar = () => {
           <ul className="mr-2">
             <li className="p-2 text-gray-900 rounded-lg outline-none hover:text-blue-500">
               <Link to="/shopCar">
-                <FaShoppingCart />
+                <TiShoppingCart className="min-h-6 min-w-6" />
               </Link>
             </li>
           </ul>
           <ul className="mr-2">
             <li className="p-2 text-gray-900 rounded-lg outline-none hover:text-blue-500">
-              <MdDensityMedium onClick={toggleMenu} />
+              {isAuth && (
+                <Dropdown>
+                  <DropdownTrigger>
+                    <button className="flex items-center justify-center w-8 h-8 hover:text-primary">
+                      <MdMenuOpen className="min-w-7 h-7" />
+                    </button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    // color="primary"
+                    variant="shadow"
+                    aria-label="Action event example"
+                    onAction={(key) => handleClick(key)}
+                  >
+                    <DropdownItem key="">Tienda</DropdownItem>
+                    <DropdownItem key="aboutUs">Sedes</DropdownItem>
+                    <DropdownItem key="contactUs">Contacto</DropdownItem>
+                    <DropdownItem
+                      key="Logout"
+                      className="text-danger"
+                      color="danger"
+                    >
+                      Cerrar Sesion
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              )}
+
+              {!isAuth && (
+                <Dropdown>
+                  <DropdownTrigger>
+                    <button className="flex items-center justify-center w-8 h-8 hover:text-primary">
+                      <MdMenuOpen className="min-w-7 h-7" />
+                    </button>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    // color="primary"
+                    variant="shadow"
+                    aria-label="Action event example"
+                    onAction={(key) => handleClick(key)}
+                  >
+                    <DropdownItem key="">Tienda</DropdownItem>
+                    <DropdownItem key="aboutUs">Sedes</DropdownItem>
+                    <DropdownItem key="contactUs">Contacto</DropdownItem>
+                    <DropdownItem
+                      key="Registro"
+                      variant="solid"
+                      className="text-primary"
+                      color="primary"
+                    >
+                      Registrate
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              )}
             </li>
           </ul>
         </div>
-        {/* <!-- Mobile Menu --> */}
-        {isOpenMenu && (
-          <div className="lg:hidden absolute top-16 left-0 right-0 bg-white shadow-md z-20">
-            <nav className="flex flex-col items-center">
-              <Link
-                to="/"
-                className="block p-2 text-gray-700 hover:text-blue-500"
-              >
-                Shop
-              </Link>
-              <Link
-                to="/aboutUs"
-                className="block p-2 text-gray-700 hover:text-blue-500"
-              >
-                About Us
-              </Link>
-              <Link
-                to="/contactUs"
-                className="block p-2 text-gray-700 hover:text-blue-500"
-              >
-                Contact Us
-              </Link>
-              {
-                isAuth && (
-                  <button
-                    onClick={logout}
-                    className="block p-2 text-gray-700 hover:text-blue-500"
-                  >
-                    Log Out
-                  </button>
-                )
-              }
-              {
-                !isAuth && (
-                  <button onClick={onOpen} className="block p-2 text-gray-700 hover:text-blue-500"> Registrate</button>
-                )
-              }
-
-            </nav>
-          </div>
-        )}
         <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange}></ModalLogin>
       </nav>
       <Outlet />

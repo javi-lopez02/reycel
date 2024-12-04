@@ -1,20 +1,28 @@
 import Card from "../components/Shop/Card";
-import HeadingFilters from "../components/Shop/HeadingFilters"
+import HeadingFilters from "../components/Shop/HeadingFilters";
 import { useRef } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { VscError } from "react-icons/vsc";
 import { useProduct } from "../context/product.context";
 import { Spinner } from "@nextui-org/spinner";
 
 export default function Shop() {
-  const { products, isNextPage, error, loading, currentPage, errorSerch, setCurrentPage } = useProduct()
+  const {
+    products,
+    isNextPage,
+    error,
+    loading,
+    currentPage,
+    errorSerch,
+    setCurrentPage,
+  } = useProduct();
 
-  const ref = useRef()
+  const ref = useRef();
 
   return (
-    <section className="bg-gray-50 py-8 antialiased dark:bg-gray-900 md:py-12">
+    <section className="bg-gray-50 min-h-screen py-8 antialiased dark:bg-gray-900 md:py-12">
       <div className="mx-auto max-w-screen-xl px-4 pt-5 2xl:px-0">
         {/* <!-- Heading & Filters --> */}
         <HeadingFilters />
@@ -91,19 +99,17 @@ export default function Shop() {
             )
           }
 
-          {
-            error && (
-              error.map((err) => toast(err))
-            )
-          }
+          {error && error.map((err) => toast(err))}
 
-          <ToastContainer theme="light" icon={<VscError color="red" />} position="bottom-right" />
+          <ToastContainer
+            theme="light"
+            icon={<VscError color="red" />}
+            position="bottom-right"
+          />
         </div>
         <div ref={ref.current}></div>
       </div>
       {/* <!-- Filter modal --> */}
-
     </section>
   );
 }
-
