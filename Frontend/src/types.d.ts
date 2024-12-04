@@ -61,6 +61,22 @@ export interface Rating {
   value: number;
 }
 
+export interface OrderItem {
+  id: string
+  price: number;
+  quantity: number;
+  product: Products;
+}
+
+export interface Order {
+  totalAmount: number;
+  id: string;
+  _count: {
+    orderItems: number;
+  };
+  orderItems: OrderItem[];
+}
+
 export type AuthContextType = {
   user: User | null;
   isAuth: boolean;

@@ -10,7 +10,7 @@ interface Product extends Products {
   Rating: Rating[];
 }
 
-export const useProduct = (query: string) => {
+export const useProductDetails = (query: string) => {
   const [rating, setRating] = useState(0)
   const [ratingAverage, setRatingAverage] = useState(0)
   const [loading, setLoading] = useState(false)

@@ -38,6 +38,7 @@ app.use("/api", rating);
 app.use("/api", comment);
 app.use("/api", order);
 
+
 app.use("/public", express.static(path.join(__dirname, "/upload")));
 
 //Con esto mandamos el mensaje hola automaticamente cada vez que se accede a la ruta /send-message en el backend esta es una prueba que estuve haciendo....

@@ -1,10 +1,9 @@
-import { Rating, RoundedStar } from "@smastrom/react-rating";
 import { useState } from "react";
 import { VscError } from "react-icons/vsc";
 import { Spinner } from "@nextui-org/spinner";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/auth.context";
-import { useProduct } from "../customHooks/useProduct";
+import { useProductDetails } from "../customHooks/useProductDetails";
 import Comment from "../components/Details/Comment";
 import FormComment from "../components/Details/FormComment";
 import Star from "../components/Details/Star";
@@ -30,7 +29,7 @@ export default function Details() {
     updateRating,
     createComment,
     addItemCarShop
-  } = useProduct(query)
+  } = useProductDetails(query)
 
   const { isAuth } = useAuth()
 

@@ -86,26 +86,19 @@ const Navbar = () => {
               isAuth && (
 
                 <div className="hidden lg:flex font-semibold text-lg">
-                  <ul className="mx-1">
-                    <li className="sm:p-4 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
-                      <Link to="/shopCar">
-                        <FaShoppingCart />
-                      </Link>
-                    </li>
-                  </ul>
+
+                  <Link to="/shopCar" className="sm:p-4 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
+                    <FaShoppingCart />
+                  </Link>
                 </div>
               )
             }
             <div className="hidden lg:flex lg:items-center font-semibold text-lg">
               {
                 isAuth && (
-                  <ul className="mx-1">
-                    <li className="sm:p-4 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
-                      <div onClick={logout}>
-                        <IoLogOut />
-                      </div>
-                    </li>
-                  </ul>
+                  <div onClick={logout} className="sm:p-4 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
+                    <IoLogOut />
+                  </div>
                 )
               }
               {

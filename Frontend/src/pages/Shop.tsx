@@ -71,6 +71,8 @@ export default function Shop() {
                     products.map((product) => {
                       return (
                         <Card
+                          id={product.id}
+                          description={product.description}
                           category={product.category}
                           key={product.id}
                           name={product.name}

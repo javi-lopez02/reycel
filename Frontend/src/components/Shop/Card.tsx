@@ -1,27 +1,31 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { type Products } from '../../types'
 import { Link } from "react-router-dom";
 import { addItemOrderRequest } from "../../services/order";
 import { useAuth } from "../../context/auth.context";
 import ModalLogin from "../../pages/auth/ModalLogin";
-import { useDisclosure } from "@nextui-org/react";
+import { Spinner, useDisclosure } from "@nextui-org/react";
 
 
 const Card: FC<Products> = (product) => {
 
   const { isAuth } = useAuth()
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [loading, setLoading] = useState(false)
 
-  const handleClikAddProduct = async () => {
+  const handleClikAddProduct = () => {
     if (!isAuth) {
       onOpen()
       return
     }
-    try {
-      await addItemOrderRequest(product.id, 1)
-    } catch (error) {
-      console.log(error)
-    }
+    setLoading(true)
+    addItemOrderRequest(product.id, 1)
+      .catch((error) => [
+        console.log(error)
+      ]).finally(() => {
+        setLoading(false)
+      })
+
   }
 
 
@@ -178,7 +182,7 @@ const Card: FC<Products> = (product) => {
 
         <div className="mt-4 flex items-center justify-between gap-4">
           <p className="text-2xl font-extrabold leading-tight text-gray-900 dark:text-white">
-            ${price}
+            ${product.price}
           </p>
 
           <button
@@ -186,23 +190,39 @@ const Card: FC<Products> = (product) => {
             onClick={handleClikAddProduct}
             className="inline-flex items-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
           >
-            <svg
-              className="-ms-2 me-2 h-5 w-5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6"
-              />
-            </svg>
-            Añadir
+            {
+              loading && (
+                <>
+                  <Spinner size="sm" color="white" className="-ms-2 me-2"/>
+                  <h1>Añadir</h1>
+                </>
+              )
+            }
+
+            {
+              !loading && (
+                <>
+                  <svg
+                    className="-ms-2 me-2 h-5 w-5"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6"
+                    />
+                  </svg>
+                  Añadir
+                </>
+              )
+            }
+
           </button>
         </div>
       </div>
