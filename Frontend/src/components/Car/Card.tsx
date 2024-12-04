@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { FaTimes } from "react-icons/fa";
 import { Rating, RoundedStar } from "@smastrom/react-rating";
 import { Input } from "@nextui-org/react";
+import ModalDelete from "./ModalDelete";
 
 interface ProductCardProps {
   image: string;
@@ -73,10 +73,7 @@ const Card: React.FC<ProductCardProps> = ({
 
             <div className="flex items-center">
               <h4 className="text-lg font-bold text-gray-800">${price}</h4>
-              <FaTimes
-                onClick={() => alert("Eliminado")}
-                className="w-6 h-6 cursor-pointer shrink-0 fill-white rounded-lg bg-red-500 p-1 hover:bg-red-800 absolute top-3.5 right-3.5"
-              />
+              <ModalDelete/>
             </div>
           </div>
         </div>
