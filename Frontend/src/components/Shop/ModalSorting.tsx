@@ -11,10 +11,10 @@ function ModalSorting() {
     let newSortOptions : Array<SortOption> = [];
     switch (key) {
       case "masViejo":
-        newSortOptions = [{ field: "createdAt", order: "desc" }];
+        newSortOptions = [{ field: "createdAt", order: "asc" }];
         break;
       case "masNuevo":
-        newSortOptions = [{ field: "createdAt", order: "asc" }];
+        newSortOptions = [{ field: "createdAt", order: "desc" }];
         break;
       case "precioCreciente":
         newSortOptions = [{ field: "price", order: "asc" },{ field: "createdAt", order: "asc" }];

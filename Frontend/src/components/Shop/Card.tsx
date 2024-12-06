@@ -141,7 +141,7 @@ const Card: FC<Products> = (product) => {
         </div>
         <Link
           to={`/details?p=${product.id}`}
-          className="text-lg overflow-hidden font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
+          className="text-lg overflow-hidden font-semibold min-h-12 leading-tight text-gray-900 hover:underline line-clamp-2"
         >
           {
             product.category?.name === "Moviles" && (

@@ -87,7 +87,7 @@ export default function Details() {
                   <>{`${product.name} `}</>
                 )}
               </h1>
-              <p className="text-2xl text-gray-600 mt-2">${product.price}</p>
+              <p className="text-2xl text-gray-600 mt-2">${(product.price * parseInt(quantity))}</p>
               <div className="mt-2 flex items-center gap-2">
                 <div className="flex items-center">
                   <div className="flex text-yellow-500">
@@ -95,7 +95,7 @@ export default function Details() {
                       <svg
                         key={index}
                         className={`h-5 w-5 fill-current ${
-                          ratingAverage > index
+                          ratingAverage > index + 0.5
                             ? "text-yellow-500"
                             : "text-gray-300"
                         }`}
@@ -137,7 +137,11 @@ export default function Details() {
                   labelPlacement="outside"
                   color="primary"
                   value={quantity}
-                  onValueChange={setQuantity}
+                  onValueChange={(value)=>{
+                    if(parseInt(value) > 0){
+                      setQuantity(value)
+                    }
+                  }}
                   type="number"
                 />
                 <button

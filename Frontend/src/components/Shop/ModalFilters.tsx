@@ -5,6 +5,10 @@ import type { SharedSelection } from "@nextui-org/react";
 
 import '@smastrom/react-rating/style.css'
 import { useProduct } from "../../context/product.context";
+import { categoryRequest } from "../../services/product";
+import { Category } from "../../types";
+import { toast, ToastContainer } from "react-toastify";
+import { VscError } from "react-icons/vsc";
 
 function ModalFilters() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -13,8 +17,10 @@ function ModalFilters() {
   const [categoria, setCategoria] = useState<Key | null>()
   const [minPrice, setMinPrice] = useState("")
   const [maxPrice, setMaxPrice] = useState("")
+  const [categories, setCategories] = useState<Array<Category>>([])
+  const [error, setError] = useState<Array<string> | null>(null)
 
-  const { categories, filters, setFilters, setCurrentPage, setIsNextPage, setSortParmas } = useProduct()
+  const { filters, setFilters, setCurrentPage, setIsNextPage, setSortParmas } = useProduct()
 
   const handleOpen = () => {
     onOpen();
@@ -42,6 +48,16 @@ function ModalFilters() {
     //setSelectedColor(new Set([filters.color || "Selecciona un color"]))
 
   }, [filters])
+
+  useEffect(() => {
+    categoryRequest()
+      .then((res) => {
+        setCategories(res.data.data)
+      }).catch((error) => {
+        console.log(error)
+        setError(["Error al cargar las Categorias"])
+      })
+  }, [])
 
   return (
     <>
@@ -273,6 +289,13 @@ function ModalFilters() {
           )}
         </ModalContent>
       </Modal>
+      {error && error.map((err) => toast(err))}
+
+      <ToastContainer
+        theme="light"
+        icon={<VscError color="red" />}
+        position="bottom-right"
+      />
     </>
   )
 }

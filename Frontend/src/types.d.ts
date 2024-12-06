@@ -62,7 +62,7 @@ export interface Rating {
 }
 
 export interface OrderItem {
-  id: string
+  id: string;
   price: number;
   quantity: number;
   product: Products;
@@ -116,13 +116,13 @@ export type SortOption = {
 export type ProductContextType = {
   products: Products[] | [];
   currentPage: number;
-  loading: boolean;
-  categories: Array<Category>;
+  querySeach: string;
   errorSerch: Array<string> | null;
   isNextPage: boolean;
   error: Array<string> | null;
   filters: FiltersType;
   sortParmas: SortOption[];
+  searchProduct: (value: boolean) => void;
   setSortParmas: (value: Array<SortOption>) => void;
   setFilters: (value: FiltersType) => void;
   setCurrentPage: (value: number) => void;
