@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { BiLock, BiMailSend } from "react-icons/bi";
 import { useAuth } from "../../context/auth.context";
 
-function ModalLogin({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: () => void }) {
+function ModalLogin({ isOpen, onOpenChange}: { isOpen: boolean, onOpenChange: () => void }) {
   const [error, setError] = useState<Array<string>>([]);
   const { errors, signIn } = useAuth()
 
@@ -40,6 +40,9 @@ function ModalLogin({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (
     }
 
     signIn({ email: emailRef.current?.value, password: passwordRef.current?.value })
+
+
+
   };
   return (
     <>
@@ -128,7 +131,6 @@ function ModalLogin({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (
                 </Button>
                 <Button color="primary" onClick={() => {
                   handleSubmit()
-                  onClose()
                 }} >
                   Entrar
                 </Button>

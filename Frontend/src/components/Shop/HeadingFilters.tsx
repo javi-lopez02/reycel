@@ -1,11 +1,18 @@
+import { Button } from "@nextui-org/react"
+import { useProduct } from "../../context/product.context"
 import ModalFilters from "./ModalFilters"
 import ModalSorting from "./ModalSorting"
 
 function HeadingFilters() {
-  //const { filters, sortParmas } = useProduct()
-  //console.log(filters)
-  //console.log(sortParmas)
-  //console.log("render")
+  const { filters, sortParmas, setFilters, setCurrentPage, setIsNextPage, setSortParmas } = useProduct()
+
+  const handleReset = () => {
+    setCurrentPage(1)
+    setIsNextPage(true)
+    setSortParmas([])
+    setFilters({})
+  }
+
   return (
     <>
       <div className="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-4">
@@ -15,19 +22,21 @@ function HeadingFilters() {
           </h2>
         </div>
         <div className="flex items-center space-x-4">
-
           <ModalFilters />
 
-
           <ModalSorting />
-
           {/* Modal sorting */}
         </div>
 
       </div>
-      <div className="mb-3">
-        filtros
-      </div>
+      {
+        sortParmas.length !== 0 && (
+          <div className="mb-5 w-full flex justify-end" >
+            <Button onClick={handleReset} >Limpiar Filtros</Button>
+          </div>
+        )
+      }
+
     </>
   )
 }
