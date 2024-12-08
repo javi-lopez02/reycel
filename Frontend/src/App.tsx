@@ -10,8 +10,8 @@ import CarShop from "./pages/CarShop";
 import { ProductProvider } from './context/product.context'
 import { NextUIProvider } from "@nextui-org/react";
 import Details from "./pages/Details";
-import Shop from "./pages/Shop";
-import Page404 from "./pages/404Page";
+import Home from "./pages/Home";
+import { Toaster } from "sonner";
 
 function App() {
   const ProductProviderOutlet = () => {
@@ -26,6 +26,7 @@ function App() {
     <NextUIProvider>
       <BrowserRouter>
         <AuthProvider>
+          <Toaster richColors expand={true}/>
           <Routes >
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -35,7 +36,7 @@ function App() {
               <Route element={<Navbar />}>
                 <Route path="/aboutUs" element={<AboutUs />} />
                 <Route path="/contactUs" element={<ContactUs />} />
-                <Route path="/" element={<Shop />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/details" element={<Details />} />
 
                 <Route element={<ProtectedRoutes />}>

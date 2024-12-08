@@ -22,7 +22,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const handleClick = (key: string | number | undefined) => {
     if (key === "Logout") {
@@ -53,6 +53,12 @@ const Navbar = () => {
       debounced(newSearch);
     }
   };
+/* 
+  useEffect(()=>{
+    if (isAuth) {
+      onClose()
+    }
+  },[isAuth]) */
 
   return (
     <>
@@ -193,7 +199,7 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange}></ModalLogin>
+        <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}></ModalLogin>
       </nav>
       <Outlet />
     </>

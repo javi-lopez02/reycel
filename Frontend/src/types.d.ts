@@ -61,6 +61,22 @@ export interface Rating {
   value: number;
 }
 
+export interface OrderItem {
+  id: string;
+  price: number;
+  quantity: number;
+  product: Products;
+}
+
+export interface Order {
+  totalAmount: number;
+  id: string;
+  _count: {
+    orderItems: number;
+  };
+  orderItems: OrderItem[];
+}
+
 export type AuthContextType = {
   user: User | null;
   isAuth: boolean;
@@ -100,13 +116,13 @@ export type SortOption = {
 export type ProductContextType = {
   products: Products[] | [];
   currentPage: number;
-  loading: boolean;
-  categories: Array<Category>;
+  querySeach: string;
   errorSerch: Array<string> | null;
   isNextPage: boolean;
   error: Array<string> | null;
   filters: FiltersType;
   sortParmas: SortOption[];
+  searchProduct: (value: boolean) => void;
   setSortParmas: (value: Array<SortOption>) => void;
   setFilters: (value: FiltersType) => void;
   setCurrentPage: (value: number) => void;
