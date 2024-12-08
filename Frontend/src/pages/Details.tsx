@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { VscError } from "react-icons/vsc";
 import { Spinner } from "@nextui-org/spinner";
-import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/auth.context";
+import {toast} from 'sonner'
 import { useProductDetails } from "../customHooks/useProductDetails";
 import Comment from "../components/Details/Comment";
 import FormComment from "../components/Details/FormComment";
@@ -11,7 +10,7 @@ import { Input, useDisclosure } from "@nextui-org/react";
 import ModalLogin from "./auth/ModalLogin";
 
 export default function Details() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const [quantity, setQuantity] = useState("1");
   const [query] = useState(() => {
@@ -55,12 +54,25 @@ export default function Details() {
     input.value = "";
   };
 
-  const handleAddCorShop = async () => {
+  const handleAddCorShop =  () => {
     if (!isAuth) {
       onOpen();
       return;
     }
-    await addItemCarShop(parseInt(quantity));
+    toast.promise(
+      addItemCarShop(parseInt(quantity)), 
+      {
+        loading: 'Loading...',
+        success: (res) => {
+          if (res.status !== 200) {
+            toast.warning(`Aviso: ${res.data.message || 'Hubo un problema con la solicitud.'}`);
+            return 'La operación no fue completamente exitosa.';
+          }
+          return `${res.data.message}`;
+        },
+        error: 'Error al añadir un producto al carrito.',
+      }
+    );
   };
 
   return (
@@ -210,15 +222,9 @@ export default function Details() {
             <Spinner size="lg" color="primary" />
           </div>
         )}
-        {error && error.map((err) => toast(err))}
+        {error && error.map((err) => toast.error(err))}
 
-        <ToastContainer
-          theme="light"
-          key={"hola"}
-          icon={<VscError color="red" />}
-          position="bottom-right"
-        />
-        <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange}></ModalLogin>
+        <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}></ModalLogin>
       </div>
     </>
   );

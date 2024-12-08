@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import prismaNew from '../Middlewares/prisma'
+import prismaNew from "../Middlewares/prisma";
 const prisma = new PrismaClient();
-
-
 
 export const addOrderItem = async (req: Request, res: Response) => {
   try {
@@ -21,7 +19,7 @@ export const addOrderItem = async (req: Request, res: Response) => {
     });
 
     if (!priceProduct) {
-      return res.status(404).json(["Producto no encontrado"]);
+      return res.status(404).json({ message: "Producto no encontrado" });
     }
 
     const priceTotal = priceProduct?.price * quantity;
@@ -41,7 +39,7 @@ export const addOrderItem = async (req: Request, res: Response) => {
     );
 
     if (productfind) {
-      return res.status(204).json(["Producto repetido"]);
+      return res.status(203).json({ message: "Producto repetido" });
     }
 
     if (!orderFind) {
@@ -73,7 +71,7 @@ export const addOrderItem = async (req: Request, res: Response) => {
       },
     });
 
-    res.status(200).json(["Producto añadido al carrito."]);
+    res.status(200).json({ message: "Producto añadido al carrito." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al agregar el Producto al carrito." });
@@ -95,7 +93,7 @@ export const getOrderItems = async (req: Request, res: Response) => {
         id: true,
         orderItems: {
           orderBy: {
-            createdAt: "asc"
+            createdAt: "asc",
           },
           select: {
             id: true,
@@ -140,28 +138,25 @@ export const updateOrderItem = async (req: Request, res: Response) => {
         price: newPrice,
         quantity: quantity,
       },
-      include:{
-        product: true
-      }
+      include: {
+        product: true,
+      },
     });
 
-    console.log(orderItem)
+    console.log(orderItem);
 
     res.status(200).json({
       data: orderItem,
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al agregar el Producto al carrito." });
   }
 };
 
-
 export const deleteOrderItem = async (req: Request, res: Response) => {
   try {
     const orderID = (req.query.p || "") as string;
-
 
     const orderItem = await prismaNew.orderItem.delete({
       where: {
@@ -172,7 +167,6 @@ export const deleteOrderItem = async (req: Request, res: Response) => {
     res.status(200).json({
       data: orderItem,
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al agregar el Producto al carrito." });

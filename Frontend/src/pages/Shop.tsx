@@ -2,9 +2,7 @@
 import Card from "../components/Shop/Card";
 import { useEffect, useRef } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { VscError } from "react-icons/vsc";
+import {toast} from 'sonner'
 import { useProduct } from "../context/product.context";
 import { Spinner } from "@nextui-org/spinner";
 
@@ -62,7 +60,7 @@ export default function Shop() {
               }}
               loader={
                 <div className="w-full flex justify-center py-4">
-                  <Spinner color="primary" size="lg" />
+                  <Spinner />
                 </div>
               }
               hasMore={isNextPage}
@@ -100,13 +98,9 @@ export default function Shop() {
           )
         }
 
-        {error && error.map((err) => toast(err))}
+        {error && error.map((err) => toast.error(err))}
 
-        <ToastContainer
-          theme="light"
-          icon={<VscError color="red" />}
-          position="bottom-right"
-        />
+      
       </div>
       <div ref={ref.current}></div>
     </>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createCommentRequest, productIDRequest } from '../services/product'
 import { type Products, type Comment, type Rating } from "../types";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { useAuth } from "../context/auth.context";
 import { ratingRequest } from '../services/rating'
 import { addItemOrderRequest } from "../services/order";
@@ -80,12 +80,14 @@ export const useProductDetails = (query: string) => {
     }
   }
 
-  const addItemCarShop = async (quantity: number) => {
+  const addItemCarShop = async (quantity: number): Promise<AxiosResponse> => {
     try {
-      await addItemOrderRequest(query, quantity)
+      const response =  await addItemOrderRequest(query, quantity)
+      return response
     } catch (error) {
       console.log(error)
       setError(["Error al añadir el producto"])
+      throw new Error("Error al añadir el producto"); 
     }
   }
 

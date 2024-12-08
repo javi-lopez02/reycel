@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import { Input, Spinner } from "@nextui-org/react";
+import { Input, useDisclosure } from "@nextui-org/react";
 import { OrderItem, Products } from "../../types";
 import { deleteOrderItemRequest } from "../../services/order";
 import { Link } from "react-router-dom";
+import ModalDelete from "./ModalDelete";
 
 interface Props {
   product: Products,
@@ -18,10 +19,9 @@ interface Props {
 
 const Card: React.FC<Props> = ({ product, quantity, id, handleQuantity, setError, setOrder, setCount, setTotalAmount }) => {
   const [value, setvalue] = useState(`${quantity}`);
-  const [loadingDelete, setLoadingDelete] = useState(false)
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleOrderDelte = (id: string) => {
-    setLoadingDelete(true)
+  const handleOrderDelte = () => {
     deleteOrderItemRequest(id)
       .then((res) => {
         setOrder((prev: OrderItem[] | null) => {
@@ -38,8 +38,6 @@ const Card: React.FC<Props> = ({ product, quantity, id, handleQuantity, setError
       .catch((error) => {
         console.log(error)
         setError(["Error al elimiar el producto del carrito"])
-      }).finally(() => {
-        setLoadingDelete(false)
       })
   }
 
@@ -115,21 +113,15 @@ const Card: React.FC<Props> = ({ product, quantity, id, handleQuantity, setError
 
             <div className="flex items-center">
               <h4 className="text-lg font-bold text-gray-800">${product.price * Number(value)}</h4>
-              <button onClick={() => { handleOrderDelte(id) }}
+              <button onClick={onOpen}
                 className="w-8 h-8 flex items-center justify-center cursor-pointer shrink-0 fill-white rounded-lg bg-red-500 p-1 hover:bg-red-800 absolute top-3.5 right-3.5">
-                {
-                  loadingDelete && (
-                    <Spinner color="white" size="sm"></Spinner>
-                  )
-                }
-                {
-                  !loadingDelete && (
-                    <FaTimes color="white" />
-                  )
-                }
+
+                <FaTimes color="white" />
+
               </button>
             </div>
           </div>
+          <ModalDelete handleOrderDelte={handleOrderDelte} isOpen={isOpen} onClose={onClose} ></ModalDelete>
         </div>
       </div>
     </div>

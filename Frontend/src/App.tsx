@@ -11,6 +11,7 @@ import { ProductProvider } from './context/product.context'
 import { NextUIProvider } from "@nextui-org/react";
 import Details from "./pages/Details";
 import Home from "./pages/Home";
+import { Toaster } from "sonner";
 
 function App() {
   const ProductProviderOutlet = () => {
@@ -25,6 +26,7 @@ function App() {
     <NextUIProvider>
       <BrowserRouter>
         <AuthProvider>
+          <Toaster richColors expand={true}/>
           <Routes >
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

@@ -7,8 +7,7 @@ import '@smastrom/react-rating/style.css'
 import { useProduct } from "../../context/product.context";
 import { categoryRequest } from "../../services/product";
 import { Category } from "../../types";
-import { toast, ToastContainer } from "react-toastify";
-import { VscError } from "react-icons/vsc";
+import {toast} from 'sonner'
 
 function ModalFilters() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -289,13 +288,8 @@ function ModalFilters() {
           )}
         </ModalContent>
       </Modal>
-      {error && error.map((err) => toast(err))}
+      {error && error.map((err) => toast.error(err))}
 
-      <ToastContainer
-        theme="light"
-        icon={<VscError color="red" />}
-        position="bottom-right"
-      />
     </>
   )
 }

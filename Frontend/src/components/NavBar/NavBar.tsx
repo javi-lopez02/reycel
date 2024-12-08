@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Link, useNavigate, Outlet } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import { TiShoppingCart } from "react-icons/ti";
@@ -54,12 +53,12 @@ const Navbar = () => {
       debounced(newSearch);
     }
   };
-
+/* 
   useEffect(()=>{
     if (isAuth) {
       onClose()
     }
-  },[isAuth])
+  },[isAuth]) */
 
   return (
     <>
@@ -200,7 +199,7 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange} ></ModalLogin>
+        <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}></ModalLogin>
       </nav>
       <Outlet />
     </>

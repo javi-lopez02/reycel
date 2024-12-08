@@ -1,21 +1,11 @@
-import { Modal, ModalContent, useDisclosure } from "@nextui-org/react";
-import { FaTimes } from "react-icons/fa";
+import { Modal, ModalContent } from "@nextui-org/react";
 
-export default function ModalDelete() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const handleOpen = () => {
-    onOpen();
-  };
+export default function ModalDelete({ isOpen, handleOrderDelte, onClose }: { isOpen: boolean, handleOrderDelte: () => void, onClose: () => void }) {
+
+
 
   return (
     <>
-      <button
-        onClick={handleOpen}
-        type="button"
-        className="w-6 h-6 cursor-pointer shrink-0 text-white rounded-lg bg-red-500 p-1 hover:bg-red-800 absolute top-3.5 right-3.5"
-      >
-        <FaTimes />
-      </button>
       <Modal backdrop={"blur"} isOpen={isOpen} onClose={onClose} size="xl">
         <ModalContent>
           {(onClose) => (
@@ -66,6 +56,7 @@ export default function ModalDelete() {
                     </button>
                     <button
                       type="button"
+                      onClick={handleOrderDelte}
                       className="px-4 py-2 rounded-lg text-white text-sm bg-red-600 hover:bg-red-700 active:bg-red-600"
                     >
                       Eliminar

@@ -4,8 +4,7 @@ import { OrderItem } from "../types";
 import { getOrderRequest, updateOrderItemRequest } from "../services/order";
 import axios, { AxiosError } from "axios";
 import { Spinner } from "@nextui-org/spinner";
-import { toast, ToastContainer } from "react-toastify";
-import { VscError } from "react-icons/vsc";
+import {toast} from 'sonner'
 
 const App: React.FC = () => {
 
@@ -96,11 +95,11 @@ const App: React.FC = () => {
 
             {
               error && (
-                error.map((err) => toast(err))
+                error.map((err) => toast.error(err))
               )
             }
 
-            <ToastContainer theme="light" icon={<VscError color="red" />} position="bottom-right" />
+            
 
           </div>
 
