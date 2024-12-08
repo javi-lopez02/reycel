@@ -1,10 +1,19 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Home from "./pages/Home";
+import SideAndNav from "./components/SideAndNav";
+
 
 function App() {
-
   return (
-    <>
-      <h1 className='bg-zinc-800 text-stone-50 '>Admin dashboard</h1>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route element={<SideAndNav />}>
+          <Route path="/" element={<Home />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
