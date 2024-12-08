@@ -25,6 +25,12 @@ export const getProductID = async (req: Request, res: Response) => {
             },
           },
         },
+        category: {
+          select:{
+            name: true,
+            id: true
+          }
+        }
       }, // Incluye los ratings asociados
     });
 
@@ -55,7 +61,7 @@ export const searchProduct = async (req: Request, res: Response) => {
     const search = (req.query.s || "") as string;
 
     const page = parseInt(req.query.page as string) || 1;
-    const pageSize = parseInt(req.query.pageSize as string) || 10;
+    const pageSize = parseInt(req.query.pageSize as string) || 15;
 
     //filters
     const minPrice = parseInt(req.query.minPrice as string) || 0;
@@ -65,6 +71,8 @@ export const searchProduct = async (req: Request, res: Response) => {
     const category = (req.query.category as string) || undefined;
 
     const color = (req.query.color as string) || undefined;
+
+    const rating = parseInt(req.query.rating as string) || undefined;
 
     //sort
     const sortQuery =
@@ -98,6 +106,14 @@ export const searchProduct = async (req: Request, res: Response) => {
               mode: "insensitive",
             },
           },
+          {
+            category:{
+              name:{
+                contains: search,
+                mode: "insensitive"
+              }
+            }
+          }
         ],
         AND: [
           {
@@ -114,10 +130,19 @@ export const searchProduct = async (req: Request, res: Response) => {
           {
             color: color,
           },
+          {
+            ratingAverage: rating
+          }
         ],
       },
       include: {
         Rating: true,
+        category: {
+          select:{
+            name: true,
+            id: true
+          }
+        }
       },
       orderBy,
       skip: skip,
@@ -139,6 +164,14 @@ export const searchProduct = async (req: Request, res: Response) => {
               mode: "insensitive",
             },
           },
+          {
+            category:{
+              name:{
+                contains: search,
+                mode: "insensitive"
+              }
+            }
+          }
         ],
         AND: [
           {
@@ -155,6 +188,9 @@ export const searchProduct = async (req: Request, res: Response) => {
           {
             color: color,
           },
+          {
+            ratingAverage: rating
+          }
         ],
       },
     });

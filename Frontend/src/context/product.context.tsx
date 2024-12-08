@@ -1,14 +1,13 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
   createContext,
   useState,
   useContext,
   PropsWithChildren,
   FC,
-  useEffect
+  useCallback,
 } from "react";
-import { categoryRequest, searchPproductRequest } from '../services/product'
-import { type Products, type ProductContextType, Category, FiltersType, SortOption } from "../types.d";
+import { searchPproductRequest } from '../services/product'
+import { type Products, type ProductContextType, FiltersType, SortOption } from "../types.d";
 import axios, { AxiosError } from "axios";
 
 
@@ -28,20 +27,16 @@ export const useProduct = () => {
 export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
   const [products, setProducts] = useState<Array<Products>>([]);
   const [currentPage, setCurrentPage] = useState(1)
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Array<string> | null>(null);
   const [errorSerch, setErrorSearch] = useState<Array<string> | null>(null);
   const [isNextPage, setIsNextPage] = useState(true);
   const [querySeach, setQuerySeach] = useState("")
-  const [categories, setCategories] = useState<Array<Category>>([])
 
   const [filters, setFilters] = useState<FiltersType>({})
   const [sortParmas, setSortParmas] = useState<SortOption[]>([])
 
-
-  const searchProduct = (reset = false) => {
+  const searchProduct = useCallback((reset = false) => {
     setError(null);
-    setLoading(true)
     searchPproductRequest(querySeach, reset ? 1 : currentPage, filters, sortParmas)
       .then((res) => {
         if (currentPage >= res.data.meta.totalPages) {
@@ -54,7 +49,6 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
             return prev.concat(res.data.data);
           });
         }
-
       })
       .catch((error) => {
         if (axios.isAxiosError(error)) {
@@ -69,30 +63,8 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
           console.error("Error desconocido:", error);
           setError(["Error con la peticion al servidor"]);
         }
-      }).finally(() => {
-        setLoading(false)
-      });
-  };
-
-  useEffect(() => {
-
-    categoryRequest()
-      .then((res) => {
-        setCategories(res.data.data)
-      }).catch(() => {
-        setError(["Error al cargar las Categorias"])
       })
-  }, [])
-
-  useEffect(() => {
-
-    searchProduct(true);
-  }, [querySeach, filters, sortParmas]);
-
-  useEffect(() => {
-
-    if (currentPage > 1) searchProduct(false);
-  }, [currentPage]);
+  }, [currentPage, filters, querySeach, sortParmas])
 
   return (
     <ProductContext.Provider
@@ -100,11 +72,12 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
         products,
         currentPage,
         error,
-        loading,
-        categories,
         errorSerch,
         isNextPage,
         filters,
+        sortParmas,
+        querySeach,
+        searchProduct,
         setSortParmas,
         setFilters,
         setQuerySeach,

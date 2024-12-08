@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn src/index.ts",
+    "add" : "ts-node-dev src/Data/addproduct.ts",
     "migrate": "npx prisma migrate dev",
     "init": "npx prisma generate && npx prisma migrate dev",
     "studio": "npx prisma studio"

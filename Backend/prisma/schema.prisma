@@ -51,6 +51,7 @@ model Product {
   battery               Int?
   mpxCameraFront        Int?
   mpxCameraBack         Int?
+  ratingAverage         Float                  @default(1)
   inventoryCount        Int                    @default(1)
   category              Category               @relation(fields: [categoryId], references: [id])
   inventoryTransactions InventoryTransaction[]
@@ -102,19 +103,20 @@ model Order {
   pending     Boolean     @default(true)
   user        User        @relation(fields: [userId], references: [id])
   orderItems  OrderItem[]
-  totalAmount Float
+  totalAmount Float       @default(0)
   payment     Payment?
   createdAt   DateTime    @default(now())
 }
 
 model OrderItem {
-  id        String  @id @default(uuid())
+  id        String   @id @default(uuid())
   orderId   String
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id])
   productId String
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
   price     Float
+  createdAt DateTime @default(now())
 }
 
 model Payment {

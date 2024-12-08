@@ -1,5 +1,6 @@
 import { FC } from "react";
-import { FaPhoneSquareAlt, FaAddressCard, FaCity } from "react-icons/fa";
+import { FaPhone, FaMapLocationDot } from "react-icons/fa6";
+import CardModerator from "./CardModerator";
 
 interface SedeCardProps {
   image: string;
@@ -10,21 +11,32 @@ interface SedeCardProps {
 
 const Card: FC<SedeCardProps> = ({ image, phone, municipe, address }) => {
   return (
-    <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-      <img className="rounded-t-lg" src={image} alt="" />
+    <div className="max-w-sm flex flex-col bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <img
+        className="rounded-t-lg min-w-full max-h-56 object-cover"
+        src={image}
+        alt=""
+      />
       <div className="p-5 flex flex-col gap-2">
-        <h5 className="flex items-center text-2xl font-bold tracking-tight text-gray-900">
-          <FaPhoneSquareAlt className="text-blue-400 min-h-9 min-w-9 mr-3" />
+        <span className="flex items-center text-lg font-bold tracking-tight text-gray-900">
+          <FaPhone className="text-blue-500 min-h-5 min-w-5 mr-3" />
           +53{phone}
-        </h5>
-        <p className="flex items-center font-semibold text-large text-gray-900">
-          <FaAddressCard className="text-blue-400 min-h-9 min-w-9 mr-3" />
-          {address}
-        </p>
-        <p className="flex items-center font-semibold text-large text-gray-900">
-          <FaCity className="text-blue-400 min-h-9 min-w-9 mr-3" /> {municipe}
-        </p>
+        </span>
+        <span className="flex items-center font-semibold text-md text-gray-900">
+          <FaMapLocationDot className="text-blue-500 min-h-5 min-w-5 mr-3" />
+          {address} {municipe}
+        </span>
       </div>
+      {[...Array(2)].map((_, index) => {
+        return (
+          <CardModerator
+            key={index}
+            imageModerator="https://readymadeui.com/profile_2.webp"
+            nameModerator="Luis Gonzales"
+            phoneModerator="+5353535353"
+          />
+        );
+      })}
     </div>
   );
 };

@@ -6,7 +6,7 @@ export const ratingProductCreate = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { value } = req.body;
 
-  if (value < 1 || value > 5) {
+  if (value < 0 || value > 5) {
     return res.status(400).json({ error: "El rating debe estar entre 1 y 5." });
   }
 
@@ -58,6 +58,15 @@ export const ratingProductCreate = async (req: Request, res: Response) => {
       0
     );
     const ratingAverage = ratingSum / updatedProduct.Rating.length;
+
+    await prisma.product.update({
+      where: {
+        id: id
+      },
+      data:{
+        ratingAverage: ratingAverage
+      }
+    })
 
     return res.status(200).json({ ratingAverage });
   } catch (error) {

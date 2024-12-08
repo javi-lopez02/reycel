@@ -1,12 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Checkbox, Input, Link } from "@nextui-org/react";
 import { useEffect, useRef, useState } from "react";
 
 import { BiLock, BiMailSend } from "react-icons/bi";
 import { useAuth } from "../../context/auth.context";
 
-function ModalLogin({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: () => void }) {
+function ModalLogin({ isOpen, onOpenChange, onClose }: { isOpen: boolean, onOpenChange: () => void, onClose: () => void }) {
   const [error, setError] = useState<Array<string>>([]);
-  const { errors, signIn } = useAuth()
+  const { errors, signIn, isAuth } = useAuth()
 
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
@@ -25,7 +26,11 @@ function ModalLogin({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (
     setError(errors)
   }, [errors])
 
-
+  useEffect(() => {
+    if (isAuth) {
+      onClose()
+    }
+  }, [isAuth])
 
   const handleSubmit = async () => {
 
@@ -40,6 +45,9 @@ function ModalLogin({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (
     }
 
     signIn({ email: emailRef.current?.value, password: passwordRef.current?.value })
+
+
+
   };
   return (
     <>
@@ -128,7 +136,6 @@ function ModalLogin({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (
                 </Button>
                 <Button color="primary" onClick={() => {
                   handleSubmit()
-                  onClose()
                 }} >
                   Entrar
                 </Button>

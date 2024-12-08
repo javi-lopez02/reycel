@@ -1,4 +1,3 @@
-
 import { FC } from "react";
 import { type Products } from '../../types'
 import { Link } from "react-router-dom";
@@ -6,22 +5,32 @@ import { addItemOrderRequest } from "../../services/order";
 import { useAuth } from "../../context/auth.context";
 import ModalLogin from "../../pages/auth/ModalLogin";
 import { useDisclosure } from "@nextui-org/react";
+import { toast } from 'sonner'
+
 
 const Card: FC<Products> = (product) => {
 
   const { isAuth } = useAuth()
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
-  const handleClikAddProduct = async () => {
+  const handleClikAddProduct = () => {
     if (!isAuth) {
       onOpen()
       return
     }
-    try {
-      await addItemOrderRequest(product.id, 1)
-    } catch (error) {
-      console.log(error)
-    }
+    toast.promise(addItemOrderRequest(product.id, 1), {
+      loading: 'Loading...',
+      success: (res) => {
+        if (res.status !== 200) {
+          toast.warning(`Aviso: ${res.data.message || 'Hubo un problema con la solicitud.'}`);
+          return 'La operación no fue completamente exitosa.';
+        }
+        return `${res.data.message}`;
+      },
+      error: 'Error al añadir un producto al carrito.',
+    });
+
+
   }
 
 
@@ -74,12 +83,10 @@ const Card: FC<Products> = (product) => {
               >
                 <path
                   stroke="currentColor"
-
                   d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"
                 />
                 <path
                   stroke="currentColor"
-
                   d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
                 />
               </svg>
@@ -111,7 +118,6 @@ const Card: FC<Products> = (product) => {
                   stroke="currentColor"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-
                   d="M12 6C6.5 1 1 8 5.8 13l6.2 7 6.2-7C23 8 17.5 1 12 6Z"
                 />
               </svg>
@@ -132,7 +138,7 @@ const Card: FC<Products> = (product) => {
           {
             product.inventoryCount <= 4 && product.inventoryCount !== 0 && (
               <span className="me-2 py-3 text-sm font-medium text-red-400">
-                {`Queda(n) ${product.inventoryCount}, más unidades en camino.`}
+                {`Queda(n) ${product.inventoryCount}, más en camino.`}
               </span>
 
             )
@@ -140,9 +146,24 @@ const Card: FC<Products> = (product) => {
         </div>
         <Link
           to={`/details?p=${product.id}`}
-          className="text-lg overflow-hidden font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
+          className="text-lg overflow-hidden font-semibold min-h-12 leading-tight text-gray-900 hover:underline line-clamp-2"
         >
-          {`${product.name},  Ram ${product.ram}GB, Almacenamiento ${product.storage}GB `}
+          {
+            product.category?.name === "Moviles" && (
+              <>
+                {`${product.name},  Ram ${product.ram}GB, Almacenamiento ${product.storage}GB `}
+              </>
+            )
+          }
+
+          {
+            product.category?.name !== "Moviles" && (
+              <>
+                {`${product.name} `}
+              </>
+            )
+          }
+
         </Link>
 
         <div className="mt-2 flex items-center gap-2">
@@ -151,7 +172,7 @@ const Card: FC<Products> = (product) => {
               {[...Array(5)].map((_, index) => (
                 <svg
                   key={index}
-                  className={`h-5 w-5 fill-current ${product.rating > index ? "text-yellow-500" : "text-gray-300"
+                  className={`h-5 w-5 fill-current ${product.ratingAverage > index ? "text-yellow-500" : "text-gray-300"
                     }`}
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
@@ -160,7 +181,7 @@ const Card: FC<Products> = (product) => {
                 </svg>
               ))}
             </div>
-            <span className="text-gray-600 ml-2">{product.rating} de 5</span>
+            <span className="text-gray-600 ml-2">{product.ratingAverage} de 5</span>
           </div>
         </div>
 
@@ -174,30 +195,31 @@ const Card: FC<Products> = (product) => {
             onClick={handleClikAddProduct}
             className="inline-flex items-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
           >
-            <svg
-              className="-ms-2 me-2 h-5 w-5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-
-                d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6"
-              />
-            </svg>
-            Añadir 
+            <>
+              <svg
+                className="-ms-2 me-2 h-5 w-5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6"
+                />
+              </svg>
+              Añadir
+            </>
           </button>
         </div>
       </div>
-      <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange}></ModalLogin>
+      <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}></ModalLogin>
     </div>
-  )
-}
+  );
+};
 
-export default Card
+export default Card;

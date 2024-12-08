@@ -25,6 +25,6 @@ declare global {
 }
 
 export interface SortItem {
-  field: "createdAt" | "price" | "rating"; // Los campos permitidos
+  field: "createdAt" | "price" | "ratingAverage"; // Los campos permitidos
   order: "asc" | "desc"; // Los valores permitidos
 }

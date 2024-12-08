@@ -24,6 +24,9 @@ app.use(
       "http://localhost:4173",
       "http://localhost:5173",
       "http://localhost:5174",
+      "http://localhost:8000",
+      "http://192.168.227.249:8000",
+
     ],
     credentials: true,
   })
@@ -37,6 +40,7 @@ app.use("/api", product);
 app.use("/api", rating);
 app.use("/api", comment);
 app.use("/api", order);
+
 
 app.use("/public", express.static(path.join(__dirname, "/upload")));
 

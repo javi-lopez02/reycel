@@ -20,7 +20,7 @@ export interface Products {
   name: string;
   description: string;
   price: number;
-  rating: number;
+  ratingAverage: number;
   imagen: string;
   color?: string;
   ram: number;
@@ -29,6 +29,10 @@ export interface Products {
   mpxCameraFront?: number;
   mpxCameraBack?: number;
   inventoryCount: number;
+  category: {
+    name: string;
+    id: string;
+  };
 }
 
 export interface Comment {
@@ -55,6 +59,22 @@ export interface Rating {
   productID: string;
   userID: string;
   value: number;
+}
+
+export interface OrderItem {
+  id: string;
+  price: number;
+  quantity: number;
+  product: Products;
+}
+
+export interface Order {
+  totalAmount: number;
+  id: string;
+  _count: {
+    orderItems: number;
+  };
+  orderItems: OrderItem[];
 }
 
 export type AuthContextType = {
@@ -89,19 +109,20 @@ export interface FiltersType {
 }
 
 export type SortOption = {
-  field: "createdAt" | "price" | "rating"; // Campos permitidos
+  field: "createdAt" | "price" | "ratingAverage"; // Campos permitidos
   order: "asc" | "desc"; // Órdenes permitidas
 };
 
 export type ProductContextType = {
   products: Products[] | [];
   currentPage: number;
-  loading: boolean;
-  categories: Array<Category>;
+  querySeach: string;
   errorSerch: Array<string> | null;
   isNextPage: boolean;
   error: Array<string> | null;
   filters: FiltersType;
+  sortParmas: SortOption[];
+  searchProduct: (value: boolean) => void;
   setSortParmas: (value: Array<SortOption>) => void;
   setFilters: (value: FiltersType) => void;
   setCurrentPage: (value: number) => void;
