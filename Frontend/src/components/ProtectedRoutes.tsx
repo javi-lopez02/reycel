@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../context/auth.context";
 import { Spinner } from '@nextui-org/react'
+import Autorizer from "./Autorizer";
 export const ProtectedRoutes = () => {
   const { loading, isAuth } = useAuth();
 
@@ -14,7 +15,7 @@ export const ProtectedRoutes = () => {
 
   // if (!isAuth && !loading) return <Navigate to="/login" replace />;
 
-  if (!isAuth && !loading) return <h1 className="mt-20">no esta autorizado</h1>;
+  if (!isAuth && !loading) return <Autorizer/>;
 
   return <Outlet />;
 };
