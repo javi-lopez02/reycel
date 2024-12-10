@@ -10,29 +10,7 @@ dotenv.config();
 const TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(`${TOKEN}`);
 
-export const initBot = (req: Request, res: Response) => {
-  bot.start((ctx) => {
-    ctx.reply("HOLA REYCEL, ESPEREMOS A QUE NOS TRANSFIERAN...");
-  });
-
-  bot.action("btn_1", (ctx) => {
-    ctx.answerCbQuery();
-    ctx.reply("Confirmado");
-    res.status(200).send({ success: true, message: "Confirmado" });
-  });
-
-  bot.action("btn_2", (ctx) => {
-    ctx.answerCbQuery();
-    ctx.reply("Denegado");
-    res.status(200).send({ success: true, message: "Denegado" });
-  });
-
-  bot.launch();
-};
-
 export const message = async (req: Request, res: Response) => {
-
-
   
   try {
     await bot.telegram.sendMessage(

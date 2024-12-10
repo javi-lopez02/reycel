@@ -2,6 +2,7 @@ import { Link, Outlet } from "react-router-dom";
 import Notifications from "./Notifications";
 import DropdownComp from "./DropdownMenu";
 import SideBar from "./DrawerSideBar";
+import Avatar from "./Avatar";
 
 function NavBar() {
   return (
@@ -70,6 +71,11 @@ function NavBar() {
             </button>
             <Notifications />
             <DropdownComp />
+            <Avatar
+              image=""
+              user="test"
+              email="test@gmail.com"
+            />
           </div>
         </div>
       </nav>
