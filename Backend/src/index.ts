@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
@@ -16,6 +16,7 @@ dotenv.config();
 
 const TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(`${TOKEN}`);
+
 const app = express();
 const port = 4000;
 
@@ -32,6 +33,7 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());

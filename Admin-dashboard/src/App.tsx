@@ -2,10 +2,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import {NextUIProvider} from "@nextui-org/react";
 import Home from "./pages/Home";
-import SideAndNav from "./components/SideAndNav";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 
+import NavBar from "./components/navbar/NavBar";
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route element={<ProtectedRoutes />}>
-              <Route element={<SideAndNav />}>
+              <Route element={<NavBar />}>
                 <Route path="/" element={<Home />} />
               </Route>
             </Route>

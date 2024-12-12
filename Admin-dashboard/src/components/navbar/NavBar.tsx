@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import Notifications from "./Notifications";
 import DropdownComp from "./DropdownMenu";
+import SideBar from "./DrawerSideBar";
+import Avatar from "./Avatar";
 
 function NavBar() {
   return (
@@ -8,6 +10,7 @@ function NavBar() {
       <nav className="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50">
         <div className="flex flex-wrap justify-between items-center">
           <div className="flex justify-between lg:w-4/5 items-center">
+            <SideBar/>
             <Link to={"/"} className="flex mr-4">
               <img src="logo.png" className="mr-3 h-8" />
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white max-md:hidden">
@@ -23,7 +26,6 @@ function NavBar() {
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                   <svg
                     className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 20 20"
@@ -54,7 +56,6 @@ function NavBar() {
               className="hidden sm:inline-flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-xs px-3 py-1.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
             >
               <svg
-                aria-hidden="true"
                 className="mr-1 -ml-1 w-5 h-5"
                 fill="currentColor"
                 viewBox="0 0 20 20"
@@ -69,10 +70,16 @@ function NavBar() {
               New Widget
             </button>
             <Notifications />
-            <DropdownComp/>
+            <DropdownComp />
+            <Avatar
+              image=""
+              user="test"
+              email="test@gmail.com"
+            />
           </div>
         </div>
       </nav>
+      <Outlet />
     </>
   );
 }
