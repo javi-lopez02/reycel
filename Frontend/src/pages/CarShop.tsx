@@ -9,7 +9,7 @@ import { useDisclosure } from "@nextui-org/react";
 import ModalMessage from "../components/Car/ModalMessage";
 
 const App: React.FC = () => {
-  const {isOpen, onOpen, onClose} = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [order, setOrder] = useState<OrderItem[] | null>(null);
   const [totalAmount, setTotalAmount] = useState(0);
@@ -60,39 +60,13 @@ const App: React.FC = () => {
   return (
     <div className="font-[sans-serif] min-h-screen bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-50 pt-16">
       <div className="max-w-7xl max-lg:max-w-4xl mx-auto p-6">
-        <h2 className="text-2xl font-extrabold text-gray-800">
+        <h2 className="text-2xl font-extrabold text-gray-800 mb-3">
           Tu carrito de compras
         </h2>
 
-        <div className="grid lg:grid-cols-3 gap-4 relative mt-8">
-          <div className="lg:col-span-2 space-y-4">
-            {order !== null &&
-              order.map((orderItem) => {
-                return (
-                  <Card
-                    key={orderItem.product.id}
-                    id={orderItem.id}
-                    product={orderItem.product}
-                    quantity={orderItem.quantity}
-                    handleQuantity={handleQuantity}
-                    setCount={setCount}
-                    setError={setError}
-                    setOrder={setOrder}
-                    setTotalAmount={setTotalAmount}
-                  />
-                );
-              })}
+        <div className="grid grid-cols-[auto_auto] gap-5 max-lg:grid-cols-1">
 
-            {loading && (
-              <div className="w-full flex justify-center pt-4">
-                <Spinner color="primary" />
-              </div>
-            )}
-
-            {error && error.map((err) => toast.error(err))}
-          </div>
-
-          <div className="bg-white h-max rounded-md p-6 shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] sticky top-16">
+          <div className="bg-white h-max rounded-md p-6 shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] max-lg:w-full lg:sticky top-16 ">
             <h3 className="text-xl font-bold text-gray-800">Orden</h3>
 
             <ul className="text-gray-800 text-sm divide-y mt-4">
@@ -121,6 +95,36 @@ const App: React.FC = () => {
             </button>
 
             <ModalMessage isOpen={isOpen} onClose={onClose} />
+          </div>
+
+          <div className="grid  gap-4 relative max-lg:pt-5">
+            <div className="lg:col-span-2 space-y-4">
+              {order !== null &&
+                order.map((orderItem) => {
+                  return (
+                    <Card
+                      key={orderItem.product.id}
+                      id={orderItem.id}
+                      product={orderItem.product}
+                      quantity={orderItem.quantity}
+                      handleQuantity={handleQuantity}
+                      setCount={setCount}
+                      setError={setError}
+                      setOrder={setOrder}
+                      setTotalAmount={setTotalAmount}
+                    />
+                  );
+                })}
+
+              {loading && (
+                <div className="w-full flex justify-center pt-4">
+                  <Spinner color="primary" />
+                </div>
+              )}
+
+              {error && error.map((err) => toast.error(err))}
+            </div>
+
           </div>
         </div>
       </div>
