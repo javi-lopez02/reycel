@@ -9,12 +9,13 @@ import product from "./Routes/product.routes";
 import rating from "./Routes/rating.routes";
 import comment from "./Routes/comment.routes";
 import order from "./Routes/order.routes";
-import { Markup, Telegraf } from "telegraf";
-
-const bot = new Telegraf("7824510445:AAF8C2hIxuJY6iDPfyBs2YySCLiMCy4hwSA");
+import bots from "./Routes/bot.routes";
+import { Telegraf } from "telegraf";
 
 dotenv.config();
 
+const TOKEN = process.env.BOT_TOKEN;
+const bot = new Telegraf(`${TOKEN}`);
 const app = express();
 const port = 4000;
 
@@ -40,29 +41,34 @@ app.use("/api", product);
 app.use("/api", rating);
 app.use("/api", comment);
 app.use("/api", order);
-
+app.use("/api", bots);
 
 app.use("/public", express.static(path.join(__dirname, "/upload")));
 
-//Con esto mandamos el mensaje hola automaticamente cada vez que se accede a la ruta /send-message en el backend esta es una prueba que estuve haciendo....
-app.use("/send-message", async (req, res) => {
-  try {
-    await bot.telegram.sendMessage(
-      1415672973,
-      "hola",
-      Markup.inlineKeyboard([
-        Markup.button.callback("Confirmar", "btn_1"),
-        Markup.button.callback("Denegar", "btn_2"),
-      ])
-    );
-    res.status(200).send({ success: true });
-  } catch (error) {
-    console.error("Error al enviar mensaje a Telegram:", error);
-    res
-      .status(500)
-      .send({ success: false, error: "Error al enviar mensaje a Telegram." });
-  }
-});
+export const initBot = () => {
+  bot.start((ctx) => {
+    ctx.reply("HOLA REYCEL, ESPEREMOS A QUE NOS TRANSFIERAN...");
+    ctx.reply(ctx.chat.id.toString())
+  });
+
+  bot.action("btn_1", (ctx) => {
+    ctx.answerCbQuery();
+    ctx.reply("Confirmado");
+    console.log("Confirmado")
+    //res.status(200).send({ success: true, message: "Confirmado" });
+  });
+
+  bot.action("btn_2", (ctx) => {
+    ctx.answerCbQuery();
+    ctx.reply("Denegado");
+    console.log("Denegado")
+    //res.status(200).send({ success: true, message: "Denegado" });
+  });
+
+  bot.launch();
+};
+
+initBot()
 
 app.listen(port, () => {
   console.log(`Server on port ${port}`);

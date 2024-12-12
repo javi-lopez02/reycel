@@ -7,12 +7,12 @@ import '@smastrom/react-rating/style.css'
 import { useProduct } from "../../context/product.context";
 import { categoryRequest } from "../../services/product";
 import { Category } from "../../types";
-import {toast} from 'sonner'
+import { toast } from 'sonner'
 
 function ModalFilters() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const [rating, setRating] = useState(3)
-  const [selectedColor, setSelectedColor] = useState<SharedSelection>();
+  const [selectedColor, setSelectedColor] = useState<SharedSelection>()
   const [categoria, setCategoria] = useState<Key | null>()
   const [minPrice, setMinPrice] = useState("")
   const [maxPrice, setMaxPrice] = useState("")
