@@ -13,7 +13,7 @@ import {
   verifyTokenRequest,
 } from "../services/auth";
 import Cookies from "js-cookie";
-import { type User, AuthContextType } from "../types.d";
+import { type User, AuthContextType, UserAuth } from "../types.d";
 import axios, { AxiosError } from "axios";
 
 
@@ -37,19 +37,18 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
 
-  const signIn = async (values: User) => {
+  const signIn = async (values: UserAuth) => {
     try {
       const res = await LoginRequest(values);
       setUser(res.data);
       setIsAuth(true);
-
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
-    
+
         if (axiosError.response) {
 
-          setErrors(axiosError.response.data as Array<string>); 
+          setErrors(axiosError.response.data as Array<string>);
 
         } else if (axiosError.request) {
           console.error('No se recibió respuesta:', axiosError.request);
@@ -57,11 +56,11 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       } else {
         console.error('Error desconocido:', error);
       }
-      
+
     }
   };
 
-  const signUp = async (values: User) => {
+  const signUp = async (values: UserAuth) => {
     try {
       console.log(values);
       const res = await RegisterRequest(values);
@@ -70,10 +69,10 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
-    
+
         if (axiosError.response) {
 
-          setErrors(axiosError.response.data as Array<string>); 
+          setErrors(axiosError.response.data as Array<string>);
 
         } else if (axiosError.request) {
           console.error('No se recibió respuesta:', axiosError.request);
@@ -81,7 +80,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       } else {
         console.error('Error desconocido:', error);
       }
-      
+
     }
   };
 
@@ -124,7 +123,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         setUser(res.data);
         setLoading(false);
       } catch (error) {
-        console.log(error);
+        console.log(error)
         setIsAuth(false);
         setLoading(false);
       }

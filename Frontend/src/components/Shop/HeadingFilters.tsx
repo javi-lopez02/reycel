@@ -4,7 +4,7 @@ import ModalFilters from "./ModalFilters"
 import ModalSorting from "./ModalSorting"
 
 function HeadingFilters() {
-  const { filters, sortParmas, setFilters, setCurrentPage, setIsNextPage, setSortParmas } = useProduct()
+  const { sortParmas, setFilters, setCurrentPage, setIsNextPage, setSortParmas } = useProduct()
 
   const handleReset = () => {
     setCurrentPage(1)

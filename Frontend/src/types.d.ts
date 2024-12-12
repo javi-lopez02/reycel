@@ -77,21 +77,19 @@ export interface Order {
   orderItems: OrderItem[];
 }
 
+interface UserAuth{
+  email: string
+  password: string
+  username?: string
+}
+
 export type AuthContextType = {
   user: User | null;
   isAuth: boolean;
   loading: boolean;
   errors: Array<string>;
-  signIn: ({ email, password }: { email: string; password: string }) => void;
-  signUp: ({
-    email,
-    password,
-    username,
-  }: {
-    email: string;
-    password: string;
-    username: string;
-  }) => void;
+  signIn: (value: UserAuth) => Promise<void>;
+  signUp: (value: UserAuth) => Promise<void>;
   logout: () => void;
 };
 

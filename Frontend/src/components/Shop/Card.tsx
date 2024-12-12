@@ -3,9 +3,10 @@ import { type Products } from '../../types'
 import { Link } from "react-router-dom";
 import { addItemOrderRequest } from "../../services/order";
 import { useAuth } from "../../context/auth.context";
-import ModalLogin from "../../pages/auth/ModalLogin";
+//import ModalLogin from "../../pages/auth/ModalLogin";
 import { useDisclosure } from "@nextui-org/react";
 import { toast } from 'sonner'
+import AuthUser from "../../pages/auth/AuthUser";
 
 
 const Card: FC<Products> = (product) => {
@@ -217,7 +218,7 @@ const Card: FC<Products> = (product) => {
           </button>
         </div>
       </div>
-      <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}></ModalLogin>
+      <AuthUser isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}></AuthUser>
     </div>
   );
 };
