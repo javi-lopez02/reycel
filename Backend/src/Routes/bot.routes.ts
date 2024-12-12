@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { initBot, message } from "../Controllers/bot.controller";
+import { message } from "../Controllers/bot.controller";
+import { authMiddleware } from "../Middlewares/middlewares";
+
 
 const router = Router();
 
-router.get("/init", initBot);
-router.get("/message", message)
+//router.get("/init", initBot);
+router.get("/message", authMiddleware ,message)
 
 export default router;

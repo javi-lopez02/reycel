@@ -7,7 +7,8 @@ import Comment from "../components/Details/Comment";
 import FormComment from "../components/Details/FormComment";
 import Star from "../components/Details/Star";
 import { Input, useDisclosure } from "@nextui-org/react";
-import ModalLogin from "./auth/ModalLogin";
+import AuthUser from "./auth/AuthUser";
+// import ModalLogin from "./auth/ModalLogin";
 
 export default function Details() {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -224,7 +225,7 @@ export default function Details() {
         )}
         {error && error.map((err) => toast.error(err))}
 
-        <ModalLogin isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}></ModalLogin>
+        <AuthUser isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}></AuthUser>
       </div>
     </>
   );

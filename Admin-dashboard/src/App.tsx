@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
-//import { NextUIProvider } from "@nextui-org/react";
+import {NextUIProvider} from "@nextui-org/react";
 import Home from "./pages/Home";
 import SideAndNav from "./components/SideAndNav";
 import { AuthProvider } from "./context/AuthContext";

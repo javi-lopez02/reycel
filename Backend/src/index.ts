@@ -10,13 +10,12 @@ import rating from "./Routes/rating.routes";
 import comment from "./Routes/comment.routes";
 import order from "./Routes/order.routes";
 import bots from "./Routes/bot.routes";
-import { Markup, Telegraf } from "telegraf";
-import { initBot } from "./Controllers/bot.controller";
-
-const bot = new Telegraf("7824510445:AAF8C2hIxuJY6iDPfyBs2YySCLiMCy4hwSA");
+import { Telegraf } from "telegraf";
 
 dotenv.config();
 
+const TOKEN = process.env.BOT_TOKEN;
+const bot = new Telegraf(`${TOKEN}`);
 const app = express();
 const port = 4000;
 
@@ -45,6 +44,31 @@ app.use("/api", order);
 app.use("/api", bots);
 
 app.use("/public", express.static(path.join(__dirname, "/upload")));
+
+export const initBot = () => {
+  bot.start((ctx) => {
+    ctx.reply("HOLA REYCEL, ESPEREMOS A QUE NOS TRANSFIERAN...");
+    ctx.reply(ctx.chat.id.toString())
+  });
+
+  bot.action("btn_1", (ctx) => {
+    ctx.answerCbQuery();
+    ctx.reply("Confirmado");
+    console.log("Confirmado")
+    //res.status(200).send({ success: true, message: "Confirmado" });
+  });
+
+  bot.action("btn_2", (ctx) => {
+    ctx.answerCbQuery();
+    ctx.reply("Denegado");
+    console.log("Denegado")
+    //res.status(200).send({ success: true, message: "Denegado" });
+  });
+
+  bot.launch();
+};
+
+initBot()
 
 app.listen(port, () => {
   console.log(`Server on port ${port}`);

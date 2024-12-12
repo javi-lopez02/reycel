@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import colors from "tailwindcss/colors";
+import {nextui} from '@nextui-org/react'
 
 export default {
   content: [
@@ -8,6 +9,8 @@ export default {
 
     // Path to Tremor module
     "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}",
+
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     transparent: "transparent",
@@ -145,5 +148,7 @@ export default {
         /^(fill-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
     },
   ],
+  darkMode: "class",
+  plugins: [nextui()],
   plugins: [require("@headlessui/tailwindcss"), require("@tailwindcss/forms")],
 };

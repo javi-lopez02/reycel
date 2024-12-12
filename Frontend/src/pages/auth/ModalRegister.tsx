@@ -1,14 +1,15 @@
-import { ModalHeader, ModalBody, ModalFooter, Button, Checkbox, Input, Link } from "@nextui-org/react";
 import { useEffect, useRef, useState } from "react";
-import { BiLock, BiMailSend } from "react-icons/bi";
 import { useAuth } from "../../context/auth.context";
+import { Button, Checkbox, Input, Link, ModalBody, ModalFooter, ModalHeader } from "@nextui-org/react";
+import { BiLock, BiMailSend, BiUser } from "react-icons/bi";
 
-function ModalLogin({ onClose, setIsRegister }: { onClose: () => void, setIsRegister: (value: boolean) => void }) {
+function ModalRegister({ onClose, setIsRegister }: { onClose: () => void, setIsRegister: (value: boolean) => void }) {
   const [error, setError] = useState<Array<string>>([]);
-  const { errors, signIn} = useAuth()
+  const { errors, signUp } = useAuth()
 
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
+  const userNameRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (error.length > 0) {
@@ -26,20 +27,22 @@ function ModalLogin({ onClose, setIsRegister }: { onClose: () => void, setIsRegi
   const handleSubmit = async () => {
 
     if (!emailRef.current?.value) {
-      setError([...error, "User name is required"]);
+      setError([...error, "Email name is required"]);
       return;
     }
-
     if (!passwordRef.current?.value) {
       setError([...error, "Password is required"]);
       return
     }
+    if (!userNameRef.current?.value) {
+      setError([...error, "User name is required"]);
+      return;
+    }
 
-    signIn({ email: emailRef.current?.value, password: passwordRef.current?.value })
+    signUp({ email: emailRef.current?.value, password: passwordRef.current?.value, username: userNameRef.current.value })
   };
 
   return (
-
     <>
       <ModalHeader className="flex flex-col gap-1">
         <div
@@ -56,7 +59,7 @@ function ModalLogin({ onClose, setIsRegister }: { onClose: () => void, setIsRegi
       </ModalHeader>
       <ModalBody>
         <h1 className="text-xl font-semibold leading-tight tracking-tight mb-3 text-gray-900 md:text-2xl dark:text-white">
-          Accede a tu cuenta
+          Crea tu cuenta
         </h1>
         {error.length > 0 &&
           error.map((err) => {
@@ -71,6 +74,15 @@ function ModalLogin({ onClose, setIsRegister }: { onClose: () => void, setIsRegi
           })}
         <Input
           autoFocus
+          ref={userNameRef}
+          label="User Name"
+          endContent={
+            <BiUser className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+          }
+          placeholder="Enter your User Name"
+          variant="bordered"
+        />
+        <Input
           ref={emailRef}
           endContent={
             <BiMailSend className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
@@ -102,9 +114,9 @@ function ModalLogin({ onClose, setIsRegister }: { onClose: () => void, setIsRegi
           </Link>
         </div>
         <div className="flex items-center  text-sm font-light text-gray-500 dark:text-gray-400">
-          ¿No tienes cuentas?
-          <div onClick={()=>setIsRegister(true)} className="font-medium ml-3 text-primary-600 hover:underline dark:text-primary-500 cursor-pointer">
-            Regístrate
+          ¿Ya tienes una cuentas?
+          <div onClick={()=>setIsRegister(false)} className="font-medium ml-3 text-primary-600 hover:underline dark:text-primary-500 cursor-pointer">
+            Inicia sesión
           </div>
         </div>
       </ModalBody>
@@ -116,11 +128,11 @@ function ModalLogin({ onClose, setIsRegister }: { onClose: () => void, setIsRegi
         <Button color="primary" onClick={() => {
           handleSubmit()
         }} >
-          Entrar
+          Registrar
         </Button>
       </ModalFooter>
     </>
   );
 }
 
-export default ModalLogin
+export default ModalRegister
