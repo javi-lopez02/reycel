@@ -6,6 +6,6 @@ import { authMiddleware } from "../Middlewares/middlewares";
 const router = Router();
 
 //router.get("/init", initBot);
-router.get("/message", authMiddleware ,message)
+router.post("/message", authMiddleware ,message)
 
 export default router;

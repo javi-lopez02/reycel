@@ -94,7 +94,7 @@ const App: React.FC = () => {
               Realizar Pago
             </button>
 
-            <ModalMessage isOpen={isOpen} onClose={onClose} />
+            <ModalMessage count={count} totalAmount={totalAmount} isOpen={isOpen} onClose={onClose} />
           </div>
 
           <div className="grid  gap-4 relative max-lg:pt-5">

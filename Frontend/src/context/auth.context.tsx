@@ -16,7 +16,6 @@ import Cookies from "js-cookie";
 import { type User, AuthContextType, UserAuth } from "../types.d";
 import axios, { AxiosError } from "axios";
 
-
 export const AuthContext = createContext<AuthContextType | null>(
   null
 );

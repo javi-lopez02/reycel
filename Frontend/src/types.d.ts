@@ -93,6 +93,12 @@ export type AuthContextType = {
   logout: () => void;
 };
 
+export interface TransactionType{
+  transactionID: string
+  price: number
+  productCount: number
+}
+
 export interface Category {
   id: string;
   name: string;

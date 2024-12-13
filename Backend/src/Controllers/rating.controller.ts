@@ -61,12 +61,12 @@ export const ratingProductCreate = async (req: Request, res: Response) => {
 
     await prisma.product.update({
       where: {
-        id: id
+        id: id,
       },
-      data:{
-        ratingAverage: ratingAverage
-      }
-    })
+      data: {
+        ratingAverage: ratingAverage,
+      },
+    });
 
     return res.status(200).json({ ratingAverage });
   } catch (error) {

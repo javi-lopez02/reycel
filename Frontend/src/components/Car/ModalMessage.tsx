@@ -1,5 +1,6 @@
 import {
   Button,
+
   Checkbox,
   Modal,
   ModalBody,
@@ -9,14 +10,58 @@ import {
   Snippet,
   Tooltip,
 } from "@nextui-org/react";
+import { FC, useRef, useState } from "react";
+import { toast } from "sonner";
+import { transactionRequest } from "../../services/transaction";
+import { TransactionType } from "../../types";
+import { io } from "socket.io-client";
 
-export default function ModalMessage({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
+interface Props {
+  count: number,
+  totalAmount: number,
+  isOpen: boolean,
+  onClose: () => void
+}
+
+const ModalMessage: FC<Props> = ({ count, totalAmount, isOpen, onClose }) => {
+  const [fastDelivery, setFastDelivery] = useState(true)
+
+  const inputID = useRef<HTMLInputElement | null>(null)
+
+
+
+  const handleClic = async () => {
+    if (!inputID.current?.value) {
+      toast.error("Debe introducir el id de la transferencia.")
+      return;
+    }
+
+    const socket = io("http://localhost:4000");
+
+    const transactionID = inputID.current.value;
+    socket.emit("registerTransaction", transactionID);
+
+    socket.on("transactionStatus", (data) => {
+      console.log("Estado de la transacción recibido:", data);
+      if (data.status === "confirmed") {
+        toast.success(`Transacción ${data.transactionID} confirmada.`);
+      } else if (data.status === "denied") {
+        toast.error(`Transacción ${data.transactionID} denegada.`);
+      }
+    })
+
+
+    console.log(inputID.current.value)
+    const value: TransactionType = { price: totalAmount, productCount: count, transactionID }
+
+    await transactionRequest(value).then((res) => {
+      toast.success(res.data.message)
+    }).catch((error) => {
+      console.log(error)
+      toast.error("Error con la cinfirmacion de la transferencia.")
+    })
+  }
+
   return (
     <>
       <Modal backdrop={"blur"} isOpen={isOpen} onClose={onClose} size="xl">
@@ -31,22 +76,39 @@ export default function ModalMessage({
                 <ul>
                   <li className="flex space-x-2">
                     <strong className="text-neutral-700/80">Precio: </strong>
-                    <h1 className="font-semibold">500$</h1>
+                    <h1 className="font-semibold">{totalAmount}$</h1>
                   </li>
                   <li className="flex space-x-2">
                     <strong className="text-neutral-700/80">Cantidad de Productos: </strong>
-                    <h1 className="font-semibold">25</h1>
+                    <h1 className="font-semibold">{count}</h1>
                   </li>
                   <li className="flex justify-between">
                     <div className="flex space-x-2">
                       <strong className="text-neutral-700/80">Entrega Rápida: </strong>
                       <h1 className="font-semibold">40$</h1>
                     </div>
-                    <Checkbox defaultSelected color="primary" />
+                    <div className="flex items-center justify-center gap-1">
+                      <Checkbox isSelected={fastDelivery} onValueChange={setFastDelivery} color="primary" />
+                      <Tooltip
+                        content={
+                          <div className="px-1 ">
+                            <div className="text-small font-bold">Acerca de la Transferencia</div>
+                            <div className="text-tiny">
+                              <h1 className="font-medium ">Se aplicará un cargo extra por la entrega de los productos.</h1>
+                            </div>
+                          </div>
+                        }
+                      >
+                        <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+
+                      </Tooltip>
+                    </div>
                   </li>
                   <li className="flex space-x-2">
                     <strong className="text-neutral-700/80">Precio Total: </strong>
-                    <h1 className="font-semibold">540$</h1>
+                    <h1 className="font-semibold">{fastDelivery ? totalAmount + 40 : totalAmount}$</h1>
                   </li>
                 </ul>
                 <div className="flex justify-center items-center pt-4">
@@ -78,16 +140,16 @@ export default function ModalMessage({
                           <div className="text-tiny">
                             <ol type="A">
                               <li className="font-medium pt-2">
-                               - Copie el numero de la trajeta y haga la transferencia.
+                                - Copie el numero de la trajeta y haga la transferencia.
                               </li>
                               <li className="font-medium pt-1">
-                               - Copie el codigo de verificaion del mensaje q le envian.
+                                - Copie el codigo de verificaion del mensaje q le envian.
                               </li>
                               <li className="font-medium pt-1">
-                               - Pegue el codigo en el campo para validar la compra.
+                                - Pegue el codigo en el campo para validar la compra.
                               </li>
                               <li className="font-medium pt-1">
-                               - Espere la confirmación de la compra.
+                                - Espere la confirmación de la compra.
                               </li>
                             </ol>
                           </div>
@@ -101,6 +163,7 @@ export default function ModalMessage({
                     </Tooltip>
                   </div>
                   <input
+                    ref={inputID}
                     className="p-2 pl-4 border focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg w-full flex"
                     type="text"
                     placeholder="ID Transacción"
@@ -111,7 +174,7 @@ export default function ModalMessage({
                 <Button color="danger" variant="light" onPress={onClose}>
                   Cancelar
                 </Button>
-                <Button color="primary" onPress={onClose}>
+                <Button color="primary" onPress={handleClic}>
                   Confirmar
                 </Button>
               </ModalFooter>
@@ -122,3 +185,5 @@ export default function ModalMessage({
     </>
   );
 }
+
+export default ModalMessage
