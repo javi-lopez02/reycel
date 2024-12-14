@@ -37,14 +37,15 @@ export default function SideBar() {
         isOpen={isOpen}
         size="xs"
         placement="left"
+        backdrop="transparent"
         hideCloseButton
         onOpenChange={onOpenChange}
       >
-        <DrawerContent className="bg-gray-800 fixed top-14 lg:mt-1">
+        <DrawerContent className="bg-white border-r border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 z-50 top-16 lg:mt-1">
           {(onClose) => (
             <>
               <DrawerHeader className="flex flex-col gap-1">
-                <form className="flex lg:hidden ml-4 lg:w-4/5 lg:pl-2">
+                <form className="flex lg:hidden">
                   <label className="sr-only">Search</label>
                   <div className="relative mt-1 lg:min-w-full">
                     <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">

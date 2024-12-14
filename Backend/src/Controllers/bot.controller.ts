@@ -11,10 +11,6 @@ const TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(`${TOKEN}`);
 
 export const message = async (req: Request, res: Response) => {
-<<<<<<< HEAD
-  
-=======
->>>>>>> origin/main
   try {
 
     const transactionNumber: number = req.body.transactionNumber

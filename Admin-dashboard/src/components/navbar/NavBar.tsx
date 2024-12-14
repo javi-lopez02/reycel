@@ -9,7 +9,7 @@ function NavBar() {
     <>
       <nav className="bg-white border-b border-gray-200 px-4 py-2.5 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50">
         <div className="flex flex-wrap justify-between items-center">
-          <div className="flex justify-between lg:w-4/5 items-center">
+          <div className="flex justify-between gap-2 lg:w-3/4 items-center">
             <SideBar/>
             <Link to={"/"} className="flex mr-4">
               <img src="logo.png" className="mr-3 h-8" />
@@ -22,7 +22,7 @@ function NavBar() {
             </Link>
             <form className="hidden lg:flex ml-4 lg:w-4/5 lg:pl-2">
               <label className="sr-only">Search</label>
-              <div className="relative mt-1 lg:min-w-full">
+              <div className="relative mt-1 md:min-w-full">
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                   <svg
                     className="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -53,7 +53,7 @@ function NavBar() {
           <div className="flex items-center lg:order-2">
             <button
               type="button"
-              className="hidden sm:inline-flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-xs px-3 py-1.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+              className="hidden md:inline-flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-xs px-3 py-1.5 mr-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
             >
               <svg
                 className="mr-1 -ml-1 w-5 h-5"
@@ -69,6 +69,7 @@ function NavBar() {
               </svg>{" "}
               New Widget
             </button>
+            <div className="flex gap-1">
             <Notifications />
             <DropdownComp />
             <Avatar
@@ -76,6 +77,7 @@ function NavBar() {
               user="test"
               email="test@gmail.com"
             />
+            </div>
           </div>
         </div>
       </nav>
