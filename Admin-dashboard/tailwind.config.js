@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import colors from "tailwindcss/colors";
-import {nextui} from '@nextui-org/react'
+import { nextui } from "@nextui-org/react";
 
 export default {
   content: [
@@ -149,6 +149,9 @@ export default {
     },
   ],
   darkMode: "class",
-  plugins: [nextui()],
-  plugins: [require("@headlessui/tailwindcss"), require("@tailwindcss/forms")],
+  plugins: [
+    nextui(),
+    require("@headlessui/tailwindcss"),
+    //require("@tailwindcss/forms"),
+  ],
 };
