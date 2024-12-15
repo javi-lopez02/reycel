@@ -1,8 +1,12 @@
+import Stadistic from "../components/home/Stadistic";
 
 function Home() {
   return (
-    <div className="pt-16 bg-gray-100 h-screen">Home</div>
-  )
+    <div className="pt-16">
+      <Stadistic />
+    </div>
+    
+  );
 }
 
-export default Home
+export default Home;

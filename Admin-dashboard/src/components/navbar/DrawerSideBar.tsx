@@ -36,6 +36,7 @@ export default function SideBar() {
         isOpen={isOpen}
         size="xs"
         placement="left"
+        backdrop="transparent"
         hideCloseButton
         onOpenChange={onOpenChange}
       >
@@ -43,7 +44,7 @@ export default function SideBar() {
           {() => (
             <>
               <DrawerHeader className="flex flex-col gap-1">
-                <form className="flex lg:hidden ml-4 lg:w-4/5 lg:pl-2">
+                <form className="flex lg:hidden">
                   <label className="sr-only">Search</label>
                   <div className="relative mt-1 lg:min-w-full">
                     <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
