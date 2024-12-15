@@ -5,35 +5,29 @@ import Home from "./pages/Home";
 import NavBar from "./components/navbar/NavBar";
 import User from "./pages/User";
 import Products from "./pages/Products";
-// import { AuthProvider } from "./context/AuthContext";
-// import ProtectedRoutes from "./components/ProtectedRoutes";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoutes from "./components/ProtectedRoutes";
+import { Toaster } from "sonner";
 
 function App() {
   return (
-    <NextUIProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route element={<NavBar />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/user" element={<User />} />
-            <Route path="/product" element={<Products />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-      {/* <AuthProvider>
+    <AuthProvider>
+      <NextUIProvider>
+        <Toaster richColors expand={true} />
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route element={<ProtectedRoutes />}>
               <Route element={<NavBar />}>
                 <Route path="/" element={<Home />} />
+                <Route path="/users" element={<User />} />
+                <Route path="/products" element={<Products />} />
               </Route>
             </Route>
           </Routes>
         </BrowserRouter>
-      </AuthProvider> */}
-    </NextUIProvider>
+      </NextUIProvider>
+    </AuthProvider>
   );
 }
 

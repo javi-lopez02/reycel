@@ -1,4 +1,11 @@
-import React, { SVGProps } from "react";
+import {
+  ChangeEvent,
+  Key,
+  SVGProps,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import {
   Table,
   TableHeader,
@@ -19,6 +26,7 @@ import {
   ChipProps,
   SortDescriptor,
   Tooltip,
+  Spinner,
 } from "@nextui-org/react";
 import { users } from "../Users";
 import {
@@ -26,8 +34,9 @@ import {
   DeleteIcon,
   EditIcon,
   EyeIcon,
+  PlusIcon,
   SearchIcon,
-} from "../Svg";
+} from "../Icons";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -41,6 +50,7 @@ const columns = [
   { name: "NOMBRE", uid: "name", sortable: true },
   { name: "ROLE", uid: "role", sortable: true },
   { name: "EMAIL", uid: "email" },
+  { name: "CREATEDAT", uid: "createdAt", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
@@ -60,23 +70,23 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions", "email"];
 type User = (typeof users)[0];
 
 export default function UsersTable() {
-  const [filterValue, setFilterValue] = React.useState("");
+  const [filterValue, setFilterValue] = useState("");
 
-  const [visibleColumns, setVisibleColumns] = React.useState<Selection>(
+  const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
+  const [statusFilter, setStatusFilter] = useState<Selection>("all");
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "name",
     direction: "ascending",
   });
 
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const headerColumns = React.useMemo(() => {
+  const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
 
     return columns.filter((column) =>
@@ -84,7 +94,7 @@ export default function UsersTable() {
     );
   }, [visibleColumns]);
 
-  const filteredItems = React.useMemo(() => {
+  const filteredItems = useMemo(() => {
     let filteredUsers = [...users];
 
     if (hasSearchFilter) {
@@ -106,14 +116,14 @@ export default function UsersTable() {
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const items = React.useMemo(() => {
+  const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
-  const sortedItems = React.useMemo(() => {
+  const sortedItems = useMemo(() => {
     return [...items].sort((a: User, b: User) => {
       const first = a[sortDescriptor.column as keyof User] as number;
       const second = b[sortDescriptor.column as keyof User] as number;
@@ -123,7 +133,7 @@ export default function UsersTable() {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
+  const renderCell = useCallback((user: User, columnKey: Key) => {
     const cellValue = user[columnKey as keyof User];
 
     switch (columnKey) {
@@ -156,7 +166,7 @@ export default function UsersTable() {
         );
       case "actions":
         return (
-          <div className="relative flex justify-end items-center gap-2">
+          <div className="relative flex justify-center items-center gap-2">
             <Tooltip content="Details">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                 <EyeIcon />
@@ -179,27 +189,27 @@ export default function UsersTable() {
     }
   }, []);
 
-  const onNextPage = React.useCallback(() => {
+  const onNextPage = useCallback(() => {
     if (page < pages) {
       setPage(page + 1);
     }
   }, [page, pages]);
 
-  const onPreviousPage = React.useCallback(() => {
+  const onPreviousPage = useCallback(() => {
     if (page > 1) {
       setPage(page - 1);
     }
   }, [page]);
 
-  const onRowsPerPageChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const onRowsPerPageChange = useCallback(
+    (e: ChangeEvent<HTMLSelectElement>) => {
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
     []
   );
 
-  const onSearchChange = React.useCallback((value?: string) => {
+  const onSearchChange = useCallback((value?: string) => {
     if (value) {
       setFilterValue(value);
       setPage(1);
@@ -208,12 +218,12 @@ export default function UsersTable() {
     }
   }, []);
 
-  const onClear = React.useCallback(() => {
+  const onClear = useCallback(() => {
     setFilterValue("");
     setPage(1);
   }, []);
 
-  const topContent = React.useMemo(() => {
+  const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
@@ -275,6 +285,9 @@ export default function UsersTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
+            <Button color="success" endContent={<PlusIcon />}>
+              Add New
+            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -304,14 +317,14 @@ export default function UsersTable() {
     onClear,
   ]);
 
-  const bottomContent = React.useMemo(() => {
+  const bottomContent = useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center">
         <Pagination
           isCompact
           showControls
           showShadow
-          color="primary"
+          color="success"
           page={page}
           total={pages}
           onChange={setPage}
@@ -347,7 +360,7 @@ export default function UsersTable() {
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
       classNames={{
-        wrapper: "max-h-[764px]",
+        wrapper: "max-h-[600px]",
       }}
       sortDescriptor={sortDescriptor}
       topContent={topContent}
@@ -365,7 +378,12 @@ export default function UsersTable() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
+      <TableBody
+        isLoading={true}
+        loadingContent={<Spinner color="white" />}
+        emptyContent={"No users found"}
+        items={sortedItems}
+      >
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

@@ -31,3 +31,27 @@ export interface Users {
     orders: number;
   };
 }
+
+export interface Products {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  ratingAverage: number;
+  imagen: string;
+  color?: string;
+  ram: number;
+  storage: number;
+  battery?: number;
+  mpxCameraFront?: number;
+  mpxCameraBack?: number;
+  inventoryCount: number;
+  category: {
+    name: string;
+    id: string;
+  };
+}
+export interface Category {
+  id: string;
+  name: string;
+}
