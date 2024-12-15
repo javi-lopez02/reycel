@@ -134,3 +134,17 @@ export type ProductContextType = {
   setErrorSearch: (value: Array<string> | null) => void;
   setQuerySeach: (value: string) => void;
 };
+
+
+export interface Sedes {
+  id?: string;
+  direction: string;
+  image: string;
+  phone: number;
+  warker: {
+    id: string;
+    email: string;
+    username: string;
+    image: string
+  }[];
+}

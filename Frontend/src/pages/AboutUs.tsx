@@ -1,22 +1,50 @@
+import { useEffect, useState } from "react";
 import Card from "../components/AboutUs/Card";
 import "../index.css";
+import { getSedeRequest } from "../services/sedes";
+import { Spinner } from "@nextui-org/spinner";
+import { toast } from "sonner";
+import { Sedes } from "../types";
 
 export default function AboutUs() {
+  const [sedes, setSedes] = useState<Array<Sedes> | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Array<string> | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    getSedeRequest()
+      .then((res) => {
+        setSedes(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        setError(["Ocurrió un error con la petición"]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <div className="flex flex-col p-20 items-center justify-between gap-8">
       <h1 className="text-3xl font-semibold">Nuestras Sedes</h1>
+      {loading && <Spinner color="primary" size="md" />}
+      {error && error.map((err) => toast.error(err))}
       <div className="grid min-w-full xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-10">
-        {[...Array(9)].map((_, index) => {
-          return (
-            <Card
-              key={index}
-              image="https://cdn.pixabay.com/photo/2023/03/06/23/44/marble-7834693_1280.jpg"
-              address="Calle Daoiz E/ San Carlos y Compostela #10278"
-              phone={53535353}
-              municipe="Matanzas"
-            />
-          );
-        })}
+        {sedes &&
+          sedes.map((sede) => {
+            return (
+              <Card
+                key={sede.id}
+                image={sede.image}
+                address={sede.direction}
+                phone={sede.phone}
+                warkers={sede.warker}
+              />
+            );
+          })}
       </div>
     </div>
   );

@@ -51,7 +51,7 @@ function ModalRegister({ onClose, setIsRegister }: { onClose: () => void, setIsR
         >
           <img
             className="w-8 h-8 mr-2"
-            src="./logo.png"
+            src="./logo.webp"
             alt="logo"
           />
           Reycel

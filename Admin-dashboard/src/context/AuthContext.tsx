@@ -10,6 +10,7 @@ import {
 import {loginRequest, LogoutRequest, verifyTokenRequest} from '../services/auth'
 import Cookies from "js-cookie";
 import axios, { AxiosError } from "axios";
+import { AuthContextType, User, UserLogin } from "../type";
 
 
 export const AuthContext = createContext<AuthContextType | null>(

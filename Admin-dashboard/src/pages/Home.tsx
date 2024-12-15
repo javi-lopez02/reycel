@@ -1,7 +1,7 @@
 
 function Home() {
   return (
-    <div>Home</div>
+    <div className="pt-16 bg-gray-100 h-screen">Home</div>
   )
 }
 

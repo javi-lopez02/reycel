@@ -13,6 +13,8 @@ import comment from "./Routes/comment.routes";
 import order from "./Routes/order.routes";
 import bots from "./Routes/bot.routes";
 import payment from './Routes/payment.routes'
+import sedes from './Routes/sedes.routes'
+import users from './Routes/user.routes'
 
 import { initBot } from "./Controllers/bot.controller";
 
@@ -43,10 +45,14 @@ app.use("/api", comment);
 app.use("/api", order);
 app.use("/api", bots);
 app.use("/api", payment)
+app.use("/api", sedes)
+app.use("/api", users)
+
+
 
 app.use("/public", express.static(path.join(__dirname, "/upload")));
 
-initBot();
+//initBot();
 
 io.on("connection", (socket: any) => {
   console.log("Cliente conectado:", socket.id);

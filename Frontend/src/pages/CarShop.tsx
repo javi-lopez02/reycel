@@ -66,7 +66,7 @@ const App: React.FC = () => {
 
         <div className="grid grid-cols-[auto_auto] gap-5 max-lg:grid-cols-1">
 
-          <div className="bg-white h-max rounded-md p-6 shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] max-lg:w-full lg:sticky top-16 ">
+          <div className="bg-white h-max rounded-md p-6 shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] max-lg:w-full lg:max-w-[335px] lg:sticky top-16 ">
             <h3 className="text-xl font-bold text-gray-800">Orden</h3>
 
             <ul className="text-gray-800 text-sm divide-y mt-4">
