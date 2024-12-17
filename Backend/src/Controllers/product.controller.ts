@@ -26,11 +26,11 @@ export const getProductID = async (req: Request, res: Response) => {
           },
         },
         category: {
-          select:{
+          select: {
             name: true,
-            id: true
-          }
-        }
+            id: true,
+          },
+        },
       }, // Incluye los ratings asociados
     });
 
@@ -107,13 +107,13 @@ export const searchProduct = async (req: Request, res: Response) => {
             },
           },
           {
-            category:{
-              name:{
+            category: {
+              name: {
                 contains: search,
-                mode: "insensitive"
-              }
-            }
-          }
+                mode: "insensitive",
+              },
+            },
+          },
         ],
         AND: [
           {
@@ -131,18 +131,18 @@ export const searchProduct = async (req: Request, res: Response) => {
             color: color,
           },
           {
-            ratingAverage: rating
-          }
+            ratingAverage: rating,
+          },
         ],
       },
       include: {
         Rating: true,
         category: {
-          select:{
+          select: {
             name: true,
-            id: true
-          }
-        }
+            id: true,
+          },
+        },
       },
       orderBy,
       skip: skip,
@@ -165,13 +165,13 @@ export const searchProduct = async (req: Request, res: Response) => {
             },
           },
           {
-            category:{
-              name:{
+            category: {
+              name: {
                 contains: search,
-                mode: "insensitive"
-              }
-            }
-          }
+                mode: "insensitive",
+              },
+            },
+          },
         ],
         AND: [
           {
@@ -189,8 +189,8 @@ export const searchProduct = async (req: Request, res: Response) => {
             color: color,
           },
           {
-            ratingAverage: rating
-          }
+            ratingAverage: rating,
+          },
         ],
       },
     });
@@ -220,5 +220,41 @@ export const searchProduct = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json(["Internal server error"]);
+  }
+};
+
+export const getProducts = async (req: Request, res: Response) => {
+  try {
+
+    const products = await prisma.product.findMany({
+      include: {
+        comment: true,
+        Rating: true,
+        category: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+      },
+      take: 1000000, //quitar esto !!!!!
+    });
+
+    res.status(200).json({
+      data: products,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Internal Server Error');
   }
 };

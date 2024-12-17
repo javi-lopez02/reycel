@@ -25,12 +25,12 @@ import {
   DeleteIcon,
   EditIcon,
   EyeIcon,
-  PlusIcon,
   SearchIcon,
 } from "../Icons";
 import { Products as Product } from "../../type";
 import useProduct from "../../customHooks/useProduct";
 import { toast } from "sonner";
+import ModalAddProduct from "./ModalAddProduct";
 
 export function Capitalize(s: string) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
@@ -40,8 +40,9 @@ const columns = [
   { name: "NOMBRE", uid: "name", sortable: true },
   { name: "CATEGORIA", uid: "category", sortable: true },
   { name: "PRECIO", uid: "price", sortable: true },
-  { name: "RATINGAVERAGE", uid: "ratingAverage", sortable: true },
+  { name: "RATING", uid: "ratingAverage", sortable: true },
   { name: "CANTIDAD", uid: "quantity", sortable: true },
+  { name: "FECHA DE CREACIÓN", uid: "createdAt", sortable: true },
   { name: "ACCIONES", uid: "actions" },
 ];
 
@@ -51,6 +52,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "category",
   "quantity",
   "actions",
+  "createdAt",
   "ratingAverage",
 ];
 
@@ -119,7 +121,7 @@ export default function ProductTable() {
 
       return sortDescriptor?.direction === "descending" ? -cmp : cmp;
     });
-    
+
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
     return sorted.slice(start, end);
@@ -130,6 +132,31 @@ export default function ProductTable() {
     sortDescriptor?.column,
     sortDescriptor?.direction,
   ]);
+
+  const formatearFecha = (isoString: string) => {
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
+
+    const fecha = new Date(isoString);
+
+    const dia = fecha.getUTCDate();
+    const mes = meses[fecha.getUTCMonth()];
+    const anio = fecha.getUTCFullYear();
+
+    return `${dia} ${mes} ${anio}`;
+  };
 
   const renderCell = useCallback((product: Product, columnKey: Key) => {
     const cellValue = product[columnKey as keyof Product];
@@ -175,10 +202,31 @@ export default function ProductTable() {
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {product.category.name} {/* Accede a una subpropiedad */}
+              {product.category.name}
             </p>
           </div>
         );
+      case "createdAt": {
+        const calcularMesesDiferencia = (fecha: string) => {
+          const fechaCreacion = new Date(fecha);
+          const fechaActual = new Date();
+          const diferenciaMeses =
+            (fechaActual.getFullYear() - fechaCreacion.getFullYear()) * 12 +
+            (fechaActual.getMonth() - fechaCreacion.getMonth());
+          return diferenciaMeses;
+        };
+
+        const mesesDiferencia = calcularMesesDiferencia(product.createdAt);
+        const textoColor = mesesDiferencia > 3 ? "text-red-500" : "text-green-700"; // Cambia a rojo si tiene más de 3 meses
+
+        return (
+          <div className="flex justify-center">
+            <p className={`text-bold text-small capitalize  ${textoColor}`}>
+              {formatearFecha(product.createdAt)}
+            </p>
+          </div>
+        );
+      }
       case "price":
         return (
           <div className="flex flex-col ml-2">
@@ -345,9 +393,7 @@ export default function ProductTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />}>
-              Nuevo Producto
-            </Button>
+           <ModalAddProduct/>
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -436,7 +482,7 @@ export default function ProductTable() {
             <TableColumn
               key={column.uid}
               align={
-                column.uid === "actions" || column.uid === "ratingAverage"
+                column.uid === "actions" || column.uid === "ratingAverage" || column.uid === "createdAt"
                   ? "center"
                   : "start"
               }

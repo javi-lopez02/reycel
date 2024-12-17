@@ -40,16 +40,14 @@ export interface Products {
   ratingAverage: number;
   imagen: string;
   color?: string;
-  ram: number;
-  storage: number;
+  ram?: number;
+  storage?: number;
   battery?: number;
+  createdAt: string,
   mpxCameraFront?: number;
   mpxCameraBack?: number;
   inventoryCount: number;
-  category: {
-    name: string;
-    id: string;
-  };
+  category: Category
 }
 export interface Category {
   id: string;
