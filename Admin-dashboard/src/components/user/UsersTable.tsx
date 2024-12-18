@@ -27,6 +27,7 @@ import {
   SortDescriptor,
   Tooltip,
   Spinner,
+  useDisclosure,
 } from "@nextui-org/react";
 import { users } from "../Users";
 import {
@@ -37,6 +38,7 @@ import {
   PlusIcon,
   SearchIcon,
 } from "../Icons";
+import ModalAddUser from "./ModalAddUser";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -70,6 +72,8 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions", "email"];
 type User = (typeof users)[0];
 
 export default function UsersTable() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [filterValue, setFilterValue] = useState("");
 
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -285,9 +289,10 @@ export default function UsersTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="success" endContent={<PlusIcon />}>
-              Add New
+            <Button color="primary" endContent={<PlusIcon />} onPress={onOpen}>
+              Nuevo Usuario
             </Button>
+            <ModalAddUser isOpen={isOpen} onClose={onClose} />
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -300,9 +305,9 @@ export default function UsersTable() {
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
             >
-              <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
+              <option value="20">20</option>
             </select>
           </label>
         </div>
@@ -315,6 +320,9 @@ export default function UsersTable() {
     onSearchChange,
     onRowsPerPageChange,
     onClear,
+    onClose,
+    isOpen,
+    onOpen,
   ]);
 
   const bottomContent = useMemo(() => {

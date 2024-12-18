@@ -182,7 +182,7 @@ export default function ProductTable() {
       case "price":
         return (
           <div className="flex flex-col ml-2">
-            <p className="text-bold text-small capitalize">{product.price} $</p>
+            <p className="text-bold text-small capitalize">${product.price}</p>
           </div>
         );
       case "ratingAverage":
@@ -360,9 +360,9 @@ export default function ProductTable() {
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
             >
-              <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
+              <option value="20">20</option>
             </select>
           </label>
         </div>

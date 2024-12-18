@@ -4,7 +4,7 @@ export default function Stadistic() {
   return (
     <div className="bg-gray-50 flex items-center justify-center font-sans py-10">
       <div className="grid lg:grid-cols-4 sm:grid-cols-2 gap-12 rounded-3xl ">
-        <Link to={"/user"}>
+        <Link to={"/users"}>
           <div className="bg-white shadow-[0_4px_24px_-8px_rgba(0,0,0,0.2)] text-center p-2 rounded-2xl">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +44,7 @@ export default function Stadistic() {
           </h3>
           <p className="text-base font-semibold mt-3">Ventas Totales </p>
         </div>
-        <Link to={"/product"}>
+        <Link to={"/products"}>
           <div className="bg-white shadow-[0_4px_24px_-8px_rgba(0,0,0,0.2)] text-center p-2 rounded-2xl">
             <svg
               xmlns="http://www.w3.org/2000/svg"
