@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { SortItem } from "../types";
+import { message } from "./bot.controller";
 
 const prisma = new PrismaClient();
 
@@ -225,7 +226,6 @@ export const searchProduct = async (req: Request, res: Response) => {
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
-
     const products = await prisma.product.findMany({
       include: {
         comment: true,
@@ -240,8 +240,19 @@ export const getProducts = async (req: Request, res: Response) => {
       take: 1000000, //quitar esto !!!!!
     });
 
+    const productWithRatings = products.map((product) => ({
+      ...product,
+      rating:
+        product.Rating.length > 0
+          ? (
+              product.Rating.reduce((sum, rating) => sum + rating.value, 0) /
+              product.Rating.length
+            ).toFixed(1)
+          : 0,
+    }));
+
     res.status(200).json({
-      data: products,
+      data: productWithRatings,
     });
   } catch (error) {
     console.log("Error:", error);
@@ -249,12 +260,88 @@ export const getProducts = async (req: Request, res: Response) => {
   }
 };
 
+export const createProduct = async (req: Request, res: Response) => {
+  try {
+    const {
+      name,
+      description,
+      categoryId,
+      price,
+      imagen,
+      inventoryCount,
+      rating,
+    } = req.body;
+
+    const userId = req.userId;
+
+    const product = await prisma.product.create({
+      data: {
+        name,
+        description,
+        categoryId,
+        price,
+        imagen,
+        inventoryCount,
+      },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    await prisma.rating.create({
+      data: {
+        productID: product.id,
+        userID: userId,
+        value: rating,
+      },
+    });
+
+    res.status(200).json({
+      data: product
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
 
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
-    
+    const { id } = req.params;
+
+    const userId = req.userId;
+
+    await prisma.rating.deleteMany({
+      where: {
+        AND: [
+          {
+            productID: id,
+          },
+          {
+            userID: userId,
+          },
+        ],
+      },
+    });
+
+    const product = await prisma.product.delete({
+      where: {
+        id,
+      },
+    });
+
+    if (!product) {
+      return res.status(404).json({ message: "Producto no encontrado" });
+    }
+
+    return res.status(200).json({ message: "Producto eliminado con exito" });
   } catch (error) {
-    console.log('Error:', error);
-    res.status(500).send('Internal Server Error');
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
   }
 };

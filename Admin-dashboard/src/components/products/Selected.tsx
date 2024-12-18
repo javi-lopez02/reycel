@@ -8,9 +8,9 @@ export default function Selected() {
   return (
     <>
       <Select
+        name="selected"
         isRequired
         className="max-w-xs"
-        defaultSelectedKeys={["cat"]}
         labelPlacement="outside"
         label="Categoría:"
         placeholder="Selecciona una categoría"

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { authMiddleware } from "../Middlewares/middlewareAdmin";
 import {
+  createProduct,
+  deleteProduct,
   getProductID,
   getProducts,
   searchProduct,
@@ -39,5 +41,10 @@ router.get("/products/category", getCategory);
 router.get("/products", getProductID);
 
 router.get("/product", authMiddleware, getProducts);
+
+router.post("/product", authMiddleware, createProduct);
+
+router.delete("/product/:id", authMiddleware, deleteProduct);
+
 
 export default router;
