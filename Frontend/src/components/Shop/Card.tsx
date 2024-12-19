@@ -173,7 +173,7 @@ const Card: FC<Products> = (product) => {
               {[...Array(5)].map((_, index) => (
                 <svg
                   key={index}
-                  className={`h-5 w-5 fill-current ${product.ratingAverage > index ? "text-yellow-500" : "text-gray-300"
+                  className={`h-5 w-5 fill-current ${product.rating -0.5 > index ? "text-yellow-500" : "text-gray-300"
                     }`}
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
@@ -182,7 +182,7 @@ const Card: FC<Products> = (product) => {
                 </svg>
               ))}
             </div>
-            <span className="text-gray-600 ml-2">{product.ratingAverage} de 5</span>
+            <span className="text-gray-600 ml-2">{product.rating} de 5</span>
           </div>
         </div>
 

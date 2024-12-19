@@ -20,7 +20,7 @@ export interface Products {
   name: string;
   description: string;
   price: number;
-  ratingAverage: number;
+  rating: number;
   imagen: string;
   color?: string;
   ram: number;

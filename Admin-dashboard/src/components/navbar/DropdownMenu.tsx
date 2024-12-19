@@ -22,9 +22,9 @@ export default function DropdownComp() {
           </svg>
         </button>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent className="p-0 bg-gray-50">
         <div
-          className="overflow-hidden z-50 my-4 max-w-sm text-base list-none bg-white rounded divide-y divide-gray-100 shadow-lg dark:bg-gray-700 dark:divide-gray-600"
+          className="overflow-hidden z-50 mt-2 rounded-xl max-w-sm text-base list-none bg-white  divide-y divide-gray-100 dark:bg-gray-700 dark:divide-gray-600"
           id="apps-dropdown"
         >
           <div className="block py-2 px-4 text-base font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

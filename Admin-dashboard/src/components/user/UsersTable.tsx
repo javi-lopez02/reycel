@@ -171,7 +171,7 @@ export default function UsersTable() {
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Details">
+            <Tooltip content="Details" color="danger">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                 <EyeIcon />
               </span>

@@ -49,7 +49,7 @@ function NavBar() {
               </div>
             </form>
           </div>
-          <div className="flex items-center lg:order-2">
+          <div className="flex items-center lg:order-2 space-x-2">
             <Notifications />
             <DropdownComp />
             <Avatar image="" user="test" email="test@gmail.com" />

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { productRequest } from "../services/product";
+import { getProductRequest } from "../services/product";
 import { Category, Products } from "../type";
 import { categoryRequest } from "../services/category";
 
@@ -12,7 +12,7 @@ function useProduct() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    productRequest()
+    getProductRequest()
       .then((res) => {
         setProducts(res.data.data);
       })
@@ -33,7 +33,7 @@ function useProduct() {
       });
   }, []);
 
-  return { products, category, error, loading };
+  return { products, category, error, loading, setProducts };
 }
 
 export default useProduct;

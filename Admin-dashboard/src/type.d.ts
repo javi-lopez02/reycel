@@ -37,19 +37,11 @@ export interface Products {
   name: string;
   description: string;
   price: number;
-  ratingAverage: number;
+  rating: number;
   imagen: string;
-  color?: string;
-  ram: number;
-  storage: number;
-  battery?: number;
-  mpxCameraFront?: number;
-  mpxCameraBack?: number;
+  createdAt: string,
   inventoryCount: number;
-  category: {
-    name: string;
-    id: string;
-  };
+  category: Category
 }
 export interface Category {
   id: string;

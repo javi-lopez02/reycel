@@ -87,7 +87,7 @@ export default function Shop() {
                         price={product.price}
                         ram={product.ram}
                         inventoryCount={product.inventoryCount}
-                        ratingAverage={product.ratingAverage}
+                        rating={product.rating}
                         storage={product.storage}
                       />
                     )
