@@ -6,6 +6,7 @@ import {
   getProductID,
   getProducts,
   searchProduct,
+  updateProduct,
 } from "../Controllers/product.controller";
 import { getCategory } from "../Controllers/category.controller";
 const router = Router();
@@ -43,6 +44,8 @@ router.get("/products", getProductID);
 router.get("/product", authMiddleware, getProducts);
 
 router.post("/product", authMiddleware, createProduct);
+
+router.put("/product/:id", authMiddleware, updateProduct);
 
 router.delete("/product/:id", authMiddleware, deleteProduct);
 

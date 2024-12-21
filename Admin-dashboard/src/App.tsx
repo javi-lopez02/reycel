@@ -11,23 +11,23 @@ import { Toaster } from "sonner";
 
 function App() {
   return (
-    <AuthProvider>
-      <NextUIProvider>
-        <Toaster richColors expand={true} />
-        <BrowserRouter>
+    <NextUIProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <Toaster richColors expand={true} />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route element={<ProtectedRoutes />}>
               <Route element={<NavBar />}>
-                <Route path="/" element={<Home/>} />
+                <Route path="/" element={<Home />} />
                 <Route path="/users" element={<User />} />
                 <Route path="/products" element={<Products />} />
               </Route>
             </Route>
           </Routes>
-        </BrowserRouter>
-      </NextUIProvider>
-    </AuthProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </NextUIProvider>
   );
 }
 

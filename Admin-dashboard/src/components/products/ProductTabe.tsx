@@ -20,12 +20,14 @@ import {
   Tooltip,
   User,
   Spinner,
+  useDisclosure,
 } from "@nextui-org/react";
 import {
   ChevronDownIcon,
   DeleteIcon,
   EditIcon,
   EyeIcon,
+  PlusIcon,
   SearchIcon,
 } from "../Icons";
 import { Products as Product } from "../../type";
@@ -59,6 +61,20 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 export default function ProductTable() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  const handleAddProduct = () => {
+    setSelectedProduct(null);
+    onOpen();
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setSelectedProduct(product);
+    onOpen();
+  };
+
   const {
     category: categoryOptions,
     products,
@@ -304,9 +320,14 @@ export default function ProductTable() {
               </span>
             </Tooltip>
             <Tooltip content="Edit product">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <button
+                onClick={() => {
+                  handleEditProduct(product);
+                }}
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+              >
                 <EditIcon />
-              </span>
+              </button>
             </Tooltip>
             <Tooltip color="danger" content="Delete product">
               <button
@@ -423,7 +444,13 @@ export default function ProductTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <ModalAddProduct setProducts={setProducts} />
+            <Button
+              color="primary"
+              onPress={handleAddProduct}
+              endContent={<PlusIcon />}
+            >
+              Nuevo Producto
+            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -539,6 +566,12 @@ export default function ProductTable() {
           )}
         </TableBody>
       </Table>
+      <ModalAddProduct
+        isOpen={isOpen}
+        onClose={onClose}
+        setProducts={setProducts}
+        {...selectedProduct}
+      />
     </>
   );
 }
