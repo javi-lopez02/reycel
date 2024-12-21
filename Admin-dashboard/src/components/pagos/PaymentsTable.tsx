@@ -26,10 +26,9 @@ import {
   ChipProps,
   SortDescriptor,
   Tooltip,
-  Spinner,
+//   Spinner,
   useDisclosure,
 } from "@nextui-org/react";
-import { users } from "../Users";
 import {
   ChevronDownIcon,
   DeleteIcon,
@@ -38,7 +37,8 @@ import {
   PlusIcon,
   SearchIcon,
 } from "../Icons";
-import ModalAddUser from "./ModalAddUser";
+import { payments } from "../Payments";
+import ModalAddPayment from "./ModalAddPAyment";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -49,29 +49,40 @@ export function Capitalize(s: string) {
 }
 
 const columns = [
-  { name: "NOMBRE", uid: "name", sortable: true },
+  { name: "USUARIO", uid: "username", sortable: true },
   { name: "ROLE", uid: "role", sortable: true },
+  { name: "PRECIO TOTAL", uid: "price", sortable: true },
+  { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
+  { name: "FECHA", uid: "date" },
   { name: "EMAIL", uid: "email" },
-  { name: "CREATEDAT", uid: "createdAt", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
 
 const statusOptions = [
-  { name: "ONLINE", uid: "online" },
-  { name: "OFFLINE", uid: "offline" },
+  { name: "COMPLETADO", uid: "completed" },
+  { name: "PENDIENTE", uid: "pendient" },
+  { name: "CANCELADO", uid: "canceled" },
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  online: "success",
-  offline: "danger",
+  completed: "success",
+  pendient: "warning",
+  canceled: "danger",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions", "email"];
+const INITIAL_VISIBLE_COLUMNS = [
+  "username",
+  "role",
+  "price",
+  "date",
+  "status",
+  "actions",
+];
 
-type User = (typeof users)[0];
+type Payment = (typeof payments)[0];
 
-export default function UsersTable() {
+export default function PaymentsTable() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
@@ -99,23 +110,23 @@ export default function UsersTable() {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredPayments = [...payments];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredPayments = filteredPayments.filter((payment) =>
+        payment.username.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
+      filteredPayments = filteredPayments.filter((payment) =>
+        Array.from(statusFilter).includes(payment.status)
       );
     }
 
-    return filteredUsers;
+    return filteredPayments;
   }, [filterValue, statusFilter, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
@@ -128,28 +139,26 @@ export default function UsersTable() {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
+    return [...items].sort((a: Payment, b: Payment) => {
+      const first = a[sortDescriptor.column as keyof Payment] as number;
+      const second = b[sortDescriptor.column as keyof Payment] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = useCallback((user: User, columnKey: Key) => {
-    const cellValue = user[columnKey as keyof User];
+  const renderCell = useCallback((payments: Payment, columnKey: Key) => {
+    const cellValue = payments[columnKey as keyof Payment];
 
     switch (columnKey) {
-      case "name":
+      case "username":
         return (
           <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.username}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
+            avatarProps={{ radius: "lg", src: payments.avatar }}
+            description={payments.username}
+            name={payments.name}
+          />
         );
       case "role":
         return (
@@ -161,17 +170,23 @@ export default function UsersTable() {
         return (
           <Chip
             className="capitalize"
-            color={statusColorMap[user.status]}
+            color={statusColorMap[payments.status]}
             size="sm"
             variant="flat"
           >
             {cellValue}
           </Chip>
         );
+      case "date":
+        return (
+          <div>
+            <p className="text-bold text-small capitalize">{cellValue}</p>
+          </div>
+        );
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Details" color="danger">
+            <Tooltip content="Details">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                 <EyeIcon />
               </span>
@@ -289,15 +304,15 @@ export default function UsersTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />} onPress={onOpen}>
-              Nuevo Usuario
+            <Button color="success" endContent={<PlusIcon />} onPress={onOpen}>
+              Nuevo Pago
             </Button>
-            <ModalAddUser isOpen={isOpen} onClose={onClose} />
+            <ModalAddPayment isOpen={isOpen} onClose={onClose} />
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} usuarios
+            Total {payments.length} pagos
           </span>
           <label className="flex items-center text-default-400 text-small">
             Filas por páginas:
@@ -388,7 +403,7 @@ export default function UsersTable() {
       </TableHeader>
       <TableBody
         isLoading={true}
-        loadingContent={<Spinner color="white" />}
+        // loadingContent={<Spinner color="white" />}
         emptyContent={"No users found"}
         items={sortedItems}
       >

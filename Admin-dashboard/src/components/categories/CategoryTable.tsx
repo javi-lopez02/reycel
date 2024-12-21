@@ -19,17 +19,14 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  Chip,
-  User,
   Pagination,
   Selection,
-  ChipProps,
   SortDescriptor,
   Tooltip,
-  Spinner,
+  // Spinner,
   useDisclosure,
 } from "@nextui-org/react";
-import { users } from "../Users";
+import { categories } from "../Categories";
 import {
   ChevronDownIcon,
   DeleteIcon,
@@ -38,7 +35,7 @@ import {
   PlusIcon,
   SearchIcon,
 } from "../Icons";
-import ModalAddUser from "./ModalAddUser";
+import ModalAddCategory from "./ModalAddCategory";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -50,28 +47,15 @@ export function Capitalize(s: string) {
 
 const columns = [
   { name: "NOMBRE", uid: "name", sortable: true },
-  { name: "ROLE", uid: "role", sortable: true },
-  { name: "EMAIL", uid: "email" },
-  { name: "CREATEDAT", uid: "createdAt", sortable: true },
-  { name: "STATUS", uid: "status", sortable: true },
+  { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const statusOptions = [
-  { name: "ONLINE", uid: "online" },
-  { name: "OFFLINE", uid: "offline" },
-];
+const INITIAL_VISIBLE_COLUMNS = ["name", "productquantity", "actions"];
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  online: "success",
-  offline: "danger",
-};
+type Category = (typeof categories)[0];
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions", "email"];
-
-type User = (typeof users)[0];
-
-export default function UsersTable() {
+export default function CategoryTable() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
@@ -79,8 +63,8 @@ export default function UsersTable() {
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "name",
     direction: "ascending",
@@ -99,24 +83,16 @@ export default function UsersTable() {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredcategories = [...categories];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
+      filteredcategories = filteredcategories.filter((Category) =>
+        Category.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
-    return filteredUsers;
-  }, [filterValue, statusFilter, hasSearchFilter]);
+    return filteredcategories;
+  }, [filterValue, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -128,60 +104,45 @@ export default function UsersTable() {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
+    return [...items].sort((a: Category, b: Category) => {
+      const first = a[sortDescriptor.column as keyof Category] as string;
+      const second = b[sortDescriptor.column as keyof Category] as string;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = useCallback((user: User, columnKey: Key) => {
-    const cellValue = user[columnKey as keyof User];
+  const renderCell = useCallback((Category: Category, columnKey: Key) => {
+    const cellValue = Category[columnKey as keyof Category];
 
     switch (columnKey) {
       case "name":
-        return (
-          <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.username}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
-        );
-      case "role":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{cellValue}</p>
           </div>
         );
-      case "status":
+      case "productquantity":
         return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{cellValue}</p>
+          </div>
         );
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Details" color="danger">
+            <Tooltip content="Details">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                 <EyeIcon />
               </span>
             </Tooltip>
-            <Tooltip content="Edit user">
+            <Tooltip content="Edit Category">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                 <EditIcon />
               </span>
             </Tooltip>
-            <Tooltip color="danger" content="Delete user">
+            <Tooltip color="danger" content="Delete Category">
               <span className="text-lg text-danger cursor-pointer active:opacity-50">
                 <DeleteIcon />
               </span>
@@ -247,30 +208,6 @@ export default function UsersTable() {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Estado
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {Capitalize(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
                   Columnas
                 </Button>
               </DropdownTrigger>
@@ -289,15 +226,15 @@ export default function UsersTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />} onPress={onOpen}>
-              Nuevo Usuario
+            <Button color="success" endContent={<PlusIcon />} onPress={onOpen}>
+              Nueva Categoria
             </Button>
-            <ModalAddUser isOpen={isOpen} onClose={onClose} />
+            <ModalAddCategory isOpen={isOpen} onClose={onClose} />
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} usuarios
+            Total {categories.length} Categorias
           </span>
           <label className="flex items-center text-default-400 text-small">
             Filas por páginas:
@@ -315,7 +252,6 @@ export default function UsersTable() {
     );
   }, [
     filterValue,
-    statusFilter,
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
@@ -388,8 +324,8 @@ export default function UsersTable() {
       </TableHeader>
       <TableBody
         isLoading={true}
-        loadingContent={<Spinner color="white" />}
-        emptyContent={"No users found"}
+        // loadingContent={<Spinner color="white" />}
+        emptyContent={"No categories found"}
         items={sortedItems}
       >
         {(item) => (

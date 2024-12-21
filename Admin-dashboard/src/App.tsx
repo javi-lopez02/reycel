@@ -8,6 +8,8 @@ import Products from "./pages/Products";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import { Toaster } from "sonner";
+import Categories from "./pages/Categories";
+import Payments from "./pages/Payments";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/users" element={<User />} />
                 <Route path="/products" element={<Products />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/payments" element={<Payments />} />
               </Route>
             </Route>
           </Routes>
