@@ -26,7 +26,7 @@ import {
   ChipProps,
   SortDescriptor,
   Tooltip,
-//   Spinner,
+  //   Spinner,
   useDisclosure,
 } from "@nextui-org/react";
 import {
@@ -38,7 +38,7 @@ import {
   SearchIcon,
 } from "../Icons";
 import { payments } from "../Payments";
-import ModalAddPayment from "./ModalAddPAyment";
+import ModalAddPayment from "./ModalAddPayment";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -52,9 +52,8 @@ const columns = [
   { name: "USUARIO", uid: "username", sortable: true },
   { name: "ROLE", uid: "role", sortable: true },
   { name: "PRECIO TOTAL", uid: "price", sortable: true },
-  { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
+  { name: "ID ORDEN", uid: "idorder" },
   { name: "FECHA", uid: "date" },
-  { name: "EMAIL", uid: "email" },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
@@ -76,6 +75,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "role",
   "price",
   "date",
+  "idorder",
   "status",
   "actions",
 ];
@@ -166,6 +166,24 @@ export default function PaymentsTable() {
             <p className="text-bold text-small capitalize">{cellValue}</p>
           </div>
         );
+      case "idorder":
+        return (
+          <div>
+            <p className="text-bold text-small capitalize">{cellValue}</p>
+          </div>
+        );
+        case "price":
+        return (
+          <div>
+            <p className="text-bold text-small capitalize">${payments.price}</p>
+          </div>
+        );
+      case "date":
+        return (
+          <div>
+            <p className="text-bold text-small capitalize">{cellValue}</p>
+          </div>
+        );
       case "status":
         return (
           <Chip
@@ -177,12 +195,6 @@ export default function PaymentsTable() {
             {cellValue}
           </Chip>
         );
-      case "date":
-        return (
-          <div>
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-          </div>
-        );
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
@@ -191,12 +203,12 @@ export default function PaymentsTable() {
                 <EyeIcon />
               </span>
             </Tooltip>
-            <Tooltip content="Edit user">
+            <Tooltip content="Edit Payment">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                 <EditIcon />
               </span>
             </Tooltip>
-            <Tooltip color="danger" content="Delete user">
+            <Tooltip color="danger" content="Delete Payment">
               <span className="text-lg text-danger cursor-pointer active:opacity-50">
                 <DeleteIcon />
               </span>

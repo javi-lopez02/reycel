@@ -6,9 +6,11 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { Link } from "react-router-dom";
+import useProduct from "../../customHooks/useProduct";
 
 export default function SideBar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const products = useProduct();
 
   return (
     <>
@@ -118,8 +120,8 @@ export default function SideBar() {
                       </Link>
                     </li>
                     <li>
-                      <a
-                        href="#"
+                      <Link
+                        to={"/orders"}
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                       >
                         <svg
@@ -137,7 +139,7 @@ export default function SideBar() {
                         <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
                           3
                         </span>
-                      </a>
+                      </Link>
                     </li>
                     <li>
                       <Link
@@ -178,9 +180,9 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Productos
                         </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          168
-                        </span>
+                        {products && <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
+                          {products.products?.length}
+                        </span>}
                       </Link>
                     </li>
                     <li>
