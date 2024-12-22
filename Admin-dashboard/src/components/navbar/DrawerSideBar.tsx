@@ -7,10 +7,14 @@ import {
 } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import useProduct from "../../customHooks/useProduct";
+import useUser from "../../customHooks/useUser";
+import useCategory from "../../customHooks/useCategory";
 
 export default function SideBar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const products = useProduct();
+  const user = useUser();
+  const category = useCategory();
 
   return (
     <>
@@ -99,6 +103,28 @@ export default function SideBar() {
                     </li>
                     <li>
                       <Link
+                        to="/users"
+                        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                      >
+                        <svg
+                          className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 20 18"
+                        >
+                          <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+                        </svg>
+                        <span className="flex-1 ms-3 whitespace-nowrap">
+                          Usuarios
+                        </span>
+                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
+                          {user && user.users?.length}
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
                         to={"/categories"}
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                       >
@@ -115,8 +141,32 @@ export default function SideBar() {
                           Categorias
                         </span>
                         <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          15
+                          {category && category.category?.length}
                         </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/products"
+                        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                      >
+                        <svg
+                          className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 18 20"
+                        >
+                          <path d="M17 5.923A1 1 0 0 0 16 5h-3V4a4 4 0 1 0-8 0v1H2a1 1 0 0 0-1 .923L.086 17.846A2 2 0 0 0 2.08 20h13.84a2 2 0 0 0 1.994-2.153L17 5.923ZM7 9a1 1 0 0 1-2 0V7h2v2Zm0-5a2 2 0 1 1 4 0v1H7V4Zm6 5a1 1 0 1 1-2 0V7h2v2Z" />
+                        </svg>
+                        <span className="flex-1 ms-3 whitespace-nowrap">
+                          Productos
+                        </span>
+                        {products && (
+                          <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
+                            {products.products?.length}
+                          </span>
+                        )}
                       </Link>
                     </li>
                     <li>
@@ -143,50 +193,6 @@ export default function SideBar() {
                     </li>
                     <li>
                       <Link
-                        to="/users"
-                        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                      >
-                        <svg
-                          className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="currentColor"
-                          viewBox="0 0 20 18"
-                        >
-                          <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
-                        </svg>
-                        <span className="flex-1 ms-3 whitespace-nowrap">
-                          Usuarios
-                        </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          6
-                        </span>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        to="/products"
-                        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                      >
-                        <svg
-                          className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="currentColor"
-                          viewBox="0 0 18 20"
-                        >
-                          <path d="M17 5.923A1 1 0 0 0 16 5h-3V4a4 4 0 1 0-8 0v1H2a1 1 0 0 0-1 .923L.086 17.846A2 2 0 0 0 2.08 20h13.84a2 2 0 0 0 1.994-2.153L17 5.923ZM7 9a1 1 0 0 1-2 0V7h2v2Zm0-5a2 2 0 1 1 4 0v1H7V4Zm6 5a1 1 0 1 1-2 0V7h2v2Z" />
-                        </svg>
-                        <span className="flex-1 ms-3 whitespace-nowrap">
-                          Productos
-                        </span>
-                        {products && <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          {products.products?.length}
-                        </span>}
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
                         to={"/payments"}
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                       >
@@ -207,6 +213,34 @@ export default function SideBar() {
                         </svg>
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Pagos
+                        </span>
+                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
+                          15
+                        </span>
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to={"/sedes"}
+                        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                      >
+                        <svg
+                          className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M10 15.5C9.59 15.5 9.25 15.84 9.25 16.25V17.75C9.25 18.16 9.59 18.5 10 18.5C10.41 18.5 10.75 18.16 10.75 17.75V16.25C10.75 15.84 10.41 15.5 10 15.5Z"
+                            fill="#292D32"
+                          />
+                          <path
+                            d="M22 21.2488H21V9.97875C21 9.35875 20.72 8.77875 20.23 8.39875L13.23 2.95875C12.51 2.38875 11.49 2.38875 10.77 2.95875L3.77 8.39875C3.28 8.77875 3 9.35875 3 9.96875L2.95 21.2488H2C1.59 21.2488 1.25 21.5788 1.25 21.9988C1.25 22.4088 1.59 22.7488 2 22.7488H22C22.41 22.7488 22.75 22.4088 22.75 21.9988C22.75 21.5788 22.41 21.2488 22 21.2488ZM10.5 6.74875H13.5C13.91 6.74875 14.25 7.08875 14.25 7.49875C14.25 7.90875 13.91 8.24875 13.5 8.24875H10.5C10.09 8.24875 9.75 7.90875 9.75 7.49875C9.75 7.08875 10.09 6.74875 10.5 6.74875ZM17 21.2488H7V12.4987C7 11.6687 7.67 10.9987 8.5 10.9987H15.5C16.33 10.9987 17 11.6687 17 12.4987V21.2488Z"
+                            fill="#292D32"
+                          />
+                        </svg>
+                        <span className="flex-1 ms-3 whitespace-nowrap">
+                          Sedes
                         </span>
                         <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
                           15

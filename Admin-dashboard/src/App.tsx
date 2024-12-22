@@ -11,6 +11,7 @@ import { Toaster } from "sonner";
 import Categories from "./pages/Categories";
 import Payments from "./pages/Payments";
 import Orders from "./pages/Orders";
+import Sedes from "./pages/Sedes";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/payments" element={<Payments />} />
                 <Route path="/orders" element={<Orders />} />
+                <Route path="/sedes" element={<Sedes />} />
               </Route>
             </Route>
           </Routes>
