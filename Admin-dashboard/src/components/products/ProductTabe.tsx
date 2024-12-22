@@ -26,7 +26,6 @@ import {
   ChevronDownIcon,
   DeleteIcon,
   EditIcon,
-  EyeIcon,
   PlusIcon,
   SearchIcon,
 } from "../Icons";
@@ -122,6 +121,7 @@ export default function ProductTable() {
       categoryFilter !== "all" &&
       Array.from(categoryFilter).length !== categoryOptions?.length
     ) {
+      console.log(categoryFilter)
       filteredProducts = filteredProducts.filter((product) =>
         Array.from(categoryFilter).includes(product.category.id)
       );
@@ -314,11 +314,6 @@ export default function ProductTable() {
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-            </Tooltip>
             <Tooltip content="Edit product">
               <button
                 onClick={() => {

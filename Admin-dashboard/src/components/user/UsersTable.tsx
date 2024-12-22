@@ -29,16 +29,18 @@ import {
   Spinner,
   useDisclosure,
 } from "@nextui-org/react";
-import { users } from "../Users";
+import { type Users } from "../../type";
 import {
   ChevronDownIcon,
   DeleteIcon,
   EditIcon,
-  EyeIcon,
   PlusIcon,
   SearchIcon,
 } from "../Icons";
 import ModalAddUser from "./ModalAddUser";
+import useUser from "../../customHooks/useUser";
+import { toast } from "sonner";
+import { deleteUsersRequest } from "../../services/user";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -49,17 +51,19 @@ export function Capitalize(s: string) {
 }
 
 const columns = [
-  { name: "NOMBRE", uid: "name", sortable: true },
+  { name: "NOMBRE", uid: "username", sortable: true },
   { name: "ROLE", uid: "role", sortable: true },
   { name: "EMAIL", uid: "email" },
-  { name: "CREATEDAT", uid: "createdAt", sortable: true },
+  { name: "Creado en: ", uid: "createdAt", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
+  { name: "Número de Ordenes", uid: "order" },
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const statusOptions = [
-  { name: "ONLINE", uid: "online" },
-  { name: "OFFLINE", uid: "offline" },
+const roleOptions = [
+  { name: "Admin", uid: "admin" },
+  { name: "Moderador", uid: "moderador" },
+  { name: "Usuario", uid: "user" },
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -67,11 +71,18 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
   offline: "danger",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions", "email"];
-
-type User = (typeof users)[0];
+const INITIAL_VISIBLE_COLUMNS = [
+  "username",
+  "role",
+  "status",
+  "actions",
+  "email",
+  "createdAt",
+  "order",
+];
 
 export default function UsersTable() {
+  const { users, error, loading, setUsers } = useUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
@@ -79,16 +90,52 @@ export default function UsersTable() {
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = useState<Selection>("all");
+  const [roleFilter, setRoleFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>();
 
   const [page, setPage] = useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
+
+
+    const [selectedUser, setSelectedUser] = useState<Users | null>(null);
+  
+    const handleAddProduct = () => {
+      setSelectedUser(null);
+      onOpen();
+    };
+  
+    const handleEditProduct = (user: Users) => {
+      setSelectedUser(user);
+      onOpen();
+    };
+  
+
+  const formatearFecha = (isoString: string) => {
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
+
+    const fecha = new Date(isoString);
+
+    const dia = fecha.getUTCDate();
+    const mes = meses[fecha.getUTCMonth()];
+    const anio = fecha.getUTCFullYear();
+
+    return `${dia} ${mes} ${anio}`;
+  };
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -99,98 +146,158 @@ export default function UsersTable() {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredUsers = [...users];
+    if (!users) {
+      return [];
+    }
+    let filteredProducts = [...users];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredProducts = filteredProducts.filter(
+        (user) =>
+          user.username.toLowerCase().includes(filterValue.toLowerCase()) ||
+          user.role.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
+      roleFilter !== "all" &&
+      Array.from(roleFilter).length !== roleOptions.length
     ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
+      filteredProducts = filteredProducts.filter((user) =>
+        Array.from(roleFilter).includes(user.role.toLowerCase())
       );
     }
-
-    return filteredUsers;
-  }, [filterValue, statusFilter, hasSearchFilter]);
+    return filteredProducts;
+  }, [users, hasSearchFilter, roleFilter, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const items = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
-
   const sortedItems = useMemo(() => {
-    return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
+    const sorted = [...filteredItems].sort((a: Users, b: Users) => {
+      const first = a[sortDescriptor?.column as never] as number;
+      const second = b[sortDescriptor?.column as never] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
+      return sortDescriptor?.direction === "descending" ? -cmp : cmp;
     });
-  }, [sortDescriptor, items]);
 
-  const renderCell = useCallback((user: User, columnKey: Key) => {
-    const cellValue = user[columnKey as keyof User];
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return sorted.slice(start, end);
+  }, [
+    filteredItems,
+    page,
+    rowsPerPage,
+    sortDescriptor?.column,
+    sortDescriptor?.direction,
+  ]);
+
+  const handleDelete = (id: string) => {
+    deleteUsersRequest(id)
+      .then(() => {
+        toast.success("Usuario eliminado con exito");
+        setUsers((prev) => {
+          return prev
+            ? prev.filter((user) => {
+                return user.id !== id;
+              })
+            : null;
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error al eliminar el Usuario");
+      });
+  };
+
+  const renderCell = useCallback((user: Users, columnKey: Key) => {
+    const cellValue = user[columnKey as keyof Users];
 
     switch (columnKey) {
-      case "name":
+      case "username":
         return (
           <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.username}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
+            avatarProps={{ radius: "lg", src: user.image }}
+            description={user.email}
+            name={
+              <span
+                style={{
+                  display: "inline-block",
+                  maxWidth: "250px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {user.username}
+              </span>
+            }
+          ></User>
         );
+      case "createdAt": {
+        return (
+          <div className="flex justify-center">
+            <p className={`text-bold text-small capitalize`}>
+              {formatearFecha(user.createdAt)}
+            </p>
+          </div>
+        );
+      }
+      case "order": {
+        return (
+          <div className="flex justify-center">
+            <p className={`text-bold text-small capitalize`}>
+              {user._count.orders}
+            </p>
+          </div>
+        );
+      }
       case "role":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
+            {user.Sede?.direction !== null && (
+              <Tooltip content={user.Sede?.direction} className="bg-green-300">
+                <p className="text-bold text-small capitalize">{user.role}</p>
+              </Tooltip>
+            )}
           </div>
         );
       case "status":
         return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
+          <div className="w-full flex justify-center">
+            <Chip
+              className="capitalize"
+              color={statusColorMap[String(user.status)]}
+              size="sm"
+              variant="flat"
+            >
+              {String(cellValue)}
+            </Chip>
+          </div>
         );
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Details" color="danger">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-            </Tooltip>
             <Tooltip content="Edit user">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <button onClick={()=>handleEditProduct(user)} className="text-lg text-default-400 cursor-pointer active:opacity-50">
                 <EditIcon />
-              </span>
+              </button>
             </Tooltip>
             <Tooltip color="danger" content="Delete user">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
+              <button
+                onClick={() => {
+                  handleDelete(user.id);
+                }}
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+              >
                 <DeleteIcon />
-              </span>
+              </button>
             </Tooltip>
           </div>
         );
       default:
-        return cellValue;
+        return String(cellValue);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onNextPage = useCallback(() => {
@@ -247,20 +354,20 @@ export default function UsersTable() {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Estado
+                  Rol
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
                 aria-label="Table Columns"
                 closeOnSelect={false}
-                selectedKeys={statusFilter}
+                selectedKeys={roleFilter}
                 selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
+                onSelectionChange={setRoleFilter}
               >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {Capitalize(status.name)}
+                {roleOptions.map((role) => (
+                  <DropdownItem key={role.uid} className="capitalize">
+                    {Capitalize(role.name)}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -289,15 +396,14 @@ export default function UsersTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />} onPress={onOpen}>
+            <Button color="primary" endContent={<PlusIcon />} onPress={handleAddProduct}>
               Nuevo Usuario
             </Button>
-            <ModalAddUser isOpen={isOpen} onClose={onClose} />
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} usuarios
+            Total {users?.length} usuarios
           </span>
           <label className="flex items-center text-default-400 text-small">
             Filas por páginas:
@@ -313,16 +419,16 @@ export default function UsersTable() {
         </div>
       </div>
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     filterValue,
-    statusFilter,
-    visibleColumns,
     onSearchChange,
+    roleFilter,
+    visibleColumns,
+    onOpen,
+    users?.length,
     onRowsPerPageChange,
     onClear,
-    onClose,
-    isOpen,
-    onOpen,
   ]);
 
   const bottomContent = useMemo(() => {
@@ -362,44 +468,56 @@ export default function UsersTable() {
   }, [page, pages, onPreviousPage, onNextPage]);
 
   return (
-    <Table
-      isHeaderSticky
-      aria-label="Example table with custom cells, pagination and sorting"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[600px]",
-      }}
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody
-        isLoading={true}
-        loadingContent={<Spinner color="white" />}
-        emptyContent={"No users found"}
-        items={sortedItems}
+    <>
+      {error && error.map((err) => toast.error(err))}
+
+      <Table
+        isHeaderSticky
+        aria-label="Example table with custom cells, pagination and sorting"
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[600px]",
+        }}
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSortChange={setSortDescriptor}
       >
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={
+                column.uid === "actions" ||
+                column.uid === "createdAt" ||
+                column.uid === "order" ||
+                column.uid === "status"
+                  ? "center"
+                  : "start"
+              }
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody
+          isLoading={loading}
+          loadingContent={<Spinner color="white" />}
+          emptyContent={"No users found"}
+          items={sortedItems}
+        >
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <ModalAddUser isOpen={isOpen} onClose={onClose} setUsers={setUsers} {...selectedUser}/>
+    </>
   );
 }

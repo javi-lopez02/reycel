@@ -3,7 +3,7 @@ import {authMiddleware} from '../Middlewares/middlewareAdmin'
 import {getSedes, getSedeId, createSede, updateSede, deleteSede} from '../Controllers/sedes.controller'
 const router = Router();
 
-router.get("/sedes/", getSedes );
+router.get("/sedes", getSedes );
 
 router.get("/sedes/:id", getSedeId );
 

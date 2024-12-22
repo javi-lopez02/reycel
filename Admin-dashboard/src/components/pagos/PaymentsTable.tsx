@@ -38,7 +38,7 @@ import {
   SearchIcon,
 } from "../Icons";
 import { payments } from "../Payments";
-import ModalAddPayment from "./ModalAddPAyment";
+import ModalAddPayment from "./ModalAddPayment";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;

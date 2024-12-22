@@ -228,6 +228,7 @@ const ModalAddProduct: FC<Props> = ({
                   <Textarea
                     label="Descripción:"
                     name="description"
+                    isRequired
                     defaultValue={description}
                     labelPlacement="outside"
                     placeholder="Introduce la descripción del Producto."
@@ -243,6 +244,7 @@ const ModalAddProduct: FC<Props> = ({
                     <Input
                       label="Precio"
                       name="price"
+                      isRequired
                       defaultValue={price?.toString()}
                       labelPlacement="outside"
                       placeholder="0.00"
@@ -255,6 +257,8 @@ const ModalAddProduct: FC<Props> = ({
                     />
                     <Input
                       label="Cantidad"
+                      required
+                      isRequired
                       name="inventoryCount"
                       defaultValue={inventoryCount?.toString()}
                       labelPlacement="outside"

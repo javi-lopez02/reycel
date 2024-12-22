@@ -22,14 +22,20 @@ export interface AuthContextType {
 export interface Users {
   id: string;
   username: string;
-  emial: string;
-  image?: string;
+  email: string;
+  image: string;
   status: boolean;
+  Sede: Sede;
   role: "USER" | "MODERADOR" | "ADMIN";
-  createdAt: Date;
-  _count: {
-    orders: number;
-  };
+  createdAt: string;
+  _count: Count;
+}
+
+interface Sede {
+  direction: string;
+}
+interface Count {
+  orders: number;
 }
 
 export interface Products {
@@ -39,9 +45,9 @@ export interface Products {
   price: number;
   rating: number;
   imagen: string;
-  createdAt: string,
+  createdAt: string;
   inventoryCount: number;
-  category: Category
+  category: Category;
 }
 export interface Category {
   id: string;
