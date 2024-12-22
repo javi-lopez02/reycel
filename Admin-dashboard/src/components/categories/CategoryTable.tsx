@@ -26,16 +26,18 @@ import {
   // Spinner,
   useDisclosure,
 } from "@nextui-org/react";
-import { categories } from "../Categories";
 import {
   ChevronDownIcon,
   DeleteIcon,
   EditIcon,
-  EyeIcon,
   PlusIcon,
   SearchIcon,
 } from "../Icons";
 import ModalAddCategory from "./ModalAddCategory";
+import useCategory from "../../customHooks/useCategory";
+import { Category } from "../../type";
+import { toast } from "sonner";
+import { deleteCategoryRequest } from "../../services/category";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -48,14 +50,19 @@ export function Capitalize(s: string) {
 const columns = [
   { name: "NOMBRE", uid: "name", sortable: true },
   { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
+  { name: "Fecha de Creación", uid: "createdAt", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "productquantity", "actions"];
-
-type Category = (typeof categories)[0];
+const INITIAL_VISIBLE_COLUMNS = [
+  "name",
+  "productquantity",
+  "createdAt",
+  "actions",
+];
 
 export default function CategoryTable() {
+  const { category, error, setCategory } = useCategory();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
@@ -63,16 +70,27 @@ export default function CategoryTable() {
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>();
 
   const [page, setPage] = useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
+
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
+
+  const handleAddCategory = () => {
+    setSelectedCategory(null);
+    onOpen();
+  };
+
+  const handleEditCategory = (category: Category) => {
+    setSelectedCategory(category);
+    onOpen();
+  };
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -83,7 +101,10 @@ export default function CategoryTable() {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredcategories = [...categories];
+    if (!category) {
+      return [];
+    }
+    let filteredcategories = [...category];
 
     if (hasSearchFilter) {
       filteredcategories = filteredcategories.filter((Category) =>
@@ -92,26 +113,72 @@ export default function CategoryTable() {
     }
 
     return filteredcategories;
-  }, [filterValue, hasSearchFilter]);
+  }, [category, filterValue, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const items = useMemo(() => {
+  const sortedItems = useMemo(() => {
+    const sorted = [...filteredItems].sort((a: Category, b: Category) => {
+      const first = a[sortDescriptor?.column as keyof Category] as string;
+      const second = b[sortDescriptor?.column as keyof Category] as string;
+      const cmp = first < second ? -1 : first > second ? 1 : 0;
+
+      return sortDescriptor?.direction === "descending" ? -cmp : cmp;
+    });
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
+    return sorted.slice(start, end);
+  }, [
+    filteredItems,
+    page,
+    rowsPerPage,
+    sortDescriptor?.column,
+    sortDescriptor?.direction,
+  ]);
 
-  const sortedItems = useMemo(() => {
-    return [...items].sort((a: Category, b: Category) => {
-      const first = a[sortDescriptor.column as keyof Category] as string;
-      const second = b[sortDescriptor.column as keyof Category] as string;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
+  const formatearFecha = (isoString: string) => {
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
 
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
+    const fecha = new Date(isoString);
+
+    const dia = fecha.getUTCDate();
+    const mes = meses[fecha.getUTCMonth()];
+    const anio = fecha.getUTCFullYear();
+
+    return `${dia} ${mes} ${anio}`;
+  };
+
+  const handleDelete = (id: string) => {
+    deleteCategoryRequest(id)
+      .then(() => {
+        toast.success("Categoría eliminado con exito");
+        setCategory((prev) => {
+          return prev
+            ? prev.filter((category) => {
+                return category.id !== id;
+              })
+            : null;
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error al eliminar el producto");
+      });
+  };
 
   const renderCell = useCallback((Category: Category, columnKey: Key) => {
     const cellValue = Category[columnKey as keyof Category];
@@ -120,38 +187,50 @@ export default function CategoryTable() {
       case "name":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
+            <p className="text-bold text-small capitalize">{Category.name}</p>
           </div>
         );
       case "productquantity":
         return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
+          <div className="flex ">
+            <p className="text-bold text-small capitalize">
+              {Category._count.products}
+            </p>
+          </div>
+        );
+      case "createdAt":
+        return (
+          <div className="flex ">
+            <p className="text-bold text-small capitalize">
+              {formatearFecha(Category.createdAt)}
+            </p>
           </div>
         );
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-            </Tooltip>
             <Tooltip content="Edit Category">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <button
+                onClick={() => handleEditCategory(Category)}
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+              >
                 <EditIcon />
-              </span>
+              </button>
             </Tooltip>
             <Tooltip color="danger" content="Delete Category">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
+              <button
+                onClick={() => handleDelete(Category.id)}
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+              >
                 <DeleteIcon />
-              </span>
+              </button>
             </Tooltip>
           </div>
         );
       default:
-        return cellValue;
+        return String(cellValue);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onNextPage = useCallback(() => {
@@ -226,15 +305,18 @@ export default function CategoryTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="success" endContent={<PlusIcon />} onPress={onOpen}>
+            <Button
+              color="success"
+              endContent={<PlusIcon />}
+              onPress={handleAddCategory}
+            >
               Nueva Categoria
             </Button>
-            <ModalAddCategory isOpen={isOpen} onClose={onClose} />
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {categories.length} Categorias
+            Total {category?.length} Categorias
           </span>
           <label className="flex items-center text-default-400 text-small">
             Filas por páginas:
@@ -250,15 +332,15 @@ export default function CategoryTable() {
         </div>
       </div>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     filterValue,
-    visibleColumns,
     onSearchChange,
+    visibleColumns,
+    onOpen,
+    category?.length,
     onRowsPerPageChange,
     onClear,
-    onClose,
-    isOpen,
-    onOpen,
   ]);
 
   const bottomContent = useMemo(() => {
@@ -298,44 +380,53 @@ export default function CategoryTable() {
   }, [page, pages, onPreviousPage, onNextPage]);
 
   return (
-    <Table
-      isHeaderSticky
-      aria-label="Example table with custom cells, pagination and sorting"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[600px]",
-      }}
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody
-        isLoading={true}
-        // loadingContent={<Spinner color="white" />}
-        emptyContent={"No categories found"}
-        items={sortedItems}
+    <>
+      {error && error.map((err) => toast.error(err))}
+      <Table
+        isHeaderSticky
+        aria-label="Example table with custom cells, pagination and sorting"
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[615px]",
+        }}
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSortChange={setSortDescriptor}
       >
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody
+          isLoading={true}
+          // loadingContent={<Spinner color="white" />}
+          emptyContent={"No categories found"}
+          items={sortedItems}
+        >
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <ModalAddCategory
+        isOpen={isOpen}
+        onClose={onClose}
+        setCategory={setCategory}
+        {...selectedCategory}
+      />
+    </>
   );
 }

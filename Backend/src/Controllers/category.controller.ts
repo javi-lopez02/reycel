@@ -9,6 +9,12 @@ export const getCategory = async (req: Request, res: Response) => {
       select: {
         id: true,
         name: true,
+        createdAt: true,
+        _count: {
+          select: {
+            products: true,
+          },
+        },
       },
     });
 
@@ -18,5 +24,86 @@ export const getCategory = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     res.status(500).json(["Internal server error"]);
+  }
+};
+
+export const createCategory = async (req: Request, res: Response) => {
+  try {
+    const { name } = req.body;
+
+    const category = await prisma.category.create({
+      data: {
+        name,
+      },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        _count: {
+          select: {
+            products: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      data: category,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const updateCategory = async (req: Request, res: Response) => {
+  try {
+    const { name } = req.body;
+    const { id } = req.params;
+
+    const category = await prisma.category.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+      },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        _count: {
+          select: {
+            products: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      data: category,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const deleteCategory = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const category = await prisma.category.delete({
+      where: {
+        id,
+      },
+    });
+
+    res.status(200).json({
+      data: category,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
   }
 };

@@ -7,11 +7,11 @@ router.get("/sedes", getSedes );
 
 router.get("/sedes/:id", getSedeId );
 
-router.post("/products/order", authMiddleware, createSede)
+router.post("/sedes", authMiddleware, createSede)
 
-router.put("/products/order", authMiddleware, updateSede)
+router.put("/sedes/:id", authMiddleware, updateSede)
 
-router.delete("/products/order", authMiddleware, deleteSede)
+router.delete("/sedes/:id", authMiddleware, deleteSede)
 
 
 export default router;
