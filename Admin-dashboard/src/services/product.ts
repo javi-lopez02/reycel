@@ -18,6 +18,11 @@ export const createProductRequest = (product: CreateProps) => {
   return axios.post(`/product`, product);
 };
 
+export const updateProductRequest = (id: string, productUpdated: CreateProps) => {
+  console.log({productUpdated})
+  return axios.put(`/product/${id}`, productUpdated);
+};
+
 
 export const deleteProductRequest = (id: string) => {
   return axios.delete(`/product/${id}`);

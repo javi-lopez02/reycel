@@ -7,16 +7,95 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
 } from "@nextui-org/react";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { BiRename } from "react-icons/bi";
+import {
+  createCategoryRequest,
+  updateCategoryRequest,
+} from "../../services/category";
+import { Category } from "../../type";
+import { toast } from "sonner";
 
 interface Props {
+  id?: string;
+  name?: string;
+  setCategory: React.Dispatch<React.SetStateAction<Category[] | null>>;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ModalAddCategory: FC<Props> = ({ isOpen, onClose }) => {
+const ModalAddCategory: FC<Props> = ({
+  id,
+  name,
+  isOpen,
+  onClose,
+  setCategory,
+}) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    const data = Object.fromEntries(new FormData(event.currentTarget));
+
+    const inputName = data["name"] as string;
+
+    if (!inputName) {
+      toast.error("Debe poner un nombre a la categoría");
+      setLoading(false);
+      return;
+    }
+
+    if (id) {
+      updateCategoryRequest(id, inputName)
+        .then((res) => {
+          const category = res.data.data;
+
+          setCategory((prev) => {
+            if (!prev) {
+              return null;
+            }
+            const categoryFilter = prev.filter(
+              (prevCategory) => prevCategory.id !== id
+            );
+
+            return [category, ...categoryFilter];
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Error al actualizar la categoría");
+        })
+        .finally(() => {
+          setLoading(false);
+          onClose();
+        });
+    }
+
+    if (!id) {
+      createCategoryRequest(inputName)
+        .then((res) => {
+          const category = res.data.data;
+
+          setCategory((prev) => {
+            if (!prev) {
+              return null;
+            }
+            return [category, ...prev];
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Error al crear la categoría");
+        })
+        .finally(() => {
+          setLoading(false);
+          onClose();
+        });
+    }
+  };
   return (
     <>
       <Modal backdrop={"opaque"} isOpen={isOpen} onClose={onClose} size="lg">
@@ -28,9 +107,11 @@ const ModalAddCategory: FC<Props> = ({ isOpen, onClose }) => {
                 <h1 className="text-2xl font-bold">Agregar Categoría</h1>
               </ModalHeader>
               <ModalBody>
-                <Form>
+                <Form onSubmit={handleSubmit}>
                   <Input
                     autoFocus
+                    name="name"
+                    defaultValue={name}
                     endContent={
                       <BiRename className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                     }
@@ -43,8 +124,9 @@ const ModalAddCategory: FC<Props> = ({ isOpen, onClose }) => {
                     <Button color="danger" variant="light" onPress={onClose}>
                       Cancelar
                     </Button>
-                    <Button color="primary" onPress={onClose}>
-                      Agregar
+                    <Button color="primary" type="submit" onPress={onClose}>
+                      {loading && <Spinner color="default" />}
+                      {!loading && <span className="font-medium">Guardar</span>}
                     </Button>
                   </div>
                 </Form>

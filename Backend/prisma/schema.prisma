@@ -17,6 +17,7 @@ model User {
   password  String
   image     String?
   status    Boolean
+  isDeleted Boolean   @default(false)
   role      Role      @default(USER)
   orders    Order[]
   createdAt DateTime  @default(now())

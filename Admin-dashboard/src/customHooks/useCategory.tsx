@@ -19,7 +19,8 @@ function useCategory() {
 
   return {
     category,
-    error
+    error,
+    setCategory
   }
 }
 

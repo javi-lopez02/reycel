@@ -14,15 +14,15 @@ import Orders from "./pages/Orders";
 
 function App() {
   return (
-    <AuthProvider>
-      <NextUIProvider>
-        <Toaster richColors expand={true} />
-        <BrowserRouter>
+    <NextUIProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <Toaster richColors expand={true} />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route element={<ProtectedRoutes />}>
               <Route element={<NavBar />}>
-                <Route path="/" element={<Home/>} />
+                <Route path="/" element={<Home />} />
                 <Route path="/users" element={<User />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/categories" element={<Categories />} />
@@ -31,9 +31,9 @@ function App() {
               </Route>
             </Route>
           </Routes>
-        </BrowserRouter>
-      </NextUIProvider>
-    </AuthProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </NextUIProvider>
   );
 }
 

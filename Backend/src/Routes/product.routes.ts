@@ -6,8 +6,9 @@ import {
   getProductID,
   getProducts,
   searchProduct,
+  updateProduct,
 } from "../Controllers/product.controller";
-import { getCategory } from "../Controllers/category.controller";
+import { createCategory, deleteCategory, getCategory, updateCategory } from "../Controllers/category.controller";
 const router = Router();
 
 /* router.get("/products", async (req, res)=>{
@@ -36,15 +37,26 @@ const router = Router();
 
 router.get("/products/search", searchProduct);
 
-router.get("/products/category", getCategory);
-
 router.get("/products", getProductID);
 
 router.get("/product", authMiddleware, getProducts);
 
 router.post("/product", authMiddleware, createProduct);
 
+router.put("/product/:id", authMiddleware, updateProduct);
+
 router.delete("/product/:id", authMiddleware, deleteProduct);
+
+
+
+router.get("/products/category", getCategory);
+
+router.post("/products/category", authMiddleware, createCategory);
+
+router.put("/products/category/:id", authMiddleware, updateCategory);
+
+router.delete("/products/category/:id", authMiddleware, deleteCategory);
+
 
 
 export default router;

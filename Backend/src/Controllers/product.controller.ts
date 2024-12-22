@@ -345,3 +345,77 @@ export const deleteProduct = async (req: Request, res: Response) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+export const updateProduct = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      description,
+      categoryId,
+      price,
+      imagen,
+      inventoryCount,
+      rating,
+    } = req.body;
+
+    const userId = req.userId;
+
+    console.log({name, description, categoryId, price, imagen, inventoryCount, rating, id})
+
+    const product = await prisma.product.update({
+      where: { id },
+      data: {
+        name,
+        description,
+        categoryId,
+        price,
+        imagen,
+        inventoryCount,
+      },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (rating !== undefined) {
+      const existingRating = await prisma.rating.findFirst({
+        where: {
+          productID: id,
+          userID: userId,
+        },
+      });
+
+      if (existingRating) {
+        await prisma.rating.update({
+          where: {
+            id: existingRating.id,
+          },
+          data: {
+            value: rating,
+          },
+        });
+      } else {
+        await prisma.rating.create({
+          data: {
+            productID: id,
+            userID: userId,
+            value: rating,
+          },
+        });
+      }
+    }
+
+    res.status(200).json({
+      data: product,
+    });
+  } catch (error) {
+    console.log('Error:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
