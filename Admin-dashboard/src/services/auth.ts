@@ -1,3 +1,4 @@
+import { UserLogin } from '../type'
 import axios from './axios'
 
 export const loginRequest = (user: UserLogin)=>{

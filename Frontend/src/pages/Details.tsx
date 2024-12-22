@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Spinner } from "@nextui-org/spinner";
 import { useAuth } from "../context/auth.context";
-import {toast} from 'sonner'
+import { toast } from "sonner";
 import { useProductDetails } from "../customHooks/useProductDetails";
 import Comment from "../components/Details/Comment";
 import FormComment from "../components/Details/FormComment";
@@ -28,8 +28,8 @@ export default function Details() {
     comments,
     updateRating,
     createComment,
-    addItemCarShop
-  } = useProductDetails(query)
+    addItemCarShop,
+  } = useProductDetails(query);
 
   const { isAuth } = useAuth();
 
@@ -55,25 +55,24 @@ export default function Details() {
     input.value = "";
   };
 
-  const handleAddCorShop =  () => {
+  const handleAddCorShop = () => {
     if (!isAuth) {
       onOpen();
       return;
     }
-    toast.promise(
-      addItemCarShop(parseInt(quantity)), 
-      {
-        loading: 'Loading...',
-        success: (res) => {
-          if (res.status !== 200) {
-            toast.warning(`Aviso: ${res.data.message || 'Hubo un problema con la solicitud.'}`);
-            return 'La operación no fue completamente exitosa.';
-          }
-          return `${res.data.message}`;
-        },
-        error: 'Error al añadir un producto al carrito.',
-      }
-    );
+    toast.promise(addItemCarShop(parseInt(quantity)), {
+      loading: "Loading...",
+      success: (res) => {
+        if (res.status !== 200) {
+          toast.warning(
+            `Aviso: ${res.data.message || "Hubo un problema con la solicitud."}`
+          );
+          return "La operación no fue completamente exitosa.";
+        }
+        return `${res.data.message}`;
+      },
+      error: "Error al añadir un producto al carrito.",
+    });
   };
 
   return (
@@ -100,7 +99,9 @@ export default function Details() {
                   <>{`${product.name} `}</>
                 )}
               </h1>
-              <p className="text-2xl text-gray-600 mt-2">${(product.price * parseInt(quantity))}</p>
+              <p className="text-2xl text-gray-600 mt-2">
+                ${product.price * parseInt(quantity)}
+              </p>
               <div className="mt-2 flex items-center gap-2">
                 <div className="flex items-center">
                   <div className="flex text-yellow-500">
@@ -150,9 +151,12 @@ export default function Details() {
                   labelPlacement="outside"
                   color="primary"
                   value={quantity}
-                  onValueChange={(value)=>{
-                    if(parseInt(value) > 0){
-                      setQuantity(value)
+                  onValueChange={(value) => {
+                    if (
+                      parseInt(value) > 0 &&
+                      parseInt(value) <= product.inventoryCount
+                    ) {
+                      setQuantity(value);
                     }
                   }}
                   type="number"
@@ -198,8 +202,8 @@ export default function Details() {
                     Reseñas
                   </h3>
                   <FormComment onSubmit={handleFormComment} />
-                  <strong className="pt-2">
-                    {comments?.length} reseñas de este producto.
+                  <strong className="pt-5">
+                    {comments?.length} Reseñas de este producto.
                   </strong>
                   {comments !== null &&
                     comments.length > 0 &&
@@ -225,7 +229,11 @@ export default function Details() {
         )}
         {error && error.map((err) => toast.error(err))}
 
-        <AuthUser isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}></AuthUser>
+        <AuthUser
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+          onClose={onClose}
+        ></AuthUser>
       </div>
     </>
   );

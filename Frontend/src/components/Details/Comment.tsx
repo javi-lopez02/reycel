@@ -11,9 +11,9 @@ interface Comment {
 
 const Comment: FC<Comment> = (comment) => {
   return (
-    <div className="mt-2">
-      <p className="text-gray-700 font-medium">{comment.User.username}</p>
-      <p className="text-gray-600">
+    <div className="mt-2 bg-neutral-100 rounded-md px-4 py-1">
+      <p className="text-gray-800 text-lg font-bold">{comment.User.username}</p>
+      <p className="text-gray-600 mx-3">
         {comment.content}
       </p>
     </div>

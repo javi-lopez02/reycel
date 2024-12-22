@@ -20,7 +20,7 @@ export interface Products {
   name: string;
   description: string;
   price: number;
-  ratingAverage: number;
+  rating: number;
   imagen: string;
   color?: string;
   ram: number;
@@ -93,6 +93,12 @@ export type AuthContextType = {
   logout: () => void;
 };
 
+export interface TransactionType{
+  transactionID: string
+  price: number
+  productCount: number
+}
+
 export interface Category {
   id: string;
   name: string;
@@ -128,3 +134,17 @@ export type ProductContextType = {
   setErrorSearch: (value: Array<string> | null) => void;
   setQuerySeach: (value: string) => void;
 };
+
+
+export interface Sedes {
+  id?: string;
+  direction: string;
+  image: string;
+  phone: number;
+  warker: {
+    id: string;
+    email: string;
+    username: string;
+    image: string
+  }[];
+}

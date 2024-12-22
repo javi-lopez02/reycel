@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family: sans-serif;
+}
 .listProduct{
   display: grid;
   min-height: 100vh;

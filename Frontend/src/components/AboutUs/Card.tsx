@@ -5,11 +5,16 @@ import CardModerator from "./CardModerator";
 interface SedeCardProps {
   image: string;
   phone: number;
-  municipe: string;
   address: string;
+  warkers: {
+    id: string;
+    email: string;
+    username: string;
+    image: string;
+  }[];
 }
 
-const Card: FC<SedeCardProps> = ({ image, phone, municipe, address }) => {
+const Card: FC<SedeCardProps> = ({ image, phone, warkers, address }) => {
   return (
     <div className="max-w-sm flex flex-col bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <img
@@ -24,16 +29,16 @@ const Card: FC<SedeCardProps> = ({ image, phone, municipe, address }) => {
         </span>
         <span className="flex items-center font-semibold text-md text-gray-900">
           <FaMapLocationDot className="text-blue-500 min-h-5 min-w-5 mr-3" />
-          {address} {municipe}
+          {address}
         </span>
       </div>
-      {[...Array(2)].map((_, index) => {
+      {warkers.map((warker) => {
         return (
           <CardModerator
-            key={index}
-            imageModerator="https://readymadeui.com/profile_2.webp"
-            nameModerator="Luis Gonzales"
-            phoneModerator="+5353535353"
+            key={warker.id}
+            imageModerator={warker.image}
+            nameModerator={warker.username}
+            phoneModerator={warker.email}
           />
         );
       })}

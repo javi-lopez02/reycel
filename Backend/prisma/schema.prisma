@@ -15,13 +15,17 @@ model User {
   username  String
   email     String    @unique
   password  String
+  image     String?
   status    Boolean
+  isDeleted Boolean   @default(false)
   role      Role      @default(USER)
   orders    Order[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   Rating    Rating[]
   comment   Comment[]
+  Sede      Sede?     @relation(fields: [sedeId], references: [id])
+  sedeId    String?
 }
 
 enum Role {
@@ -120,17 +124,33 @@ model OrderItem {
 }
 
 model Payment {
-  id            String        @id @default(uuid())
+  id            String        @id
   orderId       String        @unique
   order         Order         @relation(fields: [orderId], references: [id])
   amount        Float
-  paymentMethod String
-  paymentStatus PaymentStatus
+  paymentMethod PaymentMethod
+  paymentStatus PaymentStatus @default(PENDING)
   createdAt     DateTime      @default(now())
+}
+
+enum PaymentMethod {
+  TRANSFER_USD
+  TRANSFER_CUP
+  CASH
+  QVAPAY
+  ZELLE
 }
 
 enum PaymentStatus {
   PENDING
   COMPLETED
   FAILED
+}
+
+model Sede {
+  id        String @id @default(uuid())
+  image     String
+  phone     Int    @unique
+  direction String
+  warker    User[]
 }

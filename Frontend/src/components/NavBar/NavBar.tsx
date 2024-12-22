@@ -59,7 +59,7 @@ const Navbar = () => {
       <nav className="bg-white dark:bg-zinc-800 pl-3 h-14 w-full shadow flex flex-row items-center justify-between fixed top-0 z-50 border-b dark:border-neutral-700">
         <div className="flex items-center space-x-3 md:w-60">
           <Link to="/" className="flex items-center">
-            <img src="./Logo.jpeg" alt="logo" className="min-w-12 md:w-8 h-8" />
+            <img src="./logo.webp" alt="logo" className="min-w-12 w-10 md:w-8 h-9" />
             <h1 className="hidden md:inline text-xl ml-2 sm:text-2xl font-bold">
               REYCEL
             </h1>
