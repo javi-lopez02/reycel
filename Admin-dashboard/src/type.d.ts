@@ -80,5 +80,33 @@ export interface PaymentMethod {
   paymentOptions: PaymentOptions;
 }
 
-export type PaymentOptions = "TRANSFER_USD" | "TRANSFER_CUP" | "CASH" | "QVAPAY" | "ZELLE";
+export type PaymentOptions =
+  | "TRANSFER_USD"
+  | "TRANSFER_CUP"
+  | "CASH"
+  | "QVAPAY"
+  | "ZELLE";
 
+export interface Payment {
+  id: string;
+  orderId: string;
+  amount: number;
+  paymentStatus: string;
+  createdAt: string;
+  paymentMethodId: string;
+  userId: string;
+  User: UserPayment;
+  PaymentMethod: PaymentMethod;
+  order: {
+    _count: {
+      orderItems: number;
+    };
+  };
+}
+
+export interface UserPayment {
+  username: string;
+  image: string;
+  email: string;
+  role: string;
+}

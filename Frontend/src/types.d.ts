@@ -24,6 +24,7 @@ export interface Products {
   imagen: string;
   color?: string;
   ram: number;
+  ratingAverage?: number;
   storage: number;
   battery?: number;
   mpxCameraFront?: number;
@@ -77,10 +78,10 @@ export interface Order {
   orderItems: OrderItem[];
 }
 
-interface UserAuth{
-  email: string
-  password: string
-  username?: string
+interface UserAuth {
+  email: string;
+  password: string;
+  username?: string;
 }
 
 export type AuthContextType = {
@@ -93,10 +94,10 @@ export type AuthContextType = {
   logout: () => void;
 };
 
-export interface TransactionType{
-  transactionID: string
-  price: number
-  productCount: number
+export interface TransactionType {
+  transactionID: string;
+  price: number;
+  productCount: number;
 }
 
 export interface Category {
@@ -135,7 +136,6 @@ export type ProductContextType = {
   setQuerySeach: (value: string) => void;
 };
 
-
 export interface Sedes {
   id?: string;
   direction: string;
@@ -145,6 +145,6 @@ export interface Sedes {
     id: string;
     email: string;
     username: string;
-    image: string
+    image: string;
   }[];
 }

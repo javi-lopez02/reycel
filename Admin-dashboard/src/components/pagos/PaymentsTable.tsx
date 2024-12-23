@@ -26,19 +26,12 @@ import {
   ChipProps,
   SortDescriptor,
   Tooltip,
-  //   Spinner,
-  useDisclosure,
+  Spinner,
 } from "@nextui-org/react";
-import {
-  ChevronDownIcon,
-  DeleteIcon,
-  EditIcon,
-  EyeIcon,
-  PlusIcon,
-  SearchIcon,
-} from "../Icons";
-import { payments } from "../Payments";
-import ModalAddPayment from "./ModalAddPayment";
+import { ChevronDownIcon, EditIcon, EyeIcon, SearchIcon } from "../Icons";
+import usePayments from "../../customHooks/usePayments";
+import { Payment } from "../../type";
+import { toast } from "sonner";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -49,41 +42,41 @@ export function Capitalize(s: string) {
 }
 
 const columns = [
-  { name: "USUARIO", uid: "username", sortable: true },
+  { name: "USUARIO", uid: "user", sortable: true },
   { name: "ROLE", uid: "role", sortable: true },
   { name: "PRECIO TOTAL", uid: "price", sortable: true },
   { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
-  { name: "FECHA", uid: "date" },
-  { name: "EMAIL", uid: "email" },
+  { name: "METODO DE PAGO", uid: "paymentMethod" },
   { name: "STATUS", uid: "status", sortable: true },
+  { name: "FECHA", uid: "date" },
   { name: "ACTIONS", uid: "actions" },
 ];
 
 const statusOptions = [
-  { name: "COMPLETADO", uid: "completed" },
-  { name: "PENDIENTE", uid: "pendient" },
-  { name: "CANCELADO", uid: "canceled" },
+  { name: "COMPLETADO", uid: "COMPLETED" },
+  { name: "PENDIENTE", uid: "PENDING" },
+  { name: "CANCELADO", uid: "FAILED" },
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  completed: "success",
-  pendient: "warning",
-  canceled: "danger",
+  COMPLETED: "success",
+  PENDING: "warning",
+  FAILED: "danger",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
-  "username",
+  "user",
   "role",
   "price",
+  "productquantity",
+  "paymentMethod",
   "date",
   "status",
   "actions",
 ];
 
-type Payment = (typeof payments)[0];
-
 export default function PaymentsTable() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { error, loading, payments } = usePayments();
 
   const [filterValue, setFilterValue] = useState("");
 
@@ -92,10 +85,7 @@ export default function PaymentsTable() {
   );
   const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>();
 
   const [page, setPage] = useState(1);
 
@@ -110,11 +100,24 @@ export default function PaymentsTable() {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
+    if (!payments) {
+      return [];
+    }
     let filteredPayments = [...payments];
 
     if (hasSearchFilter) {
-      filteredPayments = filteredPayments.filter((payment) =>
-        payment.username.toLowerCase().includes(filterValue.toLowerCase())
+      filteredPayments = filteredPayments.filter(
+        (payment) =>
+          payment.User.username
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          payment.User.role.toLowerCase().includes(filterValue.toLowerCase()) ||
+          payment.PaymentMethod.paymentOptions
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          payment.paymentStatus
+            .toLowerCase()
+            .includes(filterValue.toLowerCase())
       );
     }
     if (
@@ -122,89 +125,142 @@ export default function PaymentsTable() {
       Array.from(statusFilter).length !== statusOptions.length
     ) {
       filteredPayments = filteredPayments.filter((payment) =>
-        Array.from(statusFilter).includes(payment.status)
+        Array.from(statusFilter).includes(payment.paymentStatus)
       );
     }
 
     return filteredPayments;
-  }, [filterValue, statusFilter, hasSearchFilter]);
+  }, [payments, hasSearchFilter, statusFilter, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const items = useMemo(() => {
+  const sortedItems = useMemo(() => {
+    const sorted = [...filteredItems].sort((a: Payment, b: Payment) => {
+      const first = a[sortDescriptor?.column as keyof Payment] as number;
+      const second = b[sortDescriptor?.column as keyof Payment] as number;
+      const cmp = first < second ? -1 : first > second ? 1 : 0;
+
+      return sortDescriptor?.direction === "descending" ? -cmp : cmp;
+    });
+
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
+    return sorted.slice(start, end);
+  }, [
+    filteredItems,
+    page,
+    rowsPerPage,
+    sortDescriptor?.column,
+    sortDescriptor?.direction,
+  ]);
 
-  const sortedItems = useMemo(() => {
-    return [...items].sort((a: Payment, b: Payment) => {
-      const first = a[sortDescriptor.column as keyof Payment] as number;
-      const second = b[sortDescriptor.column as keyof Payment] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
+  const formatearFecha = (isoString: string) => {
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
 
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
+    const fecha = new Date(isoString);
+
+    const dia = fecha.getUTCDate();
+    const mes = meses[fecha.getUTCMonth()];
+    const anio = fecha.getUTCFullYear();
+
+    return `${dia} ${mes} ${anio}`;
+  };
 
   const renderCell = useCallback((payments: Payment, columnKey: Key) => {
     const cellValue = payments[columnKey as keyof Payment];
 
     switch (columnKey) {
-      case "username":
+      case "user":
         return (
           <User
-            avatarProps={{ radius: "lg", src: payments.avatar }}
-            description={payments.username}
-            name={payments.name}
+            avatarProps={{ radius: "lg", src: payments.User.image }}
+            description={payments.User.email}
+            name={payments.User.username}
           />
         );
       case "role":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
+            <p className="text-bold text-small capitalize">
+              {payments.User.role}
+            </p>
+          </div>
+        );
+
+      case "price":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">
+              {payments.amount}$
+            </p>
+          </div>
+        );
+      case "productquantity":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">
+              {payments.order._count.orderItems}
+            </p>
+          </div>
+        );
+      case "paymentMethod":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">
+              {payments.PaymentMethod.paymentOptions}
+            </p>
           </div>
         );
       case "status":
         return (
           <Chip
             className="capitalize"
-            color={statusColorMap[payments.status]}
+            color={statusColorMap[payments.paymentStatus]}
             size="sm"
             variant="flat"
           >
-            {cellValue}
+            {payments.paymentStatus}
           </Chip>
         );
       case "date":
         return (
           <div>
-            <p className="text-bold text-small capitalize">{cellValue}</p>
+            <p className="text-bold text-small capitalize">
+              {formatearFecha(payments.createdAt)}
+            </p>
           </div>
         );
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+            <Tooltip content="Detalles" color="success">
+              <span className="text-lg text-success cursor-pointer active:opacity-50">
                 <EyeIcon />
               </span>
             </Tooltip>
-            <Tooltip content="Edit user">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+            <Tooltip content="Editar pago" color="warning">
+              <span className="text-lg text-warning cursor-pointer active:opacity-50">
                 <EditIcon />
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete user">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <DeleteIcon />
               </span>
             </Tooltip>
           </div>
         );
       default:
-        return cellValue;
+        return String(cellValue);
     }
   }, []);
 
@@ -305,15 +361,15 @@ export default function PaymentsTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="success" endContent={<PlusIcon />} onPress={onOpen}>
+            {/*       <Button color="success" endContent={<PlusIcon />} onPress={onOpen}>
               Nuevo Pago
             </Button>
-            <ModalAddPayment isOpen={isOpen} onClose={onClose} />
+            <ModalAddPayment isOpen={isOpen} onClose={onClose} /> */}
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {payments.length} pagos
+            Total {payments?.length} pagos
           </span>
           <label className="flex items-center text-default-400 text-small">
             Filas por páginas:
@@ -331,14 +387,12 @@ export default function PaymentsTable() {
     );
   }, [
     filterValue,
+    onSearchChange,
     statusFilter,
     visibleColumns,
-    onSearchChange,
+    payments?.length,
     onRowsPerPageChange,
     onClear,
-    onClose,
-    isOpen,
-    onOpen,
   ]);
 
   const bottomContent = useMemo(() => {
@@ -380,6 +434,7 @@ export default function PaymentsTable() {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-4xl font-medium text-left">Tabla de Pagos</h1>
+      {error && error.map((err) => toast.error(err))}
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
@@ -405,9 +460,9 @@ export default function PaymentsTable() {
           )}
         </TableHeader>
         <TableBody
-          isLoading={true}
-          // loadingContent={<Spinner color="white" />}
-          emptyContent={"No users found"}
+          isLoading={loading}
+          loadingContent={<Spinner color="success" />}
+          emptyContent={"No hay pagos aún"}
           items={sortedItems}
         >
           {(item) => (

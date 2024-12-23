@@ -24,6 +24,7 @@ model User {
   updatedAt DateTime  @updatedAt
   Rating    Rating[]
   comment   Comment[]
+  payment   Payment[]
   Sede      Sede?     @relation(fields: [sedeId], references: [id])
   sedeId    String?
 }
@@ -132,13 +133,15 @@ model Payment {
   createdAt       DateTime      @default(now())
   PaymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
   paymentMethodId String
+  User            User          @relation(fields: [userId], references: [id])
+  userId          String
 }
 
 model PaymentMethod {
-  id         String   @id @default(uuid())
-  cardImage  String
-  cardNumber String?
-  createdAt  DateTime @default(now())
+  id             String         @id @default(uuid())
+  cardImage      String
+  cardNumber     String?
+  createdAt      DateTime       @default(now())
   payment        Payment[]
   paymentOptions PaymentOptions
 }

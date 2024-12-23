@@ -220,6 +220,7 @@ const ModalAddUser: FC<Props> = ({
                         variant="bordered"
                         label="Role"
                         name="role"
+                        defaultOpen
                         placeholder="Seleccione el role"
                         labelPlacement="outside"
                         onChange={handleRoleChange}
