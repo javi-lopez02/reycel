@@ -71,6 +71,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "productquantity",
   "paymentMethod",
   "date",
+  "idorder",
   "status",
   "actions",
 ];
