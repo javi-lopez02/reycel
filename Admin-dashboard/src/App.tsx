@@ -10,8 +10,8 @@ import ProtectedRoutes from "./components/ProtectedRoutes";
 import { Toaster } from "sonner";
 import Categories from "./pages/Categories";
 import Payments from "./pages/Payments";
-import Orders from "./pages/Orders";
 import Sedes from "./pages/Sedes";
+import Order from "./pages/Order";
 
 function App() {
   return (
@@ -28,7 +28,7 @@ function App() {
                 <Route path="/products" element={<Products />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/payments" element={<Payments />} />
-                <Route path="/orders" element={<Orders />} />
+                <Route path="/order" element={<Order />} />
                 <Route path="/sedes" element={<Sedes />} />
               </Route>
             </Route>

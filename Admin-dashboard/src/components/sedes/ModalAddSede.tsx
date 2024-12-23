@@ -19,8 +19,7 @@ interface Props {
 }
 
 const ModalAddSede: FC<Props> = ({ isOpen, onClose }) => {
-
-    const {users} = useUser();
+  const { users } = useUser();
 
   return (
     <>
@@ -91,9 +90,10 @@ const ModalAddSede: FC<Props> = ({ isOpen, onClose }) => {
                       placeholder="Seleccione el Trabajador"
                       labelPlacement="outside"
                     >
-                      {users && users.map((user) => (
-                        <SelectItem>{user.username}</SelectItem>
-                ))}
+                      {users &&
+                        users.map((user) => (
+                          <SelectItem>{user.username}</SelectItem>
+                        ))}
                     </Select>
                   </div>
                   <Textarea
