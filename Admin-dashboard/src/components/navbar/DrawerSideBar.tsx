@@ -118,8 +118,8 @@ export default function SideBar() {
                       </Link>
                     </li>
                     <li>
-                      <a
-                        href="#"
+                      <Link
+                        to="/order"
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
                       >
                         <svg
@@ -137,7 +137,7 @@ export default function SideBar() {
                         <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
                           3
                         </span>
-                      </a>
+                      </Link>
                     </li>
                     <li>
                       <Link

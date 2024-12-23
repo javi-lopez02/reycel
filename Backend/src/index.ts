@@ -4,7 +4,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import path from "path";
-import {io, server, app} from './Libs/socketServer'
+import { io, server, app } from "./Libs/socketServer";
 
 import auth from "./Routes/auth.routes";
 import product from "./Routes/product.routes";
@@ -12,9 +12,10 @@ import rating from "./Routes/rating.routes";
 import comment from "./Routes/comment.routes";
 import order from "./Routes/order.routes";
 import bots from "./Routes/bot.routes";
-import payment from './Routes/payment.routes'
-import sedes from './Routes/sedes.routes'
-import users from './Routes/user.routes'
+import payment from "./Routes/payment.routes";
+import sedes from "./Routes/sedes.routes";
+import users from "./Routes/user.routes";
+import paymentMethod from "./Routes/paymentMethod.routes";
 
 import { initBot } from "./Controllers/bot.controller";
 
@@ -44,13 +45,12 @@ app.use("/api", rating);
 app.use("/api", comment);
 app.use("/api", order);
 app.use("/api", bots);
-app.use("/api", payment)
-app.use("/api", sedes)
-app.use("/api", users)
+app.use("/api", payment);
+app.use("/api", sedes);
+app.use("/api", users);
+app.use("/api", paymentMethod);
 
-
-
-app.use("/public", express.static(path.join(__dirname, "/upload")));
+app.use("/public", express.static(path.join(__dirname, "/Upload")));
 
 //initBot();
 

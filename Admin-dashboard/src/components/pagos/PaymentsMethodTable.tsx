@@ -19,12 +19,14 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
+  Chip,
+  User,
   Pagination,
   Selection,
   SortDescriptor,
   Tooltip,
-  // Spinner,
   useDisclosure,
+  Spinner,
 } from "@nextui-org/react";
 import {
   ChevronDownIcon,
@@ -33,11 +35,10 @@ import {
   PlusIcon,
   SearchIcon,
 } from "../Icons";
-import ModalAddCategory from "./ModalAddCategory";
-import useCategory from "../../customHooks/useCategory";
-import { Category } from "../../type";
+import ModalAddPayment from "./ModalAddPayment";
+import usePaymentMethod from "../../customHooks/usePaymentMethod";
 import { toast } from "sonner";
-import { deleteCategoryRequest } from "../../services/category";
+import { PaymentMethod } from "../../type";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -48,21 +49,23 @@ export function Capitalize(s: string) {
 }
 
 const columns = [
-  { name: "NOMBRE", uid: "name", sortable: true },
-  { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
-  { name: "Fecha de Creación", uid: "createdAt", sortable: true },
+  { name: "TARJETA", uid: "card", sortable: true },
+  { name: "NÚMERO", uid: "number", sortable: true },
+  { name: "CANTIDAD DE PAGOS", uid: "payment", sortable: true },
+  { name: "FECHA", uid: "createdAt", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
-  "name",
-  "productquantity",
+  "card",
+  "number",
+  "payment",
   "createdAt",
   "actions",
 ];
 
-export default function CategoryTable() {
-  const { category, error, setCategory } = useCategory();
+export default function PaymentsMethodTable() {
+  const { error, loading, paymentMethod } = usePaymentMethod();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
@@ -70,27 +73,12 @@ export default function CategoryTable() {
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [rowsPerPage, setRowsPerPage] = useState(15);
-
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>();
 
   const [page, setPage] = useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
-
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
-  );
-
-  const handleAddCategory = () => {
-    setSelectedCategory(null);
-    onOpen();
-  };
-
-  const handleEditCategory = (category: Category) => {
-    setSelectedCategory(category);
-    onOpen();
-  };
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -101,30 +89,40 @@ export default function CategoryTable() {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    if (!category) {
+    if (!paymentMethod) {
       return [];
     }
-    let filteredcategories = [...category];
+    let filteredPayments = [...paymentMethod];
 
     if (hasSearchFilter) {
-      filteredcategories = filteredcategories.filter((Category) =>
-        Category.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredPayments = filteredPayments.filter(
+        (payment) =>
+          payment.paymentOptions
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          payment.cardNumber
+            ?.toString()
+            .toLowerCase()
+            .includes(filterValue.toLowerCase())
       );
     }
 
-    return filteredcategories;
-  }, [category, filterValue, hasSearchFilter]);
+    return filteredPayments;
+  }, [paymentMethod, hasSearchFilter, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const sortedItems = useMemo(() => {
-    const sorted = [...filteredItems].sort((a: Category, b: Category) => {
-      const first = a[sortDescriptor?.column as keyof Category] as string;
-      const second = b[sortDescriptor?.column as keyof Category] as string;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
+    const sorted = [...filteredItems].sort(
+      (a: PaymentMethod, b: PaymentMethod) => {
+        const first = a[sortDescriptor?.column as never] as number;
+        const second = b[sortDescriptor?.column as never] as number;
+        const cmp = first < second ? -1 : first > second ? 1 : 0;
 
-      return sortDescriptor?.direction === "descending" ? -cmp : cmp;
-    });
+        return sortDescriptor?.direction === "descending" ? -cmp : cmp;
+      }
+    );
+
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
@@ -162,76 +160,69 @@ export default function CategoryTable() {
     return `${dia} ${mes} ${anio}`;
   };
 
-  const handleDelete = (id: string) => {
-    deleteCategoryRequest(id)
-      .then(() => {
-        toast.success("Categoría eliminado con exito");
-        setCategory((prev) => {
-          return prev
-            ? prev.filter((category) => {
-                return category.id !== id;
-              })
-            : null;
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Error al eliminar el producto");
-      });
-  };
+  const renderCell = useCallback(
+    (paymentMethod: PaymentMethod, columnKey: Key) => {
+      const cellValue = paymentMethod[columnKey as keyof PaymentMethod];
 
-  const renderCell = useCallback((Category: Category, columnKey: Key) => {
-    const cellValue = Category[columnKey as keyof Category];
-
-    switch (columnKey) {
-      case "name":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{Category.name}</p>
-          </div>
-        );
-      case "productquantity":
-        return (
-          <div className="flex ">
-            <p className="text-bold text-small capitalize">
-              {Category._count.products}
-            </p>
-          </div>
-        );
-      case "createdAt":
-        return (
-          <div className="flex ">
-            <p className="text-bold text-small capitalize">
-              {formatearFecha(Category.createdAt)}
-            </p>
-          </div>
-        );
-      case "actions":
-        return (
-          <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Edit Category">
-              <button
-                onClick={() => handleEditCategory(Category)}
-                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+      switch (columnKey) {
+        case "card":
+          return (
+            <User
+              avatarProps={{ radius: "lg", src: paymentMethod.cardImage }}
+              description={paymentMethod.id}
+              name={paymentMethod.paymentOptions}
+            />
+          );
+        case "number":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                {paymentMethod.cardNumber}
+              </p>
+            </div>
+          );
+        case "payment":
+          return (
+            <div className="flex justify-center">
+              <Chip
+                className="capitalize"
+                color="success"
+                size="sm"
+                variant="flat"
               >
-                <EditIcon />
-              </button>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete Category">
-              <button
-                onClick={() => handleDelete(Category.id)}
-                className="text-lg text-danger cursor-pointer active:opacity-50"
-              >
-                <DeleteIcon />
-              </button>
-            </Tooltip>
-          </div>
-        );
-      default:
-        return String(cellValue);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+                {paymentMethod._count.payment}
+              </Chip>
+            </div>
+          );
+        case "createdAt":
+          return (
+            <div>
+              <p className="text-bold text-small capitalize">
+                {formatearFecha(paymentMethod.createdAt)}
+              </p>
+            </div>
+          );
+        case "actions":
+          return (
+            <div className="relative flex justify-center items-center gap-2">
+              <Tooltip content="Edit user">
+                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                  <EditIcon />
+                </span>
+              </Tooltip>
+              <Tooltip color="danger" content="Delete user">
+                <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                  <DeleteIcon />
+                </span>
+              </Tooltip>
+            </div>
+          );
+        default:
+          return String(cellValue);
+      }
+    },
+    []
+  );
 
   const onNextPage = useCallback(() => {
     if (page < pages) {
@@ -275,7 +266,7 @@ export default function CategoryTable() {
             isClearable
             color="success"
             className="w-full sm:max-w-[44%]"
-            placeholder="Búsqueda ..."
+            placeholder="Búsqueda..."
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}
@@ -306,18 +297,15 @@ export default function CategoryTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button
-              color="success"
-              endContent={<PlusIcon />}
-              onPress={handleAddCategory}
-            >
-              Nueva Categoria
+            <Button color="success" endContent={<PlusIcon />} onPress={onOpen}>
+              Nuevo Pago
             </Button>
+            <ModalAddPayment isOpen={isOpen} onClose={onClose} />
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {category?.length} Categorias
+            Total {paymentMethod?.length} pagos
           </span>
           <label className="flex items-center text-default-400 text-small">
             Filas por páginas:
@@ -333,13 +321,14 @@ export default function CategoryTable() {
         </div>
       </div>
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     filterValue,
     onSearchChange,
     visibleColumns,
     onOpen,
-    category?.length,
+    isOpen,
+    onClose,
+    paymentMethod?.length,
     onRowsPerPageChange,
     onClear,
   ]);
@@ -381,15 +370,17 @@ export default function CategoryTable() {
   }, [page, pages, onPreviousPage, onNextPage]);
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
+      <h1 className="text-4xl font-medium text-left">Metodos de Pago</h1>
       {error && error.map((err) => toast.error(err))}
+
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         classNames={{
-          wrapper: "max-h-[615px]",
+          wrapper: "max-h-[600px]",
         }}
         sortDescriptor={sortDescriptor}
         topContent={topContent}
@@ -400,7 +391,7 @@ export default function CategoryTable() {
           {(column) => (
             <TableColumn
               key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
+              align={column.uid === "actions"|| column.uid === "payment" ? "center" : "start"}
               allowsSorting={column.sortable}
             >
               {column.name}
@@ -408,9 +399,9 @@ export default function CategoryTable() {
           )}
         </TableHeader>
         <TableBody
-          isLoading={true}
-          // loadingContent={<Spinner color="white" />}
-          emptyContent={"No categories found"}
+          isLoading={loading}
+          loadingContent={<Spinner color="white" />}
+          emptyContent={"No users found"}
           items={sortedItems}
         >
           {(item) => (
@@ -422,12 +413,6 @@ export default function CategoryTable() {
           )}
         </TableBody>
       </Table>
-      <ModalAddCategory
-        isOpen={isOpen}
-        onClose={onClose}
-        setCategory={setCategory}
-        {...selectedCategory}
-      />
-    </>
+    </div>
   );
 }

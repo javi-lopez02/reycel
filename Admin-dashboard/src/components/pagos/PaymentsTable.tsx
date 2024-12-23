@@ -26,7 +26,7 @@ import {
   ChipProps,
   SortDescriptor,
   Tooltip,
-//   Spinner,
+  //   Spinner,
   useDisclosure,
 } from "@nextui-org/react";
 import {
@@ -249,7 +249,8 @@ export default function PaymentsTable() {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Búsqueda por nombre..."
+            color="success"
+            placeholder="Búsqueda..."
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}
@@ -377,44 +378,47 @@ export default function PaymentsTable() {
   }, [page, pages, onPreviousPage, onNextPage]);
 
   return (
-    <Table
-      isHeaderSticky
-      aria-label="Example table with custom cells, pagination and sorting"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[600px]",
-      }}
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody
-        isLoading={true}
-        // loadingContent={<Spinner color="white" />}
-        emptyContent={"No users found"}
-        items={sortedItems}
+    <div className="flex flex-col gap-4">
+      <h1 className="text-4xl font-medium text-left">Tabla de Pagos</h1>
+      <Table
+        isHeaderSticky
+        aria-label="Example table with custom cells, pagination and sorting"
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[600px]",
+        }}
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSortChange={setSortDescriptor}
       >
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody
+          isLoading={true}
+          // loadingContent={<Spinner color="white" />}
+          emptyContent={"No users found"}
+          items={sortedItems}
+        >
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

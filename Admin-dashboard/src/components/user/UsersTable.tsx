@@ -98,19 +98,17 @@ export default function UsersTable() {
 
   const hasSearchFilter = Boolean(filterValue);
 
+  const [selectedUser, setSelectedUser] = useState<Users | null>(null);
 
-    const [selectedUser, setSelectedUser] = useState<Users | null>(null);
-  
-    const handleAddProduct = () => {
-      setSelectedUser(null);
-      onOpen();
-    };
-  
-    const handleEditProduct = (user: Users) => {
-      setSelectedUser(user);
-      onOpen();
-    };
-  
+  const handleAddProduct = () => {
+    setSelectedUser(null);
+    onOpen();
+  };
+
+  const handleEditProduct = (user: Users) => {
+    setSelectedUser(user);
+    onOpen();
+  };
 
   const formatearFecha = (isoString: string) => {
     const meses = [
@@ -254,10 +252,13 @@ export default function UsersTable() {
       case "role":
         return (
           <div className="flex flex-col">
-            {user.Sede?.direction !== null && (
-              <Tooltip content={user.Sede?.direction} className="bg-green-300">
+            {user.Sede?.direction !== undefined && (
+              <Tooltip content={user.Sede?.direction} color="primary">
                 <p className="text-bold text-small capitalize">{user.role}</p>
               </Tooltip>
+            )}
+            {user.Sede?.direction === undefined && (
+              <p className="text-bold text-small capitalize">{user.role}</p>
             )}
           </div>
         );
@@ -278,7 +279,10 @@ export default function UsersTable() {
         return (
           <div className="relative flex justify-center items-center gap-2">
             <Tooltip content="Edit user">
-              <button onClick={()=>handleEditProduct(user)} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <button
+                onClick={() => handleEditProduct(user)}
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+              >
                 <EditIcon />
               </button>
             </Tooltip>
@@ -297,7 +301,7 @@ export default function UsersTable() {
       default:
         return String(cellValue);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onNextPage = useCallback(() => {
@@ -314,6 +318,7 @@ export default function UsersTable() {
 
   const onRowsPerPageChange = useCallback(
     (e: ChangeEvent<HTMLSelectElement>) => {
+      console.log(e.target.value);
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
@@ -340,8 +345,9 @@ export default function UsersTable() {
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
+            color="primary"
             className="w-full sm:max-w-[44%]"
-            placeholder="Búsqueda por nombre..."
+            placeholder="Búsqueda..."
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}
@@ -396,7 +402,11 @@ export default function UsersTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="primary" endContent={<PlusIcon />} onPress={handleAddProduct}>
+            <Button
+              color="primary"
+              endContent={<PlusIcon />}
+              onPress={handleAddProduct}
+            >
               Nuevo Usuario
             </Button>
           </div>
@@ -419,7 +429,7 @@ export default function UsersTable() {
         </div>
       </div>
     );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     filterValue,
     onSearchChange,
@@ -438,7 +448,7 @@ export default function UsersTable() {
           isCompact
           showControls
           showShadow
-          color="success"
+          color="primary"
           page={page}
           total={pages}
           onChange={setPage}
@@ -477,8 +487,9 @@ export default function UsersTable() {
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         classNames={{
-          wrapper: "max-h-[600px]",
+          wrapper: "max-h-[670px]",
         }}
+        color="danger"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
@@ -517,7 +528,12 @@ export default function UsersTable() {
           )}
         </TableBody>
       </Table>
-      <ModalAddUser isOpen={isOpen} onClose={onClose} setUsers={setUsers} {...selectedUser}/>
+      <ModalAddUser
+        isOpen={isOpen}
+        onClose={onClose}
+        setUsers={setUsers}
+        {...selectedUser}
+      />
     </>
   );
 }

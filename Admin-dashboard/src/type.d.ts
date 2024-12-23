@@ -57,3 +57,28 @@ export interface Category {
     products: number;
   };
 }
+
+export interface Order {
+  createdAt: string;
+  id: string;
+  totalAmount: number;
+  pending: boolean;
+  user: Users;
+  _count: {
+    orderItems: number;
+  };
+}
+
+export interface PaymentMethod {
+  id: string;
+  cardImage: string;
+  cardNumber?: string;
+  createdAt: string;
+  _count: {
+    payment: number;
+  };
+  paymentOptions: PaymentOptions;
+}
+
+export type PaymentOptions = "TRANSFER_USD" | "TRANSFER_CUP" | "CASH" | "QVAPAY" | "ZELLE";
+

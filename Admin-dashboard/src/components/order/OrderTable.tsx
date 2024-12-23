@@ -1,5 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { ChangeEvent, Key, useCallback, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  Key,
+  SVGProps,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import {
   Table,
   TableHeader,
@@ -14,81 +20,79 @@ import {
   DropdownMenu,
   DropdownItem,
   Chip,
+  User,
   Pagination,
   Selection,
+  ChipProps,
   SortDescriptor,
   Tooltip,
-  User,
   Spinner,
-  useDisclosure,
+  //useDisclosure,
 } from "@nextui-org/react";
 import {
   ChevronDownIcon,
-  DeleteIcon,
-  EditIcon,
-  PlusIcon,
+  EyeIcon,
   SearchIcon,
 } from "../Icons";
-import { Products as Product } from "../../type";
-import useProduct from "../../customHooks/useProduct";
+//import ModalAddOrder from "./ModalAddOrder";
+import useOrder from "../../customHooks/useOrder";
 import { toast } from "sonner";
-import ModalAddProduct from "./ModalAddProduct";
-import { deleteProductRequest } from "../../services/product";
+import { Order } from "../../type";
+
+export type IconSvgProps = SVGProps<SVGSVGElement> & {
+  size?: number;
+};
 
 export function Capitalize(s: string) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
 
 const columns = [
-  { name: "NOMBRE", uid: "name", sortable: true },
-  { name: "CATEGORIA", uid: "category", sortable: true },
-  { name: "PRECIO", uid: "price", sortable: true },
-  { name: "RATING", uid: "ratingAverage", sortable: true },
-  { name: "CANTIDAD", uid: "quantity", sortable: true },
-  { name: "FECHA DE CREACIÓN", uid: "createdAt", sortable: true },
-  { name: "ACCIONES", uid: "actions" },
+  { name: "USUARIO", uid: "username", sortable: true },
+  { name: "ROLE", uid: "role", sortable: true },
+  { name: "PRECIO TOTAL", uid: "totalAmount", sortable: true },
+  { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
+  { name: "STATUS", uid: "pending", sortable: true },
+  { name: "FECHA", uid: "createdAt" },
+  { name: "ACTIONS", uid: "actions" },
 ];
+
+const statusOptions = [
+  { name: "COMPLETADO", uid: "false" },
+  { name: "PENDIENTE", uid: "true" },
+];
+
+const statusColorMap: Record<string, ChipProps["color"]> = {
+  false: "success",
+  true: "warning",
+};
 
 const INITIAL_VISIBLE_COLUMNS = [
-  "name",
-  "price",
-  "category",
-  "quantity",
-  "actions",
+  "username",
+  "role",
+  "totalAmount",
+  "productquantity",
   "createdAt",
-  "ratingAverage",
+  "pending",
+  "actions",
 ];
 
-export default function ProductTable() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+export default function OrerTable() {
+  const { error, loading, orders } = useOrder();
 
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  //const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleAddProduct = () => {
-    setSelectedProduct(null);
-    onOpen();
-  };
-
-  const handleEditProduct = (product: Product) => {
-    setSelectedProduct(product);
-    onOpen();
-  };
-
-  const {
-    category: categoryOptions,
-    products,
-    loading,
-    error,
-    setProducts,
-  } = useProduct();
   const [filterValue, setFilterValue] = useState("");
 
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [categoryFilter, setcategoryFilter] = useState<Selection>("all");
+  const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>();
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+    column: "name",
+    direction: "ascending",
+  });
 
   const [page, setPage] = useState(1);
 
@@ -103,58 +107,59 @@ export default function ProductTable() {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    if (!products) {
+    if (!orders) {
       return [];
     }
-    let filteredProducts = [...products];
+
+    let filteredOrders = [...orders];
 
     if (hasSearchFilter) {
-      filteredProducts = filteredProducts.filter(
-        (product) =>
-          product.name.toLowerCase().includes(filterValue.toLowerCase()) ||
-          product.category.name
+      filteredOrders = filteredOrders.filter(
+        (order) =>
+          order.user.username
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          order.user.email.toLowerCase().includes(filterValue.toLowerCase()) ||
+          order.user.role.toLowerCase().includes(filterValue.toLowerCase()) ||
+          order.totalAmount
+            .toString()
             .toLowerCase()
             .includes(filterValue.toLowerCase())
       );
     }
     if (
-      categoryFilter !== "all" &&
-      Array.from(categoryFilter).length !== categoryOptions?.length
+      statusFilter !== "all" &&
+      Array.from(statusFilter).length !== statusOptions.length
     ) {
-      console.log(categoryFilter)
-      filteredProducts = filteredProducts.filter((product) =>
-        Array.from(categoryFilter).includes(product.category.id)
+      filteredOrders = filteredOrders.filter((order) =>
+        Array.from(statusFilter).includes(String(order.pending))
       );
     }
-    return filteredProducts;
-  }, [
-    products,
-    hasSearchFilter,
-    categoryFilter,
-    categoryOptions?.length,
-    filterValue,
-  ]);
+
+    return filteredOrders;
+  }, [orders, hasSearchFilter, statusFilter, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const sortedItems = useMemo(() => {
-    const sorted = [...filteredItems].sort((a: Product, b: Product) => {
-      const first = a[sortDescriptor?.column as keyof Product] as number;
-      const second = b[sortDescriptor?.column as keyof Product] as number;
+    const sorted = [...filteredItems].sort((a: Order, b: Order) => {
+      const first = a[sortDescriptor.column as keyof Order] as number;
+      const second = b[sortDescriptor.column as keyof Order] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
-      return sortDescriptor?.direction === "descending" ? -cmp : cmp;
+      return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
 
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
+
     return sorted.slice(start, end);
   }, [
     filteredItems,
     page,
     rowsPerPage,
-    sortDescriptor?.column,
-    sortDescriptor?.direction,
+    sortDescriptor.column,
+    sortDescriptor.direction,
   ]);
 
   const formatearFecha = (isoString: string) => {
@@ -182,157 +187,66 @@ export default function ProductTable() {
     return `${dia} ${mes} ${anio}`;
   };
 
-  const handleDelete = (id: string) => {
-    deleteProductRequest(id)
-      .then(() => {
-        toast.success("Producto eliminado con exito");
-        setProducts((prev) => {
-          return prev
-            ? prev.filter((product) => {
-                return product.id !== id;
-              })
-            : null;
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Error al eliminar el producto");
-      });
-  };
-
-  const renderCell = useCallback((product: Product, columnKey: Key) => {
-    const cellValue = product[columnKey as keyof Product];
+  const renderCell = useCallback((orders: Order, columnKey: Key) => {
+    const cellValue = orders[columnKey as keyof Order];
 
     switch (columnKey) {
-      case "name":
+      case "username":
         return (
           <User
-            avatarProps={{ radius: "lg", src: product.imagen }}
-            description={
-              <Tooltip content={product.description}>
-                <span
-                  style={{
-                    display: "inline-block",
-                    maxWidth: "200px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {product.description}
-                </span>
-              </Tooltip>
-            }
-            name={
-              <Tooltip content={String(cellValue)}>
-                <span
-                  style={{
-                    display: "inline-block",
-                    maxWidth: "250px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {String(cellValue)}
-                </span>
-              </Tooltip>
-            }
+            avatarProps={{ radius: "lg", src: orders.user.image }}
+            description={orders.user.email}
+            name={orders.user.username}
           />
         );
-      case "category":
+      case "role":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">
-              {product.category.name}
+              {orders.user.role}
             </p>
           </div>
         );
-      case "createdAt": {
-        const calcularMesesDiferencia = (fecha: string) => {
-          const fechaCreacion = new Date(fecha);
-          const fechaActual = new Date();
-          const diferenciaMeses =
-            (fechaActual.getFullYear() - fechaCreacion.getFullYear()) * 12 +
-            (fechaActual.getMonth() - fechaCreacion.getMonth());
-          return diferenciaMeses;
-        };
-
-        const mesesDiferencia = calcularMesesDiferencia(product.createdAt);
-        const textoColor =
-          mesesDiferencia > 3 ? "text-red-500" : "text-green-700"; // Cambia a rojo si tiene más de 3 meses
-
+        case "totalAmount":
         return (
-          <div className="flex justify-center">
-            <p className={`text-bold text-small capitalize  ${textoColor}`}>
-              {formatearFecha(product.createdAt)}
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">
+              {orders.totalAmount}$
             </p>
           </div>
         );
-      }
-      case "price":
-        return (
-          <div className="flex flex-col ml-2">
-            <p className="text-bold text-small capitalize">${product.price}</p>
-          </div>
-        );
-      case "ratingAverage":
-        return (
-          <div className="mt-2 flex items-center justify-center gap-2">
-            <div className="flex items-center mt-2">
-              <div className="flex text-yellow-500">
-                {[...Array(5)].map((_, index) => (
-                  <svg
-                    key={index}
-                    className={`h-5 w-5 fill-current ${
-                      product.rating - 0.5 > index
-                        ? "text-yellow-500"
-                        : "text-gray-300"
-                    }`}
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M10 15l-5.878 3.09 1.122-6.545L.368 6.91l6.564-.955L10 0l3.068 5.955 6.564.955-4.878 4.635 1.122 6.545z" />
-                  </svg>
-                ))}
-              </div>
-              <span className="text-gray-600 ml-2">{product.rating} de 5</span>
-            </div>
-          </div>
-        );
-      case "quantity":
+      case "pending":
         return (
           <Chip
             className="capitalize"
+            color={statusColorMap[String(orders.pending)]}
             size="sm"
-            variant="dot"
-            color={product.inventoryCount <= 3 ? "danger" : "success"}
+            variant="flat"
           >
-            {String(product.inventoryCount)}
+            {orders.pending ? "Pendiente" : "Completada"}
           </Chip>
+        );
+      case "productquantity":
+        return (
+          <span className="font-semibold flex justify-center">
+            {orders._count.orderItems}
+          </span>
+        );
+      case "createdAt":
+        return (
+          <div>
+            <p className="text-bold text-small capitalize">
+              {formatearFecha(orders.createdAt)}
+            </p>
+          </div>
         );
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Edit product">
-              <button
-                onClick={() => {
-                  handleEditProduct(product);
-                }}
-                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-              >
-                <EditIcon />
-              </button>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete product">
-              <button
-                onClick={() => {
-                  handleDelete(product.id);
-                }}
-                className="text-lg text-danger cursor-pointer active:opacity-50"
-              >
-                <DeleteIcon />
-              </button>
+            <Tooltip content="Details">
+              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                <EyeIcon />
+              </span>
             </Tooltip>
           </div>
         );
@@ -381,9 +295,9 @@ export default function ProductTable() {
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
-            color="primary"
+            color="warning"
             className="w-full sm:max-w-[44%]"
-            placeholder="Búsqueda... "
+            placeholder="Búsqueda..."
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}
@@ -396,24 +310,22 @@ export default function ProductTable() {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Categoría
+                  Estado
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
-                className="max-h-96 overflow-y-auto"
                 disallowEmptySelection
                 aria-label="Table Columns"
                 closeOnSelect={false}
-                selectedKeys={categoryFilter}
+                selectedKeys={statusFilter}
                 selectionMode="multiple"
-                onSelectionChange={setcategoryFilter}
+                onSelectionChange={setStatusFilter}
               >
-                {categoryOptions &&
-                  categoryOptions.map((category) => (
-                    <DropdownItem key={category.id} className="capitalize">
-                      {Capitalize(category.name)}
-                    </DropdownItem>
-                  ))}
+                {statusOptions.map((status) => (
+                  <DropdownItem key={status.uid} className="capitalize">
+                    {Capitalize(status.name)}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
             <Dropdown>
@@ -440,18 +352,15 @@ export default function ProductTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button
-              color="primary"
-              onPress={handleAddProduct}
-              endContent={<PlusIcon />}
-            >
-              Nuevo Producto
+            {/* <Button color="success" endContent={<PlusIcon />} onPress={onOpen}>
+              Nuevo Orden
             </Button>
+            <ModalAddOrder isOpen={isOpen} onClose={onClose} /> */}
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {products?.length} productos
+            Total {orders?.length} Ordenes
           </span>
           <label className="flex items-center text-default-400 text-small">
             Filas por páginas:
@@ -470,10 +379,9 @@ export default function ProductTable() {
   }, [
     filterValue,
     onSearchChange,
-    categoryFilter,
-    categoryOptions,
+    statusFilter,
     visibleColumns,
-    products?.length,
+    orders?.length,
     onRowsPerPageChange,
     onClear,
   ]);
@@ -485,7 +393,7 @@ export default function ProductTable() {
           isCompact
           showControls
           showShadow
-          color="primary"
+          color="success"
           page={page}
           total={pages}
           onChange={setPage}
@@ -536,8 +444,9 @@ export default function ProductTable() {
               key={column.uid}
               align={
                 column.uid === "actions" ||
-                column.uid === "ratingAverage" ||
-                column.uid === "createdAt"
+                column.uid === "productquantity" ||
+                column.uid === "totalAmount" ||
+                column.uid === "role"
                   ? "center"
                   : "start"
               }
@@ -550,7 +459,7 @@ export default function ProductTable() {
         <TableBody
           isLoading={loading}
           loadingContent={<Spinner color="success" />}
-          emptyContent={"No products found"}
+          emptyContent={"No se encontraron ordenes"}
           items={sortedItems}
         >
           {(item) => (
@@ -562,12 +471,6 @@ export default function ProductTable() {
           )}
         </TableBody>
       </Table>
-      <ModalAddProduct
-        isOpen={isOpen}
-        onClose={onClose}
-        setProducts={setProducts}
-        {...selectedProduct}
-      />
     </>
   );
 }

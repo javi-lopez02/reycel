@@ -124,16 +124,26 @@ model OrderItem {
 }
 
 model Payment {
-  id            String        @id
-  orderId       String        @unique
-  order         Order         @relation(fields: [orderId], references: [id])
-  amount        Float
-  paymentMethod PaymentMethod
-  paymentStatus PaymentStatus @default(PENDING)
-  createdAt     DateTime      @default(now())
+  id              String        @id @default(uuid())
+  orderId         String        @unique
+  order           Order         @relation(fields: [orderId], references: [id])
+  amount          Float
+  paymentStatus   PaymentStatus @default(PENDING)
+  createdAt       DateTime      @default(now())
+  PaymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  paymentMethodId String
 }
 
-enum PaymentMethod {
+model PaymentMethod {
+  id         String   @id @default(uuid())
+  cardImage  String
+  cardNumber String?
+  createdAt  DateTime @default(now())
+  payment        Payment[]
+  paymentOptions PaymentOptions
+}
+
+enum PaymentOptions {
   TRANSFER_USD
   TRANSFER_CUP
   CASH

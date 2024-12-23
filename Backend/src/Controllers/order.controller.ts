@@ -172,3 +172,37 @@ export const deleteOrderItem = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error al agregar el Producto al carrito." });
   }
 };
+
+export const getOrder = async (req: Request, res: Response) => {
+  try {
+    const orders = await prisma.order.findMany({
+      select: {
+        _count: {
+          select: {
+            orderItems: true,
+          },
+        },
+        createdAt: true,
+        id: true,
+        totalAmount: true,
+        pending: true,
+        user: {
+          select: {
+            email: true,
+            id: true,
+            image: true,
+            role: true,
+            username: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      data: orders,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
