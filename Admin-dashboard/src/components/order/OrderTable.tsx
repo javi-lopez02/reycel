@@ -27,17 +27,15 @@ import {
   SortDescriptor,
   Tooltip,
   Spinner,
+  useDisclosure,
   //useDisclosure,
 } from "@nextui-org/react";
-import {
-  ChevronDownIcon,
-  EyeIcon,
-  SearchIcon,
-} from "../Icons";
+import { ChevronDownIcon, EyeIcon, SearchIcon } from "../Icons";
 //import ModalAddOrder from "./ModalAddOrder";
 import useOrder from "../../customHooks/useOrder";
 import { toast } from "sonner";
 import { Order } from "../../type";
+import ModalProductsView from "./ModalProductsView";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -80,7 +78,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 export default function OrerTable() {
   const { error, loading, orders } = useOrder();
 
-  //const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
 
@@ -187,73 +185,77 @@ export default function OrerTable() {
     return `${dia} ${mes} ${anio}`;
   };
 
-  const renderCell = useCallback((orders: Order, columnKey: Key) => {
-    const cellValue = orders[columnKey as keyof Order];
+  const renderCell = useCallback(
+    (orders: Order, columnKey: Key) => {
+      const cellValue = orders[columnKey as keyof Order];
 
-    switch (columnKey) {
-      case "username":
-        return (
-          <User
-            avatarProps={{ radius: "lg", src: orders.user.image }}
-            description={orders.user.email}
-            name={orders.user.username}
-          />
-        );
-      case "role":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {orders.user.role}
-            </p>
-          </div>
-        );
+      switch (columnKey) {
+        case "username":
+          return (
+            <User
+              avatarProps={{ radius: "lg", src: orders.user.image }}
+              description={orders.user.email}
+              name={orders.user.username}
+            />
+          );
+        case "role":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                {orders.user.role}
+              </p>
+            </div>
+          );
         case "totalAmount":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {orders.totalAmount}$
-            </p>
-          </div>
-        );
-      case "pending":
-        return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[String(orders.pending)]}
-            size="sm"
-            variant="flat"
-          >
-            {orders.pending ? "Pendiente" : "Completada"}
-          </Chip>
-        );
-      case "productquantity":
-        return (
-          <span className="font-semibold flex justify-center">
-            {orders._count.orderItems}
-          </span>
-        );
-      case "createdAt":
-        return (
-          <div>
-            <p className="text-bold text-small capitalize">
-              {formatearFecha(orders.createdAt)}
-            </p>
-          </div>
-        );
-      case "actions":
-        return (
-          <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-            </Tooltip>
-          </div>
-        );
-      default:
-        return String(cellValue);
-    }
-  }, []);
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                {orders.totalAmount}$
+              </p>
+            </div>
+          );
+        case "pending":
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap[String(orders.pending)]}
+              size="sm"
+              variant="flat"
+            >
+              {orders.pending ? "Pendiente" : "Completada"}
+            </Chip>
+          );
+        case "productquantity":
+          return (
+            <span className="font-semibold flex justify-center">
+              {orders._count.orderItems}
+            </span>
+          );
+        case "createdAt":
+          return (
+            <div>
+              <p className="text-bold text-small capitalize">
+                {formatearFecha(orders.createdAt)}
+              </p>
+            </div>
+          );
+        case "actions":
+          return (
+            <div className="relative flex justify-center items-center gap-2">
+              <Tooltip content="Details">
+                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                  <EyeIcon onClick={onOpen} />
+                </span>
+              </Tooltip>
+            </div>
+          );
+
+        default:
+          return String(cellValue);
+      }
+    },
+    [onOpen]
+  );
 
   const onNextPage = useCallback(() => {
     if (page < pages) {
@@ -356,6 +358,7 @@ export default function OrerTable() {
               Nuevo Orden
             </Button>
             <ModalAddOrder isOpen={isOpen} onClose={onClose} /> */}
+            <ModalProductsView isOpen={isOpen} onClose={onClose} />;
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -384,6 +387,8 @@ export default function OrerTable() {
     orders?.length,
     onRowsPerPageChange,
     onClear,
+    isOpen,
+    onClose
   ]);
 
   const bottomContent = useMemo(() => {

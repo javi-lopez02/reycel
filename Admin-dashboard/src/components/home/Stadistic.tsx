@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
 import useProduct from "../../customHooks/useProduct";
 import useUser from "../../customHooks/useUser";
+import useOrder from "../../customHooks/useOrder";
 
 export default function Stadistic() {
   const products = useProduct();
   const user = useUser();
+  const orders = useOrder();
 
   return (
-    <div className="bg-gray-50 flex items-center justify-center font-sans py-10">
+    <div className="bg-neutral-100 flex items-center justify-center font-sans py-10">
       <div className="grid lg:grid-cols-4 grid-cols-2 gap-12 rounded-3xl ">
         <Link to={"/users"}>
           <div className="bg-white shadow-[0_4px_24px_-8px_rgba(0,0,0,0.2)] text-center p-2 rounded-2xl">
@@ -56,7 +58,7 @@ export default function Stadistic() {
               <path d="m17.418 3.623-.018-.008a6.713 6.713 0 0 0-2.4-.569V2h1a1 1 0 1 0 0-2h-2a1 1 0 0 0-1 1v2H9.89A6.977 6.977 0 0 1 12 8v5h-2V8A5 5 0 1 0 0 8v6a1 1 0 0 0 1 1h8v4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-4h6a1 1 0 0 0 1-1V8a5 5 0 0 0-2.582-4.377ZM6 12H4a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2Z" />
             </svg>
             <h3 className="text-3xl font-extrabold text-teal-700 fill-tetext-teal-700 mt-5">
-              700+
+              {orders && orders.orders?.length}
             </h3>
             <p className="text-base font-semibold mt-3">Ordenes Totales</p>
           </div>
