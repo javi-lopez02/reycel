@@ -1,9 +1,20 @@
-import ProductTable from "../components/products/ProductTabe";
+import { lazy, Suspense } from "react";
+import { Spinner } from "@nextui-org/react";
+
+const ProductTable = lazy(() => import("../components/products/ProductTabe"));
 
 export default function Products() {
   return (
     <div className="pt-20 p-16 bg-neutral-100">
-      <ProductTable />
+      <Suspense
+        fallback={
+          <div className="w-full h-full flex justify-center items-center">
+            <Spinner color="success" />
+          </div>
+        }
+      >
+        <ProductTable />
+      </Suspense>
     </div>
   );
 }

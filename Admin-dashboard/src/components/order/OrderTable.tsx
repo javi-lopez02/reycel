@@ -1,6 +1,8 @@
 import {
   ChangeEvent,
   Key,
+  lazy,
+  Suspense,
   SVGProps,
   useCallback,
   useMemo,
@@ -35,7 +37,7 @@ import { ChevronDownIcon, EyeIcon, SearchIcon } from "../Icons";
 import useOrder from "../../customHooks/useOrder";
 import { toast } from "sonner";
 import { Order } from "../../type";
-import ModalProductsView from "./ModalProductsView";
+const ModalProductsView = lazy(() => import("./ModalProductsView"));
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -81,6 +83,8 @@ export default function OrerTable() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
+
+  const [orderId, setOrderId] = useState<string>("");
 
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
@@ -244,7 +248,12 @@ export default function OrerTable() {
             <div className="relative flex justify-center items-center gap-2">
               <Tooltip content="Details">
                 <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                  <EyeIcon onClick={onOpen} />
+                  <EyeIcon
+                    onClick={() => {
+                      onOpen();
+                      setOrderId(orders.id);
+                    }}
+                  />
                 </span>
               </Tooltip>
             </div>
@@ -358,7 +367,6 @@ export default function OrerTable() {
               Nuevo Orden
             </Button>
             <ModalAddOrder isOpen={isOpen} onClose={onClose} /> */}
-            <ModalProductsView isOpen={isOpen} onClose={onClose} />;
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -387,8 +395,6 @@ export default function OrerTable() {
     orders?.length,
     onRowsPerPageChange,
     onClear,
-    isOpen,
-    onClose
   ]);
 
   const bottomContent = useMemo(() => {
@@ -398,7 +404,7 @@ export default function OrerTable() {
           isCompact
           showControls
           showShadow
-          color="success"
+          color="warning"
           page={page}
           total={pages}
           onChange={setPage}
@@ -430,6 +436,17 @@ export default function OrerTable() {
   return (
     <>
       {error && error.map((err) => toast.error(err))}
+      {isOpen && (
+        <Suspense
+          fallback={
+            <div className="w-full flex justify-center fixed pt-2">
+              <Spinner color="warning" />
+            </div>
+          }
+        >
+          <ModalProductsView isOpen={isOpen} onClose={onClose} id={orderId} />
+        </Suspense>
+      )}
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
@@ -463,7 +480,7 @@ export default function OrerTable() {
         </TableHeader>
         <TableBody
           isLoading={loading}
-          loadingContent={<Spinner color="success" />}
+          loadingContent={<Spinner color="warning" />}
           emptyContent={"No se encontraron ordenes"}
           items={sortedItems}
         >

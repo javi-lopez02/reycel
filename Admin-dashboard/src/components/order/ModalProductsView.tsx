@@ -5,6 +5,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -13,10 +14,13 @@ import {
   TableRow,
   User,
 } from "@nextui-org/react";
-import React, { FC } from "react";
-import {payments} from '../Payments'
+import React, { FC, useEffect, useMemo, useState } from "react";
+import { getOrderItemsRequest } from "../../services/order";
+import { OrderItem } from "../../type";
+import { toast } from "sonner";
 
 interface Props {
+  id: string;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -27,38 +31,80 @@ const columns = [
   { name: "PRECIO TOTAL", uid: "totalPrice" },
 ];
 
-type Product = (typeof payments)[0];
+const ModalProductsView: FC<Props> = ({ id, isOpen, onClose }) => {
+  const [items, setItems] = useState<OrderItem[] | null>(null);
+  const [loading, setLoading] = useState(false);
 
-const ModalProductsView: FC<Props> = ({ isOpen, onClose }) => {
+  useEffect(() => {
+    setLoading(true);
+    getOrderItemsRequest(id)
+      .then((res) => {
+        setItems(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error al cargar los productos");
+      }).finally(()=>{
+        setLoading(false)
+      });
+  }, [id]);
+
+  const itemsFilter = useMemo(():OrderItem[] => {
+    if (!items) {
+      return [];
+    }
+
+    return items;
+  }, [items]);
+
   const renderCell = React.useCallback(
-    (product: Product, columnKey: React.Key) => {
-      const cellValue = product[columnKey as keyof Product];
+    (item: OrderItem, columnKey: React.Key) => {
+      const cellValue = item[columnKey as keyof OrderItem];
 
       switch (columnKey) {
         case "name":
           return (
             <User
-              avatarProps={{ radius: "lg", src: product.avatar }}
-              description={product.description}
-              name={cellValue}
-            >
-              {product.description}
-            </User>
+              avatarProps={{ radius: "lg", src: item.product.imagen }}
+              description={
+                <div className=" flex items-center justify-center gap-2">
+                  <div className="flex items-center">
+                    <div className="flex text-yellow-500">
+                      {[...Array(5)].map((_, index) => (
+                        <svg
+                          key={index}
+                          className={`h-4 w-4 fill-current ${
+                            item.product.ratingAverage - 0.5 > index
+                              ? "text-yellow-500"
+                              : "text-gray-300"
+                          }`}
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M10 15l-5.878 3.09 1.122-6.545L.368 6.91l6.564-.955L10 0l3.068 5.955 6.564.955-4.878 4.635 1.122 6.545z" />
+                        </svg>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              }
+              name={item.product.name}
+            ></User>
           );
         case "quantity":
           return (
-            <div className="flex flex-col">
-              <p className="text-bold text-sm capitalize">{cellValue}</p>
+            <div className="flex  justify-center">
+              <p className="text-bold text-sm capitalize">{item.quantity}</p>
             </div>
           );
         case "totalPrice":
           return (
-            <div className="flex flex-col">
-              <p className="text-bold text-sm capitalize">{product.price * product.quantity}</p>
+            <div className="flex justify-center ">
+              <p className="text-bold text-sm capitalize">{item.price}</p>
             </div>
           );
         default:
-          return cellValue;
+          return String(cellValue);
       }
     },
     []
@@ -66,7 +112,13 @@ const ModalProductsView: FC<Props> = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <Modal backdrop={"opaque"} isOpen={isOpen} onClose={onClose} size="lg">
+      <Modal
+        classNames={{ body: "px-1" }}
+        backdrop={"opaque"}
+        isOpen={isOpen}
+        onClose={onClose}
+        size="xl"
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -75,18 +127,32 @@ const ModalProductsView: FC<Props> = ({ isOpen, onClose }) => {
                 <h1 className="text-2xl font-bold">Productos de la Orden</h1>
               </ModalHeader>
               <ModalBody>
-                <Table aria-label="Example table with custom cells">
+                <Table
+                  aria-label="Example table with custom cells"
+                  shadow="none"
+                  isHeaderSticky
+                  classNames={{ wrapper: "max-h-[500px] max-w-full" }}
+                >
                   <TableHeader columns={columns}>
                     {(column) => (
                       <TableColumn
                         key={column.uid}
-                        align={column.uid === "actions" ? "center" : "start"}
+                        align={
+                          column.uid === "quantity" ||
+                          column.uid === "totalPrice"
+                            ? "center"
+                            : "start"
+                        }
                       >
                         {column.name}
                       </TableColumn>
                     )}
                   </TableHeader>
-                  <TableBody items={payments}>
+                  <TableBody
+                    items={itemsFilter}
+                    isLoading={loading}
+                    loadingContent={<Spinner color="warning" />}
+                  >
                     {(item) => (
                       <TableRow key={item.id}>
                         {(columnKey) => (
@@ -97,15 +163,10 @@ const ModalProductsView: FC<Props> = ({ isOpen, onClose }) => {
                   </TableBody>
                 </Table>
               </ModalBody>
-              <ModalFooter>
-                <div className="flex min-w-full justify-end mt-5 gap-3">
-                  <Button color="danger" variant="light" onPress={onClose}>
-                    Cancelar
-                  </Button>
-                  <Button color="primary" type="submit" onPress={onClose}>
-                    Agregar
-                  </Button>
-                </div>
+              <ModalFooter className="flex min-w-full justify-end gap-3">
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cancelar
+                </Button>
               </ModalFooter>
             </>
           )}

@@ -40,8 +40,7 @@ const ModalAddUser: FC<Props> = ({
   username,
   email,
   image,
-  Sede,
-  role,
+
   isOpen,
   onClose,
   setUsers,

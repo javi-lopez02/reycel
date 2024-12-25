@@ -6,19 +6,9 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { Link } from "react-router-dom";
-import useProduct from "../../customHooks/useProduct";
-import useUser from "../../customHooks/useUser";
-import useCategory from "../../customHooks/useCategory";
-import usePayments from "../../customHooks/usePayments";
-import useOrder from "../../customHooks/useOrder";
 
 export default function SideBar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const products = useProduct();
-  const user = useUser();
-  const category = useCategory();
-  const payments = usePayments();
-  const orders = useOrder();
 
   return (
     <>
@@ -123,7 +113,7 @@ export default function SideBar() {
                           Usuarios
                         </span>
                         <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          {user && user.users?.length}
+                          16
                         </span>
                       </Link>
                     </li>
@@ -145,7 +135,7 @@ export default function SideBar() {
                           Categorias
                         </span>
                         <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          {category && category.category?.length}
+                          32
                         </span>
                       </Link>
                     </li>
@@ -166,11 +156,7 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Productos
                         </span>
-                        {products && (
-                          <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                            {products.products?.length}
-                          </span>
-                        )}
+                        166
                       </Link>
                     </li>
                     <li>
@@ -191,7 +177,7 @@ export default function SideBar() {
                           Ordenes
                         </span>
                         <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          {orders && orders.orders?.length}
+                          7
                         </span>
                       </Link>
                     </li>
@@ -219,7 +205,7 @@ export default function SideBar() {
                           Pagos
                         </span>
                         <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          {payments && payments.payments?.length}
+                          5
                         </span>
                       </Link>
                     </li>

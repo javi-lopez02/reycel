@@ -110,3 +110,17 @@ export interface UserPayment {
   email: string;
   role: string;
 }
+
+export interface OrderItem {
+  id: string;
+  createdAt: string;
+  price: number;
+  quantity: number;
+  product: ProductOrder;
+}
+
+export interface ProductOrder {
+  imagen: string;
+  name: string;
+  ratingAverage: number;
+}

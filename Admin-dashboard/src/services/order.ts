@@ -16,3 +16,8 @@ export const UpdateOrderRequest = (id: string, order: Order) => {
 export const deleteOrderRequest = (id: string) => {
   return axios.delete(`/order/${id}`);
 };
+
+
+export const getOrderItemsRequest = (id: string) => {
+  return axios.get(`/order/items/${id}`);
+};
