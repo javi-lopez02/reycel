@@ -30,13 +30,12 @@ import {
   Tooltip,
   Spinner,
   useDisclosure,
-  //useDisclosure,
 } from "@nextui-org/react";
-import { ChevronDownIcon, EyeIcon, SearchIcon } from "../Icons";
-//import ModalAddOrder from "./ModalAddOrder";
+import { ChevronDownIcon, EyeIcon, PlusIcon, SearchIcon } from "../Icons";
 import useOrder from "../../customHooks/useOrder";
 import { toast } from "sonner";
 import { Order } from "../../type";
+import { useNavigate } from "react-router-dom";
 const ModalProductsView = lazy(() => import("./ModalProductsView"));
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
@@ -79,6 +78,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 export default function OrerTable() {
   const { error, loading, orders } = useOrder();
+  const navigate = useNavigate();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -301,6 +301,9 @@ export default function OrerTable() {
   }, []);
 
   const topContent = useMemo(() => {
+    const handleNavigate = () => {
+      navigate("/neworder");
+    };
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
@@ -363,10 +366,14 @@ export default function OrerTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            {/* <Button color="success" endContent={<PlusIcon />} onPress={onOpen}>
-              Nuevo Orden
+            <Button
+              color="success"
+              endContent={<PlusIcon />}
+              onPress={handleNavigate}
+            >
+              Nueva Orden
             </Button>
-            <ModalAddOrder isOpen={isOpen} onClose={onClose} /> */}
+            {/* <ModalAddOrder isOpen={isOpen} onClose={onClose} /> */}
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -395,6 +402,7 @@ export default function OrerTable() {
     orders?.length,
     onRowsPerPageChange,
     onClear,
+    navigate,
   ]);
 
   const bottomContent = useMemo(() => {
