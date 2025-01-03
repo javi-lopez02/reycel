@@ -145,6 +145,8 @@ export const login = async (req: Request, res: Response) => {
       email: user.email,
       status: user.status,
       userId: user.id,
+      userRole: user.role,
+      image: user.image
     });
   } catch (error) {
     console.log(error);

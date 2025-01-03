@@ -5,7 +5,7 @@ import {
   Button,
   useDisclosure,
 } from "@nextui-org/react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/auth.context";
 import { MdLogout } from "react-icons/md";
 import ModalEditUser from "../ModalEditUser";
 
@@ -18,19 +18,19 @@ const Avatar = () => {
       <PopoverTrigger>
         <button
           type="button"
-          className="p-2 text-gray-500 rounded-lg hover:text-primary-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 "
+          className="sm:p-3 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer"
           id="user-menu-button"
           aria-expanded="false"
           data-dropdown-toggle="dropdown"
         >
-          {user && (
+          {user?.image && (
             <img
               className="w-5 h-5 rounded-full"
               src={user.image}
               alt="user photo"
             />
           )}
-          {!user && (
+          {!user?.image && (
             <svg
               className="w-6 h-6"
               aria-hidden="true"
