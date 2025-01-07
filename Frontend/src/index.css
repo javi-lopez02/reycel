@@ -5,14 +5,19 @@
 body {
   font-family: sans-serif;
 }
-.listProduct{
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari y Opera */
+}
+
+.listProduct {
   display: grid;
   min-height: 100vh;
   grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
   gap: 16px;
 }
 
-.text_color{
+.text_color {
   text-shadow: 2px 2px 2px #000000;
 }
 

@@ -47,6 +47,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
       email: user.email,
       userRole: user.role,
       userId: user.id,
+      image: user.image
     });
   } catch (error) {
     console.log(error);

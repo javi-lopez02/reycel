@@ -4,6 +4,7 @@ export type User = {
   password?: string;
   status?: boolean;
   email: string;
+  image: string
 };
 
 export type Specs = {

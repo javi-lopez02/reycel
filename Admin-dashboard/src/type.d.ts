@@ -4,10 +4,11 @@ export interface UserLogin {
 }
 
 export interface User {
-  usermane: string;
-  useId: string;
-  emial: string;
+  username: string;
+  userId: string;
+  email: string;
   userRole: "USER" | "MODERADOR" | "ADMIN";
+  image?: string;
 }
 
 export interface AuthContextType {
