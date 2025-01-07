@@ -1,22 +1,37 @@
-import { AreaChart, DateRangePicker, EventProps } from "@tremor/react";
-import { useState } from "react";
-import { DatePicker } from "./DatePicker";
-const chartdata = [
-  { date: "Jan 23", 2022: 45, 2023: 78 },
-  { date: "Feb 23", 2022: 52, 2023: 71 },
-  { date: "Mar 23", 2022: 48, 2023: 80 },
-  { date: "Apr 23", 2022: 61, 2023: 65 },
-  { date: "May 23", 2022: 55, 2023: 58 },
-  { date: "Jun 23", 2022: 67, 2023: 62 },
-  { date: "Jul 23", 2022: 60, 2023: 54 },
-  { date: "Aug 23", 2022: 72, 2023: 49 },
-  { date: "Sep 23", 2022: 65, 2023: 52 },
-  { date: "Oct 23", 2022: 68, 2023: null },
-  { date: "Nov 23", 2022: 74, 2023: null },
-  { date: "Dec 23", 2022: 71, 2023: null },
-];
+import {
+  AreaChart,
+  DateRangePicker,
+  DateRangePickerItem,
+  DateRangePickerValue,
+} from "@tremor/react";
+import { es } from "date-fns/locale";
+import { useEffect, useState } from "react";
+import { getPaymentsRequest } from "../../services/analytics";
+import { PaymentAnalytics } from "../../type";
+import { toast } from "sonner";
+
 export function MonthlyEarnings() {
-  const [value, setValue] = useState<EventProps>(null);
+  const [value, setValue] = useState<DateRangePickerValue>({
+    from: new Date(2023, 1, 1),
+    to: new Date(),
+  });
+  const [payments, setPayments] = useState<PaymentAnalytics[] | null>(null);
+  useEffect(() => {
+    const startDate = value.from?.toUTCString();
+    const endDate = value.to?.toUTCString();
+
+    if (startDate && endDate) {
+      getPaymentsRequest(startDate, endDate)
+        .then((res) => {
+          setPayments(res.data.chartData);
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Error al cargar el esatdo de los pagos");
+        });
+    }
+  }, [value.from, value.to]);
+
   return (
     <>
       <div className="flex justify-between items-center w-full">
@@ -28,18 +43,52 @@ export function MonthlyEarnings() {
             $34,567
           </p>
         </div>
-        <DatePicker/>
+        <DateRangePicker
+          className=" max-w-md"
+          value={value}
+          onValueChange={setValue}
+          locale={es}
+          selectPlaceholder="Seleccionar"
+          color="rose"
+        >
+          <DateRangePickerItem
+            key="ytd"
+            value="ytd"
+            from={new Date(2023, 0, 1)}
+          >
+            Año transcurrido
+          </DateRangePickerItem>
+          <DateRangePickerItem
+            key="half"
+            value="half"
+            from={new Date(2023, 0, 1)}
+            to={new Date(2023, 5, 31)}
+          >
+            Primer semestre
+          </DateRangePickerItem>
+        </DateRangePicker>
       </div>
-      <AreaChart
-        className="mt-4 h-72"
-        data={chartdata}
-        index="date"
-        categories={["2022", "2023"]}
-        colors={["blue", "red"]}
-        yAxisWidth={30}
-        onValueChange={(v) => setValue(v)}
-        connectNulls={true}
-      />
+      {payments && value.from && value.to &&(
+        <AreaChart
+          className="mt-4 h-72"
+          data={payments}
+          index="date"
+          categories={[
+            value.from.toLocaleString("default", {
+              month: "long",
+              timeZone: "UTC",
+            }),
+            value.to.toLocaleString("default", {
+              month: "long",
+              timeZone: "UTC",
+            })
+          ]}
+          colors={["blue", "red"]}
+          yAxisWidth={30}
+          //onValueChange={(v) => setValue(v)}
+          connectNulls={true}
+        />
+      )}
     </>
   );
 }

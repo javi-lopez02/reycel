@@ -41,7 +41,7 @@ export default function SideBar() {
         onOpenChange={onOpenChange}
       >
         <DrawerContent className="dark:bg-gray-800 fixed bg-white top-14 lg:mt-1">
-          {() => (
+          {(onClose) => (
             <>
               <DrawerHeader className="flex flex-col gap-1">
                 <form className="flex lg:hidden">
@@ -77,7 +77,7 @@ export default function SideBar() {
               <DrawerBody>
                 <div className="py-4 overflow-y-hidden">
                   <ul className="space-y-2 font-medium">
-                    <li>
+                    <li onClick={onClose}>
                       <Link
                         to={"/"}
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -95,7 +95,7 @@ export default function SideBar() {
                         <span className="ms-3">Dashboard</span>
                       </Link>
                     </li>
-                    <li>
+                    <li onClick={onClose}>
                       <Link
                         to="/users"
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -117,7 +117,7 @@ export default function SideBar() {
                         </span>
                       </Link>
                     </li>
-                    <li>
+                    <li onClick={onClose}>
                       <Link
                         to={"/categories"}
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -139,7 +139,7 @@ export default function SideBar() {
                         </span>
                       </Link>
                     </li>
-                    <li>
+                    <li onClick={onClose}>
                       <Link
                         to="/products"
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -159,7 +159,7 @@ export default function SideBar() {
                         166
                       </Link>
                     </li>
-                    <li>
+                    <li onClick={onClose}>
                       <Link
                         to="/order"
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -181,7 +181,7 @@ export default function SideBar() {
                         </span>
                       </Link>
                     </li>
-                    <li>
+                    <li onClick={onClose}>
                       <Link
                         to={"/payments"}
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -209,7 +209,7 @@ export default function SideBar() {
                         </span>
                       </Link>
                     </li>
-                    <li>
+                    <li onClick={onClose}>
                       <Link
                         to={"/sedes"}
                         className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"

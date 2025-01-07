@@ -124,3 +124,27 @@ export interface ProductOrder {
   name: string;
   ratingAverage: number;
 }
+
+export interface Analytics {
+  dataProductsByMonth:   DataSByMonth[];
+  dataUsersByMonth:      DataSByMonth[];
+  dataCategoriesByMonth: DataSByMonth[];
+  growthProducts:        number;
+  growthUsers:           number;
+  growthCategories:      number;
+  totalProduct:          number;
+  totalUser:             number;
+  totalCategory:         number;
+}
+
+export interface DataSByMonth {
+  month: string;
+  total: number;
+}
+
+export interface PaymentAnalytics {
+  date:       string;
+  octubre:   number;
+  diciembre: number;
+}
+

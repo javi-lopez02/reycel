@@ -121,7 +121,7 @@ export default function ProductTable() {
       categoryFilter !== "all" &&
       Array.from(categoryFilter).length !== categoryOptions?.length
     ) {
-      console.log(categoryFilter)
+      console.log(categoryFilter);
       filteredProducts = filteredProducts.filter((product) =>
         Array.from(categoryFilter).includes(product.category.id)
       );
@@ -209,34 +209,30 @@ export default function ProductTable() {
           <User
             avatarProps={{ radius: "lg", src: product.imagen }}
             description={
-              <Tooltip content={product.description}>
-                <span
-                  style={{
-                    display: "inline-block",
-                    maxWidth: "200px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {product.description}
-                </span>
-              </Tooltip>
+              <span
+                style={{
+                  display: "inline-block",
+                  maxWidth: "200px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {product.description}
+              </span>
             }
             name={
-              <Tooltip content={String(cellValue)}>
-                <span
-                  style={{
-                    display: "inline-block",
-                    maxWidth: "250px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {String(cellValue)}
-                </span>
-              </Tooltip>
+              <span
+                style={{
+                  display: "inline-block",
+                  maxWidth: "250px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {String(cellValue)}
+              </span>
             }
           />
         );

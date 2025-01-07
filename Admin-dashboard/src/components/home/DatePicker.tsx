@@ -2,15 +2,17 @@ import {
   DateRangePicker,
   DateRangePickerItem,
   DateRangePickerValue,
-} from '@tremor/react';
-import { es } from 'date-fns/locale';
-import { useState } from 'react';
+} from "@tremor/react";
+import { es } from "date-fns/locale";
+import { useState } from "react";
 
 export function DatePicker() {
   const [value, setValue] = useState<DateRangePickerValue>({
     from: new Date(2023, 1, 1),
     to: new Date(),
   });
+
+  console.log(value)
   return (
     <DateRangePicker
       className=" max-w-md"
