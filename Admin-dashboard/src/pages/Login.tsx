@@ -17,11 +17,11 @@ function Login() {
     event.preventDefault()
 
     const { elements } = event.currentTarget
-    const inputEmail = elements.namedItem("email") as RadioNodeList
+    const inputUserName = elements.namedItem("userName") as RadioNodeList
     const inputPassword = elements.namedItem("password") as RadioNodeList
     
-    signIn({ email: inputEmail.value, password: inputPassword.value }).then(() => {
-      inputEmail.value = ""
+    signIn({ userName: inputUserName.value, password: inputPassword.value }).then(() => {
+      inputUserName.value = ""
       inputPassword.value = ""
     })
 
@@ -49,8 +49,8 @@ function Login() {
             }
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                <input type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required />
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your User Name</label>
+                <input type="text" name="userName" id="userName" className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required />
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>

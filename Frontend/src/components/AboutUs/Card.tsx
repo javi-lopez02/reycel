@@ -8,7 +8,6 @@ interface SedeCardProps {
   address: string;
   warkers: {
     id: string;
-    email: string;
     username: string;
     image: string;
   }[];
@@ -38,7 +37,6 @@ const Card: FC<SedeCardProps> = ({ image, phone, warkers, address }) => {
             key={warker.id}
             imageModerator={warker.image}
             nameModerator={warker.username}
-            phoneModerator={warker.email}
           />
         );
       })}

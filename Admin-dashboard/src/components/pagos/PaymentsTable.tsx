@@ -189,7 +189,6 @@ export default function PaymentsTable() {
         return (
           <User
             avatarProps={{ radius: "lg", src: payments.User.image }}
-            description={payments.User.email}
             name={payments.User.username}
           />
         );

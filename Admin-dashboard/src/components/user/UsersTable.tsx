@@ -53,7 +53,6 @@ export function Capitalize(s: string) {
 const columns = [
   { name: "NOMBRE", uid: "username", sortable: true },
   { name: "ROLE", uid: "role", sortable: true },
-  { name: "EMAIL", uid: "email" },
   { name: "Creado en: ", uid: "createdAt", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "Número de Ordenes", uid: "order" },
@@ -76,7 +75,6 @@ const INITIAL_VISIBLE_COLUMNS = [
   "role",
   "status",
   "actions",
-  "email",
   "createdAt",
   "order",
 ];
@@ -215,7 +213,6 @@ export default function UsersTable() {
         return (
           <User
             avatarProps={{ radius: "lg", src: user.image }}
-            description={user.email}
             name={
               <span
                 style={{

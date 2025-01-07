@@ -14,7 +14,6 @@ export const getSedes = async (req: Request, res: Response) => {
         warker: {
           select: {
             id: true,
-            email: true,
             username: true,
             image: true
           },
@@ -51,7 +50,6 @@ export const getSedeId = async (req: Request, res: Response) => {
         warker: {
           select: {
             id: true,
-            email: true,
             username: true,
             image: true
           },

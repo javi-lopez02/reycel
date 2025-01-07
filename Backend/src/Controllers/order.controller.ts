@@ -188,7 +188,6 @@ export const getOrder = async (req: Request, res: Response) => {
         pending: true,
         user: {
           select: {
-            email: true,
             id: true,
             image: true,
             role: true,

@@ -62,7 +62,6 @@ export default function Register() {
     }
 
     await signUp({
-      email: inputEmail.value,
       password: inputPassword.value,
       username: inputUser.value,
     });

@@ -3,7 +3,6 @@ import axios from "./axios";
 interface UserRequest {
   userId: string
   username: string;
-  email: string;
   password: string;
   image: string;
   sedeId?: string;

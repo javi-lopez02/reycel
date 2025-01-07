@@ -10,9 +10,7 @@ export default function NewOrderPage() {
 
   return (
     <div className="p-10 pt-20 md:pt-20 flex flex-col bg-gray-50 gap-10">
-      <h1 className="text-center text-2xl md:text-4xl font-extrabold leading-tight text-gray-900 dark:text-white">
-        Nueva Orden
-      </h1>
+      <h1 className="text-4xl font-medium text-left">Nueva Orden</h1>
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="bg-white h-max rounded-md p-6 shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] max-sm:w-full md:min-w-max lg:sticky top-16 ">
           <h3 className="text-xl font-bold text-gray-800">Orden</h3>

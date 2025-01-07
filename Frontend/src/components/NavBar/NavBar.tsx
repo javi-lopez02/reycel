@@ -5,7 +5,6 @@ import { MdMenuOpen } from "react-icons/md";
 import { useAuth } from "../../context/auth.context";
 import { useProduct } from "../../context/product.context";
 import { useDebouncedCallback } from "use-debounce";
-//import ModalLogin from "../../pages/auth/ModalLogin";
 import { useDisclosure } from "@nextui-org/react";
 import {
   Dropdown,

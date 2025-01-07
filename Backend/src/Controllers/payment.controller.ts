@@ -47,7 +47,6 @@ export const getPayments = async (req: Request, res: Response) => {
           select: {
             username: true,
             image: true,
-            email: true,
             role: true,
           },
         },

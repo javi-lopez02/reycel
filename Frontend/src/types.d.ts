@@ -3,7 +3,6 @@ export type User = {
   userId: string;
   password?: string;
   status?: boolean;
-  email: string;
   image: string
 };
 
@@ -80,9 +79,8 @@ export interface Order {
 }
 
 interface UserAuth {
-  email: string;
   password: string;
-  username?: string;
+  username: string;
 }
 
 export type AuthContextType = {
@@ -144,7 +142,6 @@ export interface Sedes {
   phone: number;
   warker: {
     id: string;
-    email: string;
     username: string;
     image: string;
   }[];

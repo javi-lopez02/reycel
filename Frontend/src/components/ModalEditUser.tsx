@@ -1,6 +1,5 @@
 import {
   Button,
-  
   Input,
   Modal,
   ModalBody,
@@ -9,28 +8,19 @@ import {
   Spinner,
 } from "@nextui-org/react";
 import { FC, useEffect, useState } from "react";
-import { BiLock, BiMailSend, BiUser } from "react-icons/bi";
+import { BiLock, BiUser } from "react-icons/bi";
 import { toast } from "sonner";
 import { editUsersRequest } from "../services/user";
 
 interface Props {
   id?: string;
   username?: string;
-  email?: string;
   image?: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ModalEditUser: FC<Props> = ({
-  id,
-  username,
-  email,
-  image,
-
-  isOpen,
-  onClose,
-}) => {
+const ModalEditUser: FC<Props> = ({ id, username, image, isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState("./logo.webp");
 
@@ -54,18 +44,12 @@ const ModalEditUser: FC<Props> = ({
 
     const inputImage = data["image"] as string;
     const inputUser = data["user"] as string;
-    const inputEmail = data["email"] as string;
     const inputPassword = data["password"] as string;
     const inputPasswordConfirm = data["passwordConfirm"] as string;
 
     // Validaciones
     if (!inputUser) {
       toast.error("El nombre del usuario es requerido.");
-      setLoading(false);
-      return;
-    }
-    if (!inputEmail) {
-      toast.error("El email del usuario es requerido.");
       setLoading(false);
       return;
     }
@@ -86,7 +70,6 @@ const ModalEditUser: FC<Props> = ({
     if (id) {
       editUsersRequest({
         userId: id,
-        email: inputEmail,
         image: inputImage,
         password: inputPassword,
         username: inputUser,
@@ -148,17 +131,6 @@ const ModalEditUser: FC<Props> = ({
                         }
                         label="Usuario"
                         placeholder="Entra el usuario"
-                        variant="bordered"
-                        labelPlacement="outside"
-                      />
-                      <Input
-                        endContent={
-                          <BiMailSend className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                        }
-                        label="Email"
-                        name="email"
-                        defaultValue={email}
-                        placeholder="Entra el email"
                         variant="bordered"
                         labelPlacement="outside"
                       />

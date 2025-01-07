@@ -53,7 +53,6 @@ const Avatar = () => {
         <div className="min-w-full flex flex-col gap-1">
           <div className="flex flex-col min-w-full justify-center items-center text-md text-gray-500 border-b-1">
             <span>{user && user.username}</span>
-            <span>{user && user.email}</span>
           </div>
 
           <div className="min-w-full">
@@ -83,7 +82,6 @@ const Avatar = () => {
               id={user?.userId}
               username={user?.username}
               image={user?.image}
-              email={user?.email}
             />
           </div>
           <div className="min-w-full">

@@ -1,12 +1,11 @@
 export interface UserLogin {
-  email: string;
+  userName: string;
   password: string;
 }
 
 export interface User {
   username: string;
   userId: string;
-  email: string;
   userRole: "USER" | "MODERADOR" | "ADMIN";
   image?: string;
 }
@@ -23,7 +22,6 @@ export interface AuthContextType {
 export interface Users {
   id: string;
   username: string;
-  email: string;
   image: string;
   status: boolean;
   Sede: Sede;
@@ -108,7 +106,6 @@ export interface Payment {
 export interface UserPayment {
   username: string;
   image: string;
-  email: string;
   role: string;
 }
 
