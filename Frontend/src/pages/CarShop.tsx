@@ -75,7 +75,7 @@ const App: React.FC = () => {
                 <span className="ml-auto font-bold">${totalAmount}</span>
               </li>
               <li className="flex flex-wrap gap-4 py-3">
-                Entrega Rapida <span className="ml-auto font-bold">$4.00</span>
+                Entrega Rapida <span className="ml-auto font-bold">$3.00</span>
               </li>
               <li className="flex flex-wrap gap-4 py-3">
                 Cantidad de productos{" "}
