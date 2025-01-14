@@ -26,13 +26,15 @@ export const getPaymentMethod = async (req: Request, res: Response) => {
 
 export const createPaymentMethod = async (req: Request, res: Response) => {
   try {
-    const { image, number, paymentOptions } = req.body;
+    const { cardImage, cardNumber, paymentOptions } = req.body;
+
+    console.table([cardImage, cardNumber, paymentOptions])
 
     const paymentMethod = await prisma.paymentMethod.create({
       data: {
-        cardImage: image,
+        cardImage,
         paymentOptions,
-        cardNumber: number,
+        cardNumber,
       },
       include: {
         _count: {

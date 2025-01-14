@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { PaymentMethod } from "../type";
-import { getPaymentMethodRequest } from "../services/paymentMethod";
+import {
+  deletePaymentMethodRequest,
+  getPaymentMethodRequest,
+} from "../services/paymentMethod";
+import { toast } from "sonner";
 
 function usePaymentMethod() {
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod[] | null>(
-    null
-  );
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod[] | undefined>();
   const [error, setError] = useState<Array<string> | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -25,7 +27,20 @@ function usePaymentMethod() {
       });
   }, []);
 
-  return {paymentMethod, error, loading}
+  const deletePaymentMethod = (id: string) => {
+    deletePaymentMethodRequest(id)
+      .then(() => {
+        setPaymentMethod((prevState)=>{
+          return prevState?.filter((prev)=> prev.id !== id)
+        })
+        toast.success("Eliminado con exito")
+      })
+      .catch(() => {
+        setError(["Error al eliminar."]);
+      });
+  };
+
+  return { paymentMethod, error, loading, deletePaymentMethod };
 }
 
 export default usePaymentMethod;

@@ -65,7 +65,8 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 export default function PaymentsMethodTable() {
-  const { error, loading, paymentMethod } = usePaymentMethod();
+  const { error, loading, paymentMethod, deletePaymentMethod } =
+    usePaymentMethod();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
@@ -160,6 +161,13 @@ export default function PaymentsMethodTable() {
     return `${dia} ${mes} ${anio}`;
   };
 
+  const handleDelete = useCallback(
+    (id: string) => () => {
+      deletePaymentMethod(id);
+    },
+    [deletePaymentMethod]
+  );
+
   const renderCell = useCallback(
     (paymentMethod: PaymentMethod, columnKey: Key) => {
       const cellValue = paymentMethod[columnKey as keyof PaymentMethod];
@@ -211,9 +219,12 @@ export default function PaymentsMethodTable() {
                 </span>
               </Tooltip>
               <Tooltip color="danger" content="Delete user">
-                <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                <button
+                  className="text-lg text-danger cursor-pointer active:opacity-50"
+                  onClick={handleDelete(paymentMethod.id)}
+                >
                   <DeleteIcon />
-                </span>
+                </button>
               </Tooltip>
             </div>
           );
@@ -221,7 +232,7 @@ export default function PaymentsMethodTable() {
           return String(cellValue);
       }
     },
-    []
+    [handleDelete]
   );
 
   const onNextPage = useCallback(() => {
@@ -298,7 +309,7 @@ export default function PaymentsMethodTable() {
               </DropdownMenu>
             </Dropdown>
             <Button color="success" endContent={<PlusIcon />} onPress={onOpen}>
-              Nuevo Pago
+              Nuevo metodo de pago
             </Button>
             <ModalAddPayment isOpen={isOpen} onClose={onClose} />
           </div>
@@ -391,7 +402,11 @@ export default function PaymentsMethodTable() {
           {(column) => (
             <TableColumn
               key={column.uid}
-              align={column.uid === "actions"|| column.uid === "payment" ? "center" : "start"}
+              align={
+                column.uid === "actions" || column.uid === "payment"
+                  ? "center"
+                  : "start"
+              }
               allowsSorting={column.sortable}
             >
               {column.name}

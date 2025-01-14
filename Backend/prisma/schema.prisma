@@ -164,5 +164,13 @@ model Sede {
   image     String
   phone     Int    @unique
   direction String
-  warker    User[]
+  workers    User[]
+}
+
+model CurrencyExchange {
+  id        String   @id @default(uuid())
+  cup       Float
+  eur       Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
