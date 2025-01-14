@@ -16,7 +16,6 @@ import { editUsersRequest } from "../services/user";
 interface Props {
   id?: string;
   username?: string;
-  email?: string;
   image?: string;
   isOpen: boolean;
   onClose: () => void;

@@ -7,12 +7,96 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
   Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
+import { useCallback, useEffect, useState } from "react";
+import { editCurrency, getCurrency } from "../../services/currencyExchange";
+import { toast } from "sonner";
+
+interface CurrencyExchange {
+  id: string;
+  cup: number;
+  eur: number;
+  updatedAt: string;
+}
 
 const ModalPricing = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [loading, setLoading] = useState(false);
+  const [currencyExchange, setCurrencyExchange] =
+    useState<CurrencyExchange | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    getCurrency()
+      .then((res) => {
+        setCurrencyExchange(res.data.data[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error al cargar la tasa de cambio.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!currencyExchange) {
+      toast.error("No sea podido actualizar la tasa de cambio.")
+      return
+    }
+    setLoading(true);
+    const data = Object.fromEntries(new FormData(event.currentTarget));
+
+    const inputEur = parseFloat(data["eur"] as string);
+
+    const inputCup = parseInt(data["cup"] as string);
+
+    console.table({inputEur, inputCup})
+
+    editCurrency(inputCup, inputEur, currencyExchange.id)
+      .then((res) => {
+        setCurrencyExchange(res.data.data);
+        console.log(res.data)
+        toast.success("Tasa de cambio actualizada.");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error al actualizar la tasa de cambio.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const formatearFecha = useCallback((isoString: string) => {
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
+
+    const fecha = new Date(isoString);
+
+    const dia = fecha.getUTCDate();
+    const mes = meses[fecha.getUTCMonth()];
+    const anio = fecha.getUTCFullYear();
+
+    return `${dia} ${mes} ${anio}`;
+  }, []);
 
   return (
     <>
@@ -21,11 +105,16 @@ const ModalPricing = () => {
         content={
           <div className="px-1">
             <div className="text-small font-bold">Sobre la tasa de cambio</div>
-            <div className="flex flex-col items-center text-tiny justify-center font-medium">
-              <p>1 USD = 0.95 EUR</p>
-              <p>1 USD = 1.15 MLC</p>
-              <p>1 USD = 310 CUP</p>
-            </div>
+            {loading && <Spinner color="warning" />}
+            {!loading && currencyExchange && (
+              <div className="flex flex-col items-center text-tiny justify-center font-medium">
+                <p>1 USD = {currencyExchange?.eur}</p>
+                <p>1 USD = {currencyExchange?.cup}</p>
+                <span className="font-medium">
+                  Fecha: {formatearFecha(currencyExchange?.updatedAt)}
+                </span>
+              </div>
+            )}
           </div>
         }
       >
@@ -63,7 +152,7 @@ const ModalPricing = () => {
                 <h1 className="text-2xl font-bold">Editar Tasa de Cambio</h1>
               </ModalHeader>
               <ModalBody>
-                <Form>
+                <Form onSubmit={handleSubmit}>
                   <div className="flex gap-4 min-w-full">
                     <Input
                       className="min-w-1/5"
@@ -84,43 +173,7 @@ const ModalPricing = () => {
                       labelPlacement="outside"
                     />
                     <Input
-                      className="min-w-1/5"
-                      startContent={
-                        <span className="text-md text-default-800 pointer-events-none flex-shrink-0">
-                          $
-                        </span>
-                      }
-                      endContent={
-                        <span className="text-md text-default-400 pointer-events-none flex-shrink-0">
-                          MLC
-                        </span>
-                      }
-                      label="MLC"
-                      placeholder="MLC"
-                      variant="bordered"
-                      labelPlacement="outside"
-                    />
-                  </div>
-                  <div className="flex gap-4 min-w-full">
-                    <Input
-                      className="min-w-1/5"
-                      startContent={
-                        <span className="text-md text-default-800 pointer-events-none flex-shrink-0">
-                          $
-                        </span>
-                      }
-                      endContent={
-                        <span className="text-md text-default-400 pointer-events-none flex-shrink-0">
-                          USD
-                        </span>
-                      }
-                      disabled
-                      label="USD"
-                      placeholder="1"
-                      variant="bordered"
-                      labelPlacement="outside"
-                    />
-                    <Input
+                      name="eur"
                       className="min-w-1/5"
                       startContent={
                         <span className="text-md text-default-800 pointer-events-none flex-shrink-0">
@@ -134,6 +187,7 @@ const ModalPricing = () => {
                       }
                       label="EUR"
                       placeholder="EUR"
+                      defaultValue={String(currencyExchange?.eur)}
                       variant="bordered"
                       labelPlacement="outside"
                     />
@@ -158,6 +212,7 @@ const ModalPricing = () => {
                       labelPlacement="outside"
                     />
                     <Input
+                      name="cup"
                       className="min-w-1/5"
                       startContent={
                         <span className="text-md text-default-800 pointer-events-none flex-shrink-0">
@@ -170,6 +225,7 @@ const ModalPricing = () => {
                         </span>
                       }
                       label="CUP"
+                      defaultValue={String(currencyExchange?.cup)}
                       placeholder="CUP"
                       variant="bordered"
                       labelPlacement="outside"

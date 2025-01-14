@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { username, password, email } = req.body;
+    const { username, password } = req.body;
 
     const userfind = await prisma.user.findFirst({ where: { username } });
 
@@ -116,7 +116,7 @@ export const login = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findFirst({
       where: {
-        username
+        username: username,
       },
     });
 

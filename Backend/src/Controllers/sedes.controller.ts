@@ -11,11 +11,11 @@ export const getSedes = async (req: Request, res: Response) => {
         direction: true,
         image: true,
         phone: true,
-        warker: {
+        workers: {
           select: {
             id: true,
             username: true,
-            image: true
+            image: true,
           },
         },
       },
@@ -47,11 +47,11 @@ export const getSedeId = async (req: Request, res: Response) => {
         direction: true,
         image: true,
         phone: true,
-        warker: {
+        workers: {
           select: {
             id: true,
             username: true,
-            image: true
+            image: true,
           },
         },
       },
@@ -74,7 +74,8 @@ export const createSede = async (req: Request, res: Response) => {
   const { phone, image, direction, workers } = req.body;
 
   try {
-    if (!phone || !direction || !Array.isArray(workers) || image) {
+    if (!phone || !direction || !workers || !image) {
+      console.log("Datos inválidos o incompletos");
       return res.status(400).json({ error: "Datos inválidos o incompletos" });
     }
 
@@ -85,6 +86,7 @@ export const createSede = async (req: Request, res: Response) => {
     });
 
     if (existingWorkers.length !== workers.length) {
+      console.log("Algunos trabajadores no existen o están inactivos");
       return res
         .status(404)
         .json({ error: "Algunos trabajadores no existen o están inactivos" });
@@ -92,12 +94,15 @@ export const createSede = async (req: Request, res: Response) => {
 
     const newSede = await prisma.sede.create({
       data: {
-        phone,
+        phone: parseInt(phone),
         image,
         direction,
-        warker: {
+        workers: {
           connect: workers.map((workerId: string) => ({ id: workerId })),
         },
+      },
+      include: {
+        workers: true,
       },
     });
 
@@ -114,7 +119,7 @@ export const createSede = async (req: Request, res: Response) => {
 
 export const updateSede = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { phone, image,direction, workers } = req.body;
+  const { phone, image, direction, workers } = req.body;
 
   try {
     const existingSede = await prisma.sede.findUnique({ where: { id } });
@@ -142,13 +147,16 @@ export const updateSede = async (req: Request, res: Response) => {
     const updatedSede = await prisma.sede.update({
       where: { id },
       data: {
-        phone,
+        phone: parseInt(phone),
         image,
         direction,
-        warker: {
+        workers: {
           set: connectedWorkers,
         },
       },
+      include:{
+        workers: true
+      }
     });
 
     return res.status(200).json({

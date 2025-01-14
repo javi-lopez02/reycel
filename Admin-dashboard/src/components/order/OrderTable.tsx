@@ -121,7 +121,6 @@ export default function OrerTable() {
           order.user.username
             .toLowerCase()
             .includes(filterValue.toLowerCase()) ||
-          order.user.email.toLowerCase().includes(filterValue.toLowerCase()) ||
           order.user.role.toLowerCase().includes(filterValue.toLowerCase()) ||
           order.totalAmount
             .toString()
@@ -198,7 +197,6 @@ export default function OrerTable() {
           return (
             <User
               avatarProps={{ radius: "lg", src: orders.user.image }}
-              description={orders.user.email}
               name={orders.user.username}
             />
           );
@@ -367,7 +365,7 @@ export default function OrerTable() {
               </DropdownMenu>
             </Dropdown>
             <Button
-              color="success"
+              color="warning"
               endContent={<PlusIcon />}
               onPress={handleNavigate}
             >

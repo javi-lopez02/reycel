@@ -143,7 +143,7 @@ export interface Sedes {
   direction: string;
   image: string;
   phone: number;
-  warker: {
+  workers: {
     id: string;
     username: string;
     image: string;

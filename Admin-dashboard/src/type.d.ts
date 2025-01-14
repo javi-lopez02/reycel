@@ -31,7 +31,11 @@ export interface Users {
 }
 
 interface Sede {
+  id: string;
+  image: string;
+  phone: string;
   direction: string;
+  workers: [Users];
 }
 interface Count {
   orders: number;
@@ -124,15 +128,15 @@ export interface ProductOrder {
 }
 
 export interface Analytics {
-  dataProductsByMonth:   DataSByMonth[];
-  dataUsersByMonth:      DataSByMonth[];
+  dataProductsByMonth: DataSByMonth[];
+  dataUsersByMonth: DataSByMonth[];
   dataCategoriesByMonth: DataSByMonth[];
-  growthProducts:        number;
-  growthUsers:           number;
-  growthCategories:      number;
-  totalProduct:          number;
-  totalUser:             number;
-  totalCategory:         number;
+  growthProducts: number;
+  growthUsers: number;
+  growthCategories: number;
+  totalProduct: number;
+  totalUser: number;
+  totalCategory: number;
 }
 
 export interface DataSByMonth {
@@ -141,8 +145,7 @@ export interface DataSByMonth {
 }
 
 export interface PaymentAnalytics {
-  date:       string;
-  octubre:   number;
+  date: string;
+  octubre: number;
   diciembre: number;
 }
-
