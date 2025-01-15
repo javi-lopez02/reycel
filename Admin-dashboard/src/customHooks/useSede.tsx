@@ -8,7 +8,7 @@ import {
 } from "../services/sedes";
 
 function useSede() {
-  const [sedes, setSedes] = useState<Sede[] | null>(null);
+  const [sedes, setSedes] = useState<Sede[] | null>([]);
   const [error, setError] = useState<Array<string> | null>(null);
   const [loading, setLoading] = useState(false);
 
