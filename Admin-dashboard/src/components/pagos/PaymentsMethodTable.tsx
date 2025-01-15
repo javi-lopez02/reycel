@@ -38,7 +38,7 @@ import {
 import ModalAddPayment from "./ModalAddPayment";
 import usePaymentMethod from "../../customHooks/usePaymentMethod";
 import { toast } from "sonner";
-import { PaymentMethod } from "../../type";
+import { AddPaymentMethodProps, PaymentMethod } from "../../type";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -65,8 +65,14 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 export default function PaymentsMethodTable() {
-  const { error, loading, paymentMethod, deletePaymentMethod } =
-    usePaymentMethod();
+  const {
+    error,
+    loading,
+    paymentMethod,
+    addPaymentMethod,
+    updatePaymentMethod,
+    deletePaymentMethod,
+  } = usePaymentMethod();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
@@ -80,6 +86,9 @@ export default function PaymentsMethodTable() {
   const [page, setPage] = useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
+
+  const [selectedPaymantMethod, setSelectedPaymantMethod] =
+    useState<AddPaymentMethodProps | null>(null);
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -214,9 +223,22 @@ export default function PaymentsMethodTable() {
           return (
             <div className="relative flex justify-center items-center gap-2">
               <Tooltip content="Edit user">
-                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                <button
+                  onClick={() => {
+                    if (paymentMethod.cardNumber) {
+                      onOpen();
+                      setSelectedPaymantMethod({
+                        image: paymentMethod.cardImage,
+                        numberCard: paymentMethod.cardNumber,
+                        selected: paymentMethod.paymentOptions,
+                        id: paymentMethod.id,
+                      });
+                    }
+                  }}
+                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                >
                   <EditIcon />
-                </span>
+                </button>
               </Tooltip>
               <Tooltip color="danger" content="Delete user">
                 <button
@@ -232,7 +254,7 @@ export default function PaymentsMethodTable() {
           return String(cellValue);
       }
     },
-    [handleDelete]
+    [handleDelete, onOpen]
   );
 
   const onNextPage = useCallback(() => {
@@ -308,10 +330,16 @@ export default function PaymentsMethodTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button color="success" endContent={<PlusIcon />} onPress={onOpen}>
+            <Button
+              color="success"
+              endContent={<PlusIcon />}
+              onPress={() => {
+                onOpen();
+                setSelectedPaymantMethod(null);
+              }}
+            >
               Nuevo metodo de pago
             </Button>
-            <ModalAddPayment isOpen={isOpen} onClose={onClose} />
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -337,8 +365,6 @@ export default function PaymentsMethodTable() {
     onSearchChange,
     visibleColumns,
     onOpen,
-    isOpen,
-    onClose,
     paymentMethod?.length,
     onRowsPerPageChange,
     onClear,
@@ -428,6 +454,13 @@ export default function PaymentsMethodTable() {
           )}
         </TableBody>
       </Table>
+      <ModalAddPayment
+        isOpen={isOpen}
+        onClose={onClose}
+        updatePaymentMethod={updatePaymentMethod}
+        addPaymentMethod={addPaymentMethod}
+        {...selectedPaymantMethod}
+      />
     </div>
   );
 }

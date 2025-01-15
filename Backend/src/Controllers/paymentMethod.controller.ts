@@ -57,16 +57,16 @@ export const createPaymentMethod = async (req: Request, res: Response) => {
 export const updatePaymentMethod = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { image, number, paymentOptions } = req.body;
+    const { cardImage, cardNumber, paymentOptions } = req.body;
 
     const paymentMethod = await prisma.paymentMethod.update({
       where: {
         id,
       },
       data: {
-        cardImage: image,
+        cardImage: cardImage,
         paymentOptions,
-        cardNumber: number,
+        cardNumber: cardNumber,
       },
       include: {
         _count: {

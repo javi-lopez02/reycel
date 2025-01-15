@@ -149,3 +149,10 @@ export interface PaymentAnalytics {
   octubre: number;
   diciembre: number;
 }
+
+export interface AddPaymentMethodProps {
+  id?:string
+  image: string
+  numberCard: string
+  selected: PaymentOptions
+}

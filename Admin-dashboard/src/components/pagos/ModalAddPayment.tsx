@@ -5,7 +5,6 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   Radio,
   RadioGroup,
@@ -15,10 +14,22 @@ import {
 } from "@nextui-org/react";
 import { FC, useState } from "react";
 import { toast } from "sonner";
-import { createPaymentMethodRequest } from "../../services/paymentMethod";
-import { PaymentOptions } from "../../type";
+import { AddPaymentMethodProps, PaymentOptions } from "../../type";
 
 interface Props {
+  id?: string;
+  image?: string;
+  numberCard?: string;
+  selected?: PaymentOptions;
+  updatePaymentMethod: (
+    id: string,
+    { image, numberCard, selected }: AddPaymentMethodProps
+  ) => Promise<void>;
+  addPaymentMethod: ({
+    image,
+    numberCard,
+    selected,
+  }: AddPaymentMethodProps) => Promise<void>;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -30,7 +41,16 @@ export const paymentOptions = [
   { key: "CASH", label: "Efectivo" },
 ];
 
-const ModalAddPayment: FC<Props> = ({ isOpen, onClose }) => {
+const ModalAddPayment: FC<Props> = ({
+  id,
+  image,
+  numberCard,
+  selected,
+  isOpen,
+  onClose,
+  updatePaymentMethod,
+  addPaymentMethod,
+}) => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -38,43 +58,64 @@ const ModalAddPayment: FC<Props> = ({ isOpen, onClose }) => {
     setLoading(true);
     const data = Object.fromEntries(new FormData(event.currentTarget));
 
-    const image = data["radioGrup"] as string;
-    const numberCard = data["inputNumberCard"] as string;
-    const selected = data["paymentOptions"] as PaymentOptions;
+    const imageData = data["radioGrup"] as string;
+    const numberCardData = data["inputNumberCard"] as string;
+    const selectedData = data["paymentOptions"] as PaymentOptions;
 
-    if (!image && selected !== "CASH") {
+    if (!imageData && selectedData !== "CASH") {
       toast.error("Debe selelcionar una imagen.");
       setLoading(false);
       return;
     }
 
-    if (!selected) {
+    if (!selectedData) {
       toast.error("Debe selelcionar un metodo de pago.");
       setLoading(false);
       return;
     }
 
-    if (!numberCard && selected !== "CASH") {
+    if (!numberCardData && selectedData !== "CASH") {
       toast.error("Debe introducir un número de cuenta.");
       setLoading(false);
       return;
     }
 
-    createPaymentMethodRequest({
-      cardImage: image,
-      cardNumber: numberCard,
-      paymentOptions: selected,
-    })
-      .then(() => {
-        toast.success("Guardado con exito ");
-        onClose();
+    if (!id) {
+      addPaymentMethod({
+        image: imageData,
+        numberCard: numberCardData,
+        selected: selectedData,
       })
-      .catch(() => {
-        toast.error("Error al hacer la petiicon");
+        .then(() => {
+          toast.success("Guardado con exito ");
+          onClose();
+        })
+        .catch(() => {
+          toast.error("Error al hacer la petiicon");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+
+    if (id) {
+      updatePaymentMethod(id, {
+        image: imageData,
+        numberCard: numberCardData,
+        selected: selectedData,
       })
-      .finally(() => {
-        setLoading(false);
-      });
+        .then(() => {
+          toast.success("Guardado con exito ");
+          onClose();
+        })
+        .catch(() => {
+          toast.error("Error al hacer la petiicon");
+        })
+        .finally(() => {
+          setLoading(false);
+        }
+      )
+    }
   };
   return (
     <>
@@ -119,6 +160,7 @@ const ModalAddPayment: FC<Props> = ({ isOpen, onClose }) => {
                   <Select
                     name="paymentOptions"
                     className="pt-5 w-full"
+                    defaultSelectedKeys={selected}
                     items={paymentOptions}
                     label="Opciones de pago"
                     placeholder="Seleccione una opción"
@@ -127,6 +169,7 @@ const ModalAddPayment: FC<Props> = ({ isOpen, onClose }) => {
                   </Select>
                   <Input
                     name="inputNumberCard"
+                    defaultValue={numberCard}
                     className="min-w-1/5 pt-5"
                     startContent={
                       <span className="text-md text-default-800 pointer-events-none flex-shrink-0">
@@ -149,7 +192,6 @@ const ModalAddPayment: FC<Props> = ({ isOpen, onClose }) => {
                   </div>
                 </Form>
               </ModalBody>
-              <ModalFooter></ModalFooter>
             </>
           )}
         </ModalContent>
