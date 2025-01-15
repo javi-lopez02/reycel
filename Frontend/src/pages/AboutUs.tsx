@@ -41,7 +41,7 @@ export default function AboutUs() {
                 image={sede.image}
                 address={sede.direction}
                 phone={sede.phone}
-                warkers={sede.warker}
+                workers={sede.workers}
               />
             );
           })}

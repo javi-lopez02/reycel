@@ -1,13 +1,13 @@
 export interface UserLogin {
-  email: string;
+  userName: string;
   password: string;
 }
 
 export interface User {
-  usermane: string;
-  useId: string;
-  emial: string;
+  username: string;
+  userId: string;
   userRole: "USER" | "MODERADOR" | "ADMIN";
+  image?: string;
 }
 
 export interface AuthContextType {
@@ -22,7 +22,6 @@ export interface AuthContextType {
 export interface Users {
   id: string;
   username: string;
-  email: string;
   image: string;
   status: boolean;
   Sede: Sede;
@@ -32,7 +31,11 @@ export interface Users {
 }
 
 interface Sede {
+  id: string;
+  image: string;
+  phone: string;
   direction: string;
+  workers: [Users];
 }
 interface Count {
   orders: number;
@@ -56,4 +59,100 @@ export interface Category {
   _count: {
     products: number;
   };
+}
+
+export interface Order {
+  createdAt: string;
+  id: string;
+  totalAmount: number;
+  pending: boolean;
+  user: Users;
+  _count: {
+    orderItems: number;
+  };
+}
+
+export interface PaymentMethod {
+  id: string;
+  cardImage: string;
+  cardNumber?: string;
+  createdAt: string;
+  _count: {
+    payment: number;
+  };
+  paymentOptions: PaymentOptions;
+}
+
+export type PaymentOptions =
+  | "TRANSFER_USD"
+  | "TRANSFER_CUP"
+  | "CASH"
+  | "QVAPAY"
+  | "ZELLE";
+
+export interface Payment {
+  id: string;
+  orderId: string;
+  amount: number;
+  paymentStatus: string;
+  createdAt: string;
+  paymentMethodId: string;
+  userId: string;
+  User: UserPayment;
+  PaymentMethod: PaymentMethod;
+  order: {
+    _count: {
+      orderItems: number;
+    };
+  };
+}
+
+export interface UserPayment {
+  username: string;
+  image: string;
+  role: string;
+}
+
+export interface OrderItem {
+  id: string;
+  createdAt: string;
+  price: number;
+  quantity: number;
+  product: ProductOrder;
+}
+
+export interface ProductOrder {
+  imagen: string;
+  name: string;
+  ratingAverage: number;
+}
+
+export interface Analytics {
+  dataProductsByMonth: DataSByMonth[];
+  dataUsersByMonth: DataSByMonth[];
+  dataCategoriesByMonth: DataSByMonth[];
+  growthProducts: number;
+  growthUsers: number;
+  growthCategories: number;
+  totalProduct: number;
+  totalUser: number;
+  totalCategory: number;
+}
+
+export interface DataSByMonth {
+  month: string;
+  total: number;
+}
+
+export interface PaymentAnalytics {
+  date: string;
+  octubre: number;
+  diciembre: number;
+}
+
+export interface AddPaymentMethodProps {
+  id?:string
+  image: string
+  numberCard: string
+  selected: PaymentOptions
 }

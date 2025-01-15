@@ -11,12 +11,11 @@ const prisma = new PrismaClient();
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { username, password, email } = req.body;
+    const { username, password } = req.body;
 
-    const emailfind = await prisma.user.findFirst({ where: { email } });
     const userfind = await prisma.user.findFirst({ where: { username } });
 
-    if (emailfind || userfind) {
+    if (userfind) {
       return res.status(500).json(["Email o Username en uso"]);
     }
 
@@ -25,7 +24,6 @@ export const register = async (req: Request, res: Response) => {
     const newUser = await prisma.user.create({
       data: {
         username,
-        email,
         password: hashedPassword,
         status: false,
         orders:{
@@ -50,7 +48,6 @@ export const register = async (req: Request, res: Response) => {
       userId: newUser.id,
       usermane: newUser.username,
       status: newUser.status,
-      email: newUser.email,
     });
   } catch (error) {
     console.log(error);
@@ -109,9 +106,9 @@ export const confirmEmail = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    if (!email || !password) {
+    if (!username || !password) {
       return res
         .status(401)
         .json(["Nesecita email y contraseña para logearce"]);
@@ -119,7 +116,7 @@ export const login = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findFirst({
       where: {
-        email,
+        username: username,
       },
     });
 
@@ -142,9 +139,10 @@ export const login = async (req: Request, res: Response) => {
     });
     res.json({
       username: user.username,
-      email: user.email,
       status: user.status,
       userId: user.id,
+      userRole: user.role,
+      image: user.image
     });
   } catch (error) {
     console.log(error);
@@ -170,7 +168,6 @@ export const verifyToken = async (req: Request, res: Response) => {
       userId: userFound.id,
       username: userFound.username,
       status: userFound.status,
-      email: userFound.email,
     });
   } catch (error) {
     console.log(error);

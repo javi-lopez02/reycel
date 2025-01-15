@@ -1,11 +1,9 @@
-import { Rating } from "react-simple-star-rating";
 import Stadistic from "../components/home/Stadistic";
 
 function Home() {
   return (
-    <div className="pt-16 ">
+    <div className="py-16 bg-neutral-100 min-h-screen">
       <Stadistic />
-      <Rating initialValue={5}/>
     </div>
   );
 }

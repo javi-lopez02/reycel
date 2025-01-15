@@ -6,15 +6,14 @@ interface SedeCardProps {
   image: string;
   phone: number;
   address: string;
-  warkers: {
+  workers: {
     id: string;
-    email: string;
     username: string;
     image: string;
   }[];
 }
 
-const Card: FC<SedeCardProps> = ({ image, phone, warkers, address }) => {
+const Card: FC<SedeCardProps> = ({ image, phone, workers, address }) => {
   return (
     <div className="max-w-sm flex flex-col bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <img
@@ -32,13 +31,12 @@ const Card: FC<SedeCardProps> = ({ image, phone, warkers, address }) => {
           {address}
         </span>
       </div>
-      {warkers.map((warker) => {
+      {workers.map((worker) => {
         return (
           <CardModerator
-            key={warker.id}
-            imageModerator={warker.image}
-            nameModerator={warker.username}
-            phoneModerator={warker.email}
+            key={worker.id}
+            imageModerator={worker.image}
+            nameModerator={worker.username}
           />
         );
       })}

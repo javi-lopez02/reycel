@@ -11,9 +11,9 @@ const prisma = new PrismaClient()
 
 export const loginAdmin = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { userName, password } = req.body;
 
-    if (!email || !password) {
+    if (!userName || !password) {
       return res
         .status(401)
         .json(["Nesecita email y contraseña para logearce"]);
@@ -21,7 +21,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findFirst({
       where: {
-        email,
+        username: userName,
       },
     });
 
@@ -44,9 +44,9 @@ export const loginAdmin = async (req: Request, res: Response) => {
     });
     res.json({
       username: user.username,
-      email: user.email,
       userRole: user.role,
       userId: user.id,
+      image: user.image
     });
   } catch (error) {
     console.log(error);
@@ -73,7 +73,6 @@ export const verifyTokenAdmin = async (req: Request, res: Response) => {
       userId: userFound.id,
       username: userFound.username,
       userRole: userFound.role,
-      email: userFound.email,
     });
   } catch (error) {
     console.log(error);

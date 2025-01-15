@@ -12,8 +12,7 @@ datasource db {
 
 model User {
   id        String    @id @default(uuid())
-  username  String
-  email     String    @unique
+  username  String    @unique
   password  String
   image     String?
   status    Boolean
@@ -24,6 +23,7 @@ model User {
   updatedAt DateTime  @updatedAt
   Rating    Rating[]
   comment   Comment[]
+  payment   Payment[]
   Sede      Sede?     @relation(fields: [sedeId], references: [id])
   sedeId    String?
 }
@@ -124,16 +124,28 @@ model OrderItem {
 }
 
 model Payment {
-  id            String        @id
-  orderId       String        @unique
-  order         Order         @relation(fields: [orderId], references: [id])
-  amount        Float
-  paymentMethod PaymentMethod
-  paymentStatus PaymentStatus @default(PENDING)
-  createdAt     DateTime      @default(now())
+  id              String        @id @default(uuid())
+  orderId         String        @unique
+  order           Order         @relation(fields: [orderId], references: [id])
+  amount          Float
+  paymentStatus   PaymentStatus @default(PENDING)
+  createdAt       DateTime      @default(now())
+  PaymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  paymentMethodId String
+  User            User          @relation(fields: [userId], references: [id])
+  userId          String
 }
 
-enum PaymentMethod {
+model PaymentMethod {
+  id             String         @id @default(uuid())
+  cardImage      String
+  cardNumber     String?
+  createdAt      DateTime       @default(now())
+  payment        Payment[]
+  paymentOptions PaymentOptions
+}
+
+enum PaymentOptions {
   TRANSFER_USD
   TRANSFER_CUP
   CASH
@@ -152,5 +164,13 @@ model Sede {
   image     String
   phone     Int    @unique
   direction String
-  warker    User[]
+  workers    User[]
+}
+
+model CurrencyExchange {
+  id        String   @id @default(uuid())
+  cup       Float
+  eur       Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

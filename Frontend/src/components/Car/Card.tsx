@@ -84,7 +84,7 @@ const Card: React.FC<Props> = ({ product, quantity, id, handleQuantity, setError
                 {[...Array(5)].map((_, index) => (
                   <svg
                     key={index}
-                    className={`h-5 w-5 fill-current ${product.ratingAverage > index ? "text-yellow-500" : "text-gray-300"
+                    className={`h-5 w-5 fill-current ${product.ratingAverage !== undefined && product.ratingAverage > index ? "text-yellow-500" : "text-gray-300"
                       }`}
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"

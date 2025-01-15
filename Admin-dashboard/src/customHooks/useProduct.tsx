@@ -18,7 +18,7 @@ function useProduct() {
       })
       .catch((err) => {
         console.log(err);
-        setError(["Ocuurio un error con la peticion."]);
+        setError(["Ocurrio un error con la peticion."]);
       })
       .finally(() => {
         setLoading(false);
@@ -29,7 +29,7 @@ function useProduct() {
       })
       .catch((err) => {
         console.log(err);
-        setError(["Ocuurio un error con la peticion."]);
+        setError(["Ocurrio un error con la peticion."]);
       });
   }, []);
 

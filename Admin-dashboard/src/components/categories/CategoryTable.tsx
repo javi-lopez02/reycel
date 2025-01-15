@@ -273,8 +273,9 @@ export default function CategoryTable() {
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
+            color="success"
             className="w-full sm:max-w-[44%]"
-            placeholder="Búsqueda por nombre..."
+            placeholder="Búsqueda ..."
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}

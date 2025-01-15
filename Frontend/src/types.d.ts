@@ -3,7 +3,7 @@ export type User = {
   userId: string;
   password?: string;
   status?: boolean;
-  email: string;
+  image: string
 };
 
 export type Specs = {
@@ -24,6 +24,7 @@ export interface Products {
   imagen: string;
   color?: string;
   ram: number;
+  ratingAverage?: number;
   storage: number;
   battery?: number;
   mpxCameraFront?: number;
@@ -77,10 +78,9 @@ export interface Order {
   orderItems: OrderItem[];
 }
 
-interface UserAuth{
-  email: string
-  password: string
-  username?: string
+interface UserAuth {
+  password: string;
+  username: string;
 }
 
 export type AuthContextType = {
@@ -93,10 +93,13 @@ export type AuthContextType = {
   logout: () => void;
 };
 
-export interface TransactionType{
-  transactionID: string
-  price: number
-  productCount: number
+export interface TransactionType {
+  transactionID: string;
+  price: number;
+  productCount: number;
+  fastDelivery: boolean;
+  address: string;
+  town: string;
 }
 
 export interface Category {
@@ -135,16 +138,14 @@ export type ProductContextType = {
   setQuerySeach: (value: string) => void;
 };
 
-
 export interface Sedes {
   id?: string;
   direction: string;
   image: string;
   phone: number;
-  warker: {
+  workers: {
     id: string;
-    email: string;
     username: string;
-    image: string
+    image: string;
   }[];
 }

@@ -6,11 +6,10 @@ export const getUsersRequest = () => {
 
 interface UserRequest {
   username: string;
-  email: string;
   password: string;
   image: string;
   sedeId?: string;
-  role: "USER" | "MODERADOR" | "ADMIN";
+  role?: "USER" | "MODERADOR" | "ADMIN";
 }
 
 export const createUsersRequest = (user: UserRequest) => {

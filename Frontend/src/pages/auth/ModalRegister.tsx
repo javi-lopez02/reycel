@@ -1,15 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/auth.context";
-import { Button, Checkbox, Input, Link, ModalBody, ModalFooter, ModalHeader } from "@nextui-org/react";
-import { BiLock, BiMailSend, BiUser } from "react-icons/bi";
+import {
+  Button,
+  Checkbox,
+  Input,
+  Link,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from "@nextui-org/react";
+import { BiLock, BiUser } from "react-icons/bi";
 
-function ModalRegister({ onClose, setIsRegister }: { onClose: () => void, setIsRegister: (value: boolean) => void }) {
+function ModalRegister({
+  onClose,
+  setIsRegister,
+}: {
+  onClose: () => void;
+  setIsRegister: (value: boolean) => void;
+}) {
   const [error, setError] = useState<Array<string>>([]);
-  const { errors, signUp } = useAuth()
+  const { errors, signUp } = useAuth();
 
-  const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const userNameRef = useRef<HTMLInputElement | null>(null);
+  const passwordConfirmRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (error.length > 0) {
@@ -21,39 +35,34 @@ function ModalRegister({ onClose, setIsRegister }: { onClose: () => void, setIsR
   }, [error]);
 
   useEffect(() => {
-    setError(errors)
-  }, [errors])
+    setError(errors);
+  }, [errors]);
 
   const handleSubmit = async () => {
-
-    if (!emailRef.current?.value) {
-      setError([...error, "Email name is required"]);
-      return;
-    }
-    if (!passwordRef.current?.value) {
-      setError([...error, "Password is required"]);
-      return
-    }
     if (!userNameRef.current?.value) {
       setError([...error, "User name is required"]);
       return;
     }
+    if (!passwordRef.current?.value) {
+      setError([...error, "Password is required"]);
+      return;
+    }
+    if( passwordRef.current?.value !== passwordConfirmRef.current?.value){
+      setError([...error, "Passwords do not match"]);
+      return;
+    }
 
-    signUp({ email: emailRef.current?.value, password: passwordRef.current?.value, username: userNameRef.current.value })
+    signUp({
+      password: passwordRef.current?.value,
+      username: userNameRef.current.value,
+    });
   };
 
   return (
     <>
       <ModalHeader className="flex flex-col gap-1">
-        <div
-
-          className="flex items-center text-2xl font-bold text-gray-900 dark:text-white"
-        >
-          <img
-            className="w-8 h-8 mr-2"
-            src="./logo.webp"
-            alt="logo"
-          />
+        <div className="flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+          <img className="w-8 h-8 mr-2" src="./logo.webp" alt="logo" />
           Reycel
         </div>
       </ModalHeader>
@@ -83,20 +92,22 @@ function ModalRegister({ onClose, setIsRegister }: { onClose: () => void, setIsR
           variant="bordered"
         />
         <Input
-          ref={emailRef}
-          endContent={
-            <BiMailSend className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-          }
-          label="Email"
-          placeholder="Enter your email"
-          variant="bordered"
-        />
-        <Input
           ref={passwordRef}
           endContent={
             <BiLock className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
           }
           label="Password"
+          placeholder="Enter your password"
+          type="password"
+          variant="bordered"
+        />
+
+        <Input
+          ref={passwordConfirmRef}
+          endContent={
+            <BiLock className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+          }
+          label="Password Confirm"
           placeholder="Enter your password"
           type="password"
           variant="bordered"
@@ -115,19 +126,24 @@ function ModalRegister({ onClose, setIsRegister }: { onClose: () => void, setIsR
         </div>
         <div className="flex items-center  text-sm font-light text-gray-500 dark:text-gray-400">
           ¿Ya tienes una cuentas?
-          <div onClick={()=>setIsRegister(false)} className="font-medium ml-3 text-primary-600 hover:underline dark:text-primary-500 cursor-pointer">
+          <div
+            onClick={() => setIsRegister(false)}
+            className="font-medium ml-3 text-primary-600 hover:underline dark:text-primary-500 cursor-pointer"
+          >
             Inicia sesión
           </div>
         </div>
       </ModalBody>
       <ModalFooter>
-
         <Button color="danger" variant="flat" onClick={onClose}>
           Cancelar
         </Button>
-        <Button color="primary" onClick={() => {
-          handleSubmit()
-        }} >
+        <Button
+          color="primary"
+          onClick={() => {
+            handleSubmit();
+          }}
+        >
           Registrar
         </Button>
       </ModalFooter>
@@ -135,4 +151,4 @@ function ModalRegister({ onClose, setIsRegister }: { onClose: () => void, setIsR
   );
 }
 
-export default ModalRegister
+export default ModalRegister;

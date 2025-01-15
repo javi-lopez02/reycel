@@ -11,7 +11,7 @@ import {
   Spinner,
 } from "@nextui-org/react";
 import { FC, useEffect, useState } from "react";
-import { BiLock, BiMailSend, BiUser } from "react-icons/bi";
+import { BiLock, BiUser } from "react-icons/bi";
 import { toast } from "sonner";
 import { createUsersRequest, editUsersRequest } from "../../services/user";
 import { Sede, Users } from "../../type";
@@ -38,10 +38,8 @@ const roles = [
 const ModalAddUser: FC<Props> = ({
   id,
   username,
-  email,
   image,
-  Sede,
-  role,
+
   isOpen,
   onClose,
   setUsers,
@@ -87,7 +85,6 @@ const ModalAddUser: FC<Props> = ({
     const selectedSede = data["sede"] as string;
 
     const inputUser = data["user"] as string;
-    const inputEmail = data["email"] as string;
     const inputPassword = data["password"] as string;
     const inputPasswordConfirm = data["passwordConfirm"] as string;
 
@@ -107,17 +104,15 @@ const ModalAddUser: FC<Props> = ({
       setLoading(false);
       return;
     }
-    if (!inputEmail) {
-      toast.error("El email del usuario es requerido.");
-      setLoading(false);
-      return;
-    }
     if (!inputPassword && !id) {
       toast.error("La contraseña es requerida.");
       setLoading(false);
       return;
     }
-    if ((!inputPasswordConfirm || inputPasswordConfirm !== inputPassword) && !id) {
+    if (
+      (!inputPasswordConfirm || inputPasswordConfirm !== inputPassword) &&
+      !id
+    ) {
       toast.error("Las contraseñas no coinciden.");
       setLoading(false);
       return;
@@ -125,7 +120,6 @@ const ModalAddUser: FC<Props> = ({
 
     if (id) {
       editUsersRequest(id, {
-        email: inputEmail,
         image: inputImage,
         password: inputPassword,
         role: selectedRole,
@@ -159,7 +153,6 @@ const ModalAddUser: FC<Props> = ({
 
     if (!id) {
       createUsersRequest({
-        email: inputEmail,
         image: inputImage,
         password: inputPassword,
         role: selectedRole,
@@ -220,6 +213,7 @@ const ModalAddUser: FC<Props> = ({
                         variant="bordered"
                         label="Role"
                         name="role"
+                        defaultOpen
                         placeholder="Seleccione el role"
                         labelPlacement="outside"
                         onChange={handleRoleChange}
@@ -239,17 +233,6 @@ const ModalAddUser: FC<Props> = ({
                         }
                         label="Usuario"
                         placeholder="Entra el usuario"
-                        variant="bordered"
-                        labelPlacement="outside"
-                      />
-                      <Input
-                        endContent={
-                          <BiMailSend className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                        }
-                        label="Email"
-                        name="email"
-                        defaultValue={email}
-                        placeholder="Entra el email"
                         variant="bordered"
                         labelPlacement="outside"
                       />

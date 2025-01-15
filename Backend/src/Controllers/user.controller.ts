@@ -46,7 +46,6 @@ export const getUsers = async (req: Request, res: Response) => {
       select: {
         id: true,
         username: true,
-        email: true,
         image: true,
         status: true,
         role: true,
@@ -89,7 +88,6 @@ export const getUserID = async (req: Request, res: Response) => {
       select: {
         id: true,
         username: true,
-        email: true,
         image: true,
         status: true,
         role: true,
@@ -123,7 +121,7 @@ export const getUserID = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { username, email, password, image, role, sedeId } = req.body;
+    const { username, password, image, role, sedeId } = req.body;
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
@@ -134,7 +132,6 @@ export const createUser = async (req: Request, res: Response) => {
         role,
         image,
         sedeId,
-        email,
         password: hashedPassword,
       },
       include: {
@@ -156,7 +153,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const editUserAdmin = async (req: Request, res: Response) => {
   try {
-    const { username, email, password, image, role } = req.body;
+    const { username, password, image, role } = req.body;
 
     const { id } = req.params;
 
@@ -172,7 +169,6 @@ export const editUserAdmin = async (req: Request, res: Response) => {
         username,
         role,
         image,
-        email,
         password: hashedPassword,
       },
       include: {
@@ -199,7 +195,7 @@ export const editUserAdmin = async (req: Request, res: Response) => {
 
 export const editUser = async (req: Request, res: Response) => {
   try {
-    const { username, email, password, image } = req.body;
+    const { username, password, image } = req.body;
     const userId = req.userId;
 
     const hashedPassword = await bcryptjs.hash(password, 10);
@@ -211,7 +207,6 @@ export const editUser = async (req: Request, res: Response) => {
       },
       data: {
         username,
-        email,
         image,
         password: hashedPassword,
       },

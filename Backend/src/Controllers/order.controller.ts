@@ -172,3 +172,76 @@ export const deleteOrderItem = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error al agregar el Producto al carrito." });
   }
 };
+
+export const getOrder = async (req: Request, res: Response) => {
+  try {
+    const orders = await prisma.order.findMany({
+      select: {
+        _count: {
+          select: {
+            orderItems: true,
+          },
+        },
+        createdAt: true,
+        id: true,
+        totalAmount: true,
+        pending: true,
+        user: {
+          select: {
+            id: true,
+            image: true,
+            role: true,
+            username: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      data: orders,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const getOrderItemsAdmin = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "El id es requerido" });
+    }
+
+    const items = await prisma.orderItem.findMany({
+      where: {
+        orderId: id,
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        price: true,
+        quantity: true,
+        product: {
+          select: {
+            imagen: true,
+            name: true,
+            ratingAverage: true,
+          },
+        },
+      },
+    });
+
+    if (!items) {
+      return res.status(404).json({ message: "Productos no encontrados" });
+    }
+
+    return res.status(200).json({
+      data: items,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
