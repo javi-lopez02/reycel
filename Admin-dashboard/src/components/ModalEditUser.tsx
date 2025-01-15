@@ -21,7 +21,14 @@ interface Props {
   onClose: () => void;
 }
 
-const ModalEditUser: FC<Props> = ({ id, username, image, isOpen, onClose }) => {
+const ModalEditUser: FC<Props> = ({
+  id,
+  username,
+  image,
+
+  isOpen,
+  onClose,
+}) => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState("./logo.webp");
 
@@ -54,15 +61,12 @@ const ModalEditUser: FC<Props> = ({ id, username, image, isOpen, onClose }) => {
       setLoading(false);
       return;
     }
-    if (!inputPassword && !id) {
+    if (!inputPassword) {
       toast.error("La contraseña es requerida.");
       setLoading(false);
       return;
     }
-    if (
-      (!inputPasswordConfirm || inputPasswordConfirm !== inputPassword) &&
-      !id
-    ) {
+    if (!inputPasswordConfirm || inputPasswordConfirm !== inputPassword) {
       toast.error("Las contraseñas no coinciden.");
       setLoading(false);
       return;
@@ -134,7 +138,6 @@ const ModalEditUser: FC<Props> = ({ id, username, image, isOpen, onClose }) => {
                         variant="bordered"
                         labelPlacement="outside"
                       />
-
                       <Input
                         endContent={
                           <BiLock className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />

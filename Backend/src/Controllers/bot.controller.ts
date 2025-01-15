@@ -82,11 +82,17 @@ export const message = async (req: Request, res: Response) => {
     const transactionID: number = req.body.transactionID;
     const price: number = req.body.price;
     const productCount = req.body.productCount;
+    const fastDelivery: boolean = req.body.fastDelivery;
+    const address = req.body.address;
+    const town: boolean = req.body.town;
 
     const message = `Se ha registrado una nueva transacción con los siguientes detalles:
     - **ID de Transacción:** ${transactionID}
     - **Cantidad de Productos:** ${productCount}
     - **Precio Total:** $${price.toFixed(2)}
+    - **Entrega Rápida:** ${fastDelivery ? "Si" : "No"}
+    - **Direccion:** ${address}
+    - **Poblado:** ${town}
     
     Por favor, confirma o deniega esta transacción.`;
 

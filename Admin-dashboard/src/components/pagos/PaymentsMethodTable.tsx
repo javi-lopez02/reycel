@@ -240,7 +240,7 @@ export default function PaymentsMethodTable() {
                   <EditIcon />
                 </button>
               </Tooltip>
-              <Tooltip color="danger" content="Delete user">
+              <Tooltip color="danger" content="Delete Payment Method">
                 <button
                   className="text-lg text-danger cursor-pointer active:opacity-50"
                   onClick={handleDelete(paymentMethod.id)}

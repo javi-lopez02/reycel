@@ -58,9 +58,7 @@ const ModalEditUser: FC<Props> = ({ id, username, image, isOpen, onClose }) => {
       setLoading(false);
       return;
     }
-    if (
-      (!inputPasswordConfirm || inputPasswordConfirm !== inputPassword)
-    ) {
+    if (!inputPasswordConfirm || inputPasswordConfirm !== inputPassword) {
       toast.error("Las contraseñas no coinciden.");
       setLoading(false);
       return;

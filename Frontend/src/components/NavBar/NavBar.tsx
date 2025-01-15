@@ -120,7 +120,7 @@ const Navbar = () => {
                 </Link>
               </div>
             )}
-            <div className="hidden lg:flex lg:items-center font-semibold text-lg">
+            <div className="hidden lg:flex lg:items-center font-semibold text-lg mr-2">
               {isAuth && <Avatar />}
               {!isAuth && (
                 <button

@@ -97,6 +97,9 @@ export interface TransactionType {
   transactionID: string;
   price: number;
   productCount: number;
+  fastDelivery: boolean;
+  address: string;
+  town: string;
 }
 
 export interface Category {

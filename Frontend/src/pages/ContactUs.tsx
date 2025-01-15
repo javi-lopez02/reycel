@@ -46,6 +46,7 @@ export default function ContactUs() {
 
     const url = `https://wa.me/${5358246718}?text=${messageWhatsApp}`;
     window.open(url, "_blank");
+    setLoading(false);
   };
 
   return (

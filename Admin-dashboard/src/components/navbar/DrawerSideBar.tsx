@@ -6,9 +6,21 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { Link } from "react-router-dom";
+import useUser from "../../customHooks/useUser";
+import useCategory from "../../customHooks/useCategory";
+import useProduct from "../../customHooks/useProduct";
+import useOrder from "../../customHooks/useOrder";
+import usePayments from "../../customHooks/usePayments";
+import useSede from "../../customHooks/useSede";
 
 export default function SideBar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { users } = useUser();
+  const { category } = useCategory();
+  const { products } = useProduct();
+  const { orders } = useOrder();
+  const { payments } = usePayments();
+  const { sedes } = useSede();
 
   return (
     <>
@@ -43,37 +55,7 @@ export default function SideBar() {
         <DrawerContent className="dark:bg-gray-800 fixed bg-white top-14 lg:mt-1">
           {(onClose) => (
             <>
-              <DrawerHeader className="flex flex-col gap-1">
-                <form className="flex lg:hidden">
-                  <label className="sr-only">Search</label>
-                  <div className="relative mt-1 lg:min-w-full">
-                    <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-                      <svg
-                        className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 20 20"
-                      >
-                        {" "}
-                        <path
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                        />{" "}
-                      </svg>
-                    </div>
-                    <input
-                      type="text"
-                      name="email"
-                      id="topbar-search"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-500 focus:border-primary-500 block min-w-full pl-9 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                      placeholder="Search"
-                    />
-                  </div>
-                </form>
-              </DrawerHeader>
+              <DrawerHeader className="flex flex-col gap-1"></DrawerHeader>
               <DrawerBody>
                 <div className="py-4 overflow-y-hidden">
                   <ul className="space-y-2 font-medium">
@@ -112,8 +94,8 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Usuarios
                         </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          16
+                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
+                          {users && users.length}
                         </span>
                       </Link>
                     </li>
@@ -134,8 +116,8 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Categorias
                         </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          32
+                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
+                          {category && category.length}
                         </span>
                       </Link>
                     </li>
@@ -156,7 +138,9 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Productos
                         </span>
-                        166
+                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
+                          {products && products.length}
+                        </span>
                       </Link>
                     </li>
                     <li onClick={onClose}>
@@ -176,8 +160,8 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Ordenes
                         </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          7
+                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
+                          {orders && orders.length}
                         </span>
                       </Link>
                     </li>
@@ -204,8 +188,8 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Pagos
                         </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          5
+                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
+                          {payments && payments.length}
                         </span>
                       </Link>
                     </li>
@@ -232,8 +216,8 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Sedes
                         </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-primary-800 bg-primary-100 rounded-full ">
-                          15
+                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
+                          {sedes && sedes.length}
                         </span>
                       </Link>
                     </li>
