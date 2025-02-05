@@ -17,6 +17,8 @@ import { BiUser } from "react-icons/bi";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  totalAmount: number;
+  username: string | undefined
 }
 
 const status = [
@@ -25,7 +27,8 @@ const status = [
   { key: "Pendient", label: "Pendiente" },
 ];
 
-const ModalAddOrder: FC<Props> = ({ isOpen, onClose }) => {
+const ModalAddOrder: FC<Props> = ({ isOpen, onClose, totalAmount, username }) => {
+
   return (
     <>
       <Modal backdrop={"opaque"} isOpen={isOpen} onClose={onClose} size="lg">
@@ -48,6 +51,7 @@ const ModalAddOrder: FC<Props> = ({ isOpen, onClose }) => {
                       label="Moderador"
                       variant="bordered"
                       labelPlacement="outside"
+                      value={username}
                     />
                     <Input
                       endContent={
@@ -58,6 +62,7 @@ const ModalAddOrder: FC<Props> = ({ isOpen, onClose }) => {
                       label="Precio"
                       variant="bordered"
                       labelPlacement="outside"
+                      defaultValue={String(totalAmount)}
                     />
                   </div>
                   <Select

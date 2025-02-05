@@ -21,7 +21,7 @@ const Card: React.FC<Props> = ({ product, quantity, id, handleQuantity, setError
   const [value, setvalue] = useState(`${quantity}`);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleOrderDelte = () => {
+  const handleOrderDelete = () => {
     deleteOrderItemRequest(id)
       .then((res) => {
         setOrder((prev: OrderItem[] | null) => {
@@ -123,7 +123,7 @@ const Card: React.FC<Props> = ({ product, quantity, id, handleQuantity, setError
               </button>
             </div>
           </div>
-          <ModalDelete handleOrderDelte={handleOrderDelte} isOpen={isOpen} onClose={onClose} ></ModalDelete>
+          <ModalDelete handleOrderDelte={handleOrderDelete} isOpen={isOpen} onClose={onClose} ></ModalDelete>
         </div>
       </div>
     </div>
