@@ -1,6 +1,7 @@
 import {
   ChangeEvent,
   Key,
+  Suspense,
   SVGProps,
   useCallback,
   useMemo,
@@ -27,11 +28,13 @@ import {
   SortDescriptor,
   Tooltip,
   Spinner,
+  useDisclosure,
 } from "@nextui-org/react";
 import { ChevronDownIcon, EditIcon, EyeIcon, SearchIcon } from "../Icons";
 import usePayments from "../../customHooks/usePayments";
 import { Payment } from "../../type";
 import { toast } from "sonner";
+import ModalPayDetails from "./ModalPayDetails";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -78,6 +81,9 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 export default function PaymentsTable() {
   const { error, loading, payments } = usePayments();
+
+  const [orderId, setOrderId] = useState<string>("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
 
@@ -181,88 +187,96 @@ export default function PaymentsTable() {
     return `${dia} ${mes} ${anio}`;
   };
 
-  const renderCell = useCallback((payments: Payment, columnKey: Key) => {
-    const cellValue = payments[columnKey as keyof Payment];
+  const renderCell = useCallback(
+    (payments: Payment, columnKey: Key) => {
+      const cellValue = payments[columnKey as keyof Payment];
 
-    switch (columnKey) {
-      case "user":
-        return (
-          <User
-            avatarProps={{ radius: "lg", src: payments.User.image }}
-            name={payments.User.username}
-          />
-        );
-      case "role":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {payments.User.role}
-            </p>
-          </div>
-        );
+      switch (columnKey) {
+        case "user":
+          return (
+            <User
+              avatarProps={{ radius: "lg", src: payments.User.image }}
+              name={payments.User.username}
+            />
+          );
+        case "role":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                {payments.User.role}
+              </p>
+            </div>
+          );
 
-      case "price":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {payments.amount}$
-            </p>
-          </div>
-        );
-      case "productquantity":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {payments.order._count.orderItems}
-            </p>
-          </div>
-        );
-      case "paymentMethod":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">
-              {payments.PaymentMethod.paymentOptions}
-            </p>
-          </div>
-        );
-      case "status":
-        return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[payments.paymentStatus]}
-            size="sm"
-            variant="flat"
-          >
-            {payments.paymentStatus}
-          </Chip>
-        );
-      case "date":
-        return (
-          <div>
-            <p className="text-bold text-small capitalize">
-              {formatearFecha(payments.createdAt)}
-            </p>
-          </div>
-        );
-      case "actions":
-        return (
-          <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Detalles" color="success">
-              <span className="text-lg text-success cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-            </Tooltip>
-            <Tooltip content="Editar pago" color="warning">
-              <span className="text-lg text-warning cursor-pointer active:opacity-50">
-                <EditIcon />
-              </span>
-            </Tooltip>
-          </div>
-        );
-      default:
-        return String(cellValue);
-    }
-  }, []);
+        case "price":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                {payments.amount}$
+              </p>
+            </div>
+          );
+        case "productquantity":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                {payments.order._count.orderItems}
+              </p>
+            </div>
+          );
+        case "paymentMethod":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                {payments.PaymentMethod.paymentOptions}
+              </p>
+            </div>
+          );
+        case "status":
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap[payments.paymentStatus]}
+              size="sm"
+              variant="flat"
+            >
+              {payments.paymentStatus}
+            </Chip>
+          );
+        case "date":
+          return (
+            <div>
+              <p className="text-bold text-small capitalize">
+                {formatearFecha(payments.createdAt)}
+              </p>
+            </div>
+          );
+        case "actions":
+          return (
+            <div className="relative flex justify-center items-center gap-2">
+              <Tooltip content="Detalles" color="success">
+                <span className="text-lg text-success cursor-pointer active:opacity-50">
+                  <EyeIcon
+                    onClick={() => {
+                      onOpen();
+                      setOrderId(payments.orderId);
+                    }}
+                  />
+                </span>
+              </Tooltip>
+              <Tooltip content="Editar pago" color="warning">
+                <span className="text-lg text-warning cursor-pointer active:opacity-50">
+                  <EditIcon />
+                </span>
+              </Tooltip>
+            </div>
+          );
+        default:
+          return String(cellValue);
+      }
+    },
+    [onOpen]
+  );
 
   const onNextPage = useCallback(() => {
     if (page < pages) {
@@ -435,6 +449,17 @@ export default function PaymentsTable() {
     <div className="flex flex-col gap-4">
       <h1 className="text-4xl font-medium text-left">Tabla de Pagos</h1>
       {error && error.map((err) => toast.error(err))}
+      {isOpen && (
+        <Suspense
+          fallback={
+            <div className="w-full flex justify-center fixed pt-2">
+              <Spinner color="warning" />
+            </div>
+          }
+        >
+          <ModalPayDetails isOpen={isOpen} onClose={onClose} id={orderId} />
+        </Suspense>
+      )}
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
