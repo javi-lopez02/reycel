@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {toast} from 'sonner'
 import { useProduct } from "../context/product.context";
-import { Spinner } from "@nextui-org/spinner";
+import { Spinner } from "@heroui/spinner";
 
 export default function Shop() {
   const {

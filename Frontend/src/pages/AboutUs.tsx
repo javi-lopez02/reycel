@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Card from "../components/AboutUs/Card";
 import "../index.css";
 import { getSedeRequest } from "../services/sedes";
-import { Spinner } from "@nextui-org/spinner";
+import { Spinner } from "@heroui/spinner";
 import { toast } from "sonner";
 import { Sedes } from "../types";
 

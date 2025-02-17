@@ -7,6 +7,7 @@ import {
   FC,
 } from "react";
 import {
+  confirmEmailRequest,
   LoginRequest,
   LogoutRequest,
   RegisterRequest,
@@ -15,10 +16,10 @@ import {
 import Cookies from "js-cookie";
 import { type User, AuthContextType, UserAuth } from "../types.d";
 import axios, { AxiosError } from "axios";
+import { io } from "socket.io-client";
+import { API_URL } from "../conf";
 
-export const AuthContext = createContext<AuthContextType | null>(
-  null
-);
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -35,60 +36,83 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [errors, setErrors] = useState<Array<string>>([]);
   const [loading, setLoading] = useState(true);
 
-
   const signIn = async (values: UserAuth) => {
     try {
       const res = await LoginRequest(values);
       setUser(res.data);
       setIsAuth(true);
+
+      const socket = io(API_URL);
+      socket.emit("usuario-conectado", res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
 
         if (axiosError.response) {
-
           setErrors(axiosError.response.data as Array<string>);
-
         } else if (axiosError.request) {
-          console.error('No se recibió respuesta:', axiosError.request);
+          console.error("No se recibió respuesta:", axiosError.request);
         }
       } else {
-        console.error('Error desconocido:', error);
+        console.error("Error desconocido:", error);
       }
-
     }
   };
 
   const signUp = async (values: UserAuth) => {
     try {
-      console.log(values);
-      const res = await RegisterRequest(values);
-      setUser(res.data);
-      setIsAuth(true);
+      await RegisterRequest(values);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
 
         if (axiosError.response) {
-
           setErrors(axiosError.response.data as Array<string>);
-
         } else if (axiosError.request) {
-          console.error('No se recibió respuesta:', axiosError.request);
+          console.error("No se recibió respuesta:", axiosError.request);
         }
       } else {
-        console.error('Error desconocido:', error);
+        console.error("Error desconocido:", error);
       }
+    }
+  };
 
+  const confirmEmail = async (values: string) => {
+    setLoading(true);
+    try {
+      try {
+        const res = await confirmEmailRequest(values);
+        setUser(res.data);
+        setIsAuth(true);
+
+        const socket = io(API_URL);
+        socket.emit("usuario-conectado", res.data);
+      } catch (error) {
+        console.log(error);
+        if (axios.isAxiosError(error)) {
+          const axiosError = error as AxiosError;
+
+          if (axiosError.response) {
+            setErrors(axiosError.response.data as Array<string>);
+          } else if (axiosError.request) {
+            console.error("No se recibió respuesta:", axiosError.request);
+          }
+        } else {
+          console.error("Error desconocido:", error);
+        }
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = async () => {
     try {
       await LogoutRequest();
-      console.log("logout")
+      console.log("logout");
       setUser(null);
       setIsAuth(false);
+
     } catch (error) {
       console.log("error");
       console.log(error);
@@ -121,8 +145,11 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         setIsAuth(true);
         setUser(res.data);
         setLoading(false);
+
+        const socket = io(API_URL);
+        socket.emit("usuario-conectado", res.data);
       } catch (error) {
-        console.log(error)
+        console.log(error);
         setIsAuth(false);
         setLoading(false);
       }
@@ -137,6 +164,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         isAuth,
         errors,
         loading,
+        confirmEmail,
         signIn,
         signUp,
         logout,

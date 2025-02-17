@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import { Input, useDisclosure } from "@nextui-org/react";
+import { Input, useDisclosure } from "@heroui/react";
 import { OrderItem, Products } from "../../types";
 import { deleteOrderItemRequest } from "../../services/order";
 import { Link } from "react-router-dom";

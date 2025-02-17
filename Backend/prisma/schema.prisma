@@ -12,6 +12,7 @@ datasource db {
 
 model User {
   id        String    @id @default(uuid())
+  email     String    @unique
   username  String    @unique
   password  String
   image     String?
@@ -164,7 +165,7 @@ model Sede {
   image     String
   phone     Int    @unique
   direction String
-  workers    User[]
+  workers   User[]
 }
 
 model CurrencyExchange {

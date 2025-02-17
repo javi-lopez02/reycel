@@ -79,6 +79,7 @@ export interface Order {
 }
 
 interface UserAuth {
+  email?: string;
   password: string;
   username: string;
 }
@@ -88,6 +89,7 @@ export type AuthContextType = {
   isAuth: boolean;
   loading: boolean;
   errors: Array<string>;
+  confirmEmail: (values: string) => Promise<void>;
   signIn: (value: UserAuth) => Promise<void>;
   signUp: (value: UserAuth) => Promise<void>;
   logout: () => void;

@@ -4,7 +4,7 @@ import {
   PopoverTrigger,
   Button,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useAuth } from "../../context/auth.context";
 import { MdLogout } from "react-icons/md";
 import ModalEditUser from "../ModalEditUser";
@@ -12,6 +12,7 @@ import ModalEditUser from "../ModalEditUser";
 const Avatar = () => {
   const { user, logout } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
 
   return (
     <Popover placement="bottom-end">

@@ -121,12 +121,13 @@ export const getUserID = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { username, password, image, role, sedeId } = req.body;
+    const { username, password, image, role, sedeId,email } = req.body;
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
     const user = await prisma.user.create({
       data: {
+        email,
         status: false,
         username,
         role,

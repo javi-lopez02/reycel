@@ -13,4 +13,8 @@ export const LogoutRequest = () => {
   return axios.post(`/auth/logout`)
 }
 
+export const confirmEmailRequest = (value: string) => {
+  return axios.get(`/auth/confirm/${value}`)
+}
+
 export const verifyTokenRequest = async () => axios.get(`/auth/verify`);

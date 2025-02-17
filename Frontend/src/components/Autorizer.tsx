@@ -1,4 +1,4 @@
-import { useDisclosure } from "@nextui-org/react";
+import { useDisclosure } from "@heroui/react";
 import AuthUser from "../pages/auth/AuthUser";
 
 export default function Autorizer() {

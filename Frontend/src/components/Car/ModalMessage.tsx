@@ -1,7 +1,6 @@
 import {
   Button,
   Checkbox,
-  Form,
   Input,
   Modal,
   ModalBody,
@@ -14,7 +13,7 @@ import {
   Snippet,
   Spinner,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FC, useRef, useState } from "react";
 import { toast } from "sonner";
 import { transactionRequest } from "../../services/transaction";
@@ -118,7 +117,7 @@ const ModalMessage: FC<Props> = ({ count, totalAmount, isOpen, onClose }) => {
                 <h1 className="text-2xl font-bold">Confirme su Compra</h1>
               </ModalHeader>
               <ModalBody>
-                <Form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}>
                   <div className="w-full">
                     <ul>
                       <li className="flex space-x-2">
@@ -343,7 +342,7 @@ const ModalMessage: FC<Props> = ({ count, totalAmount, isOpen, onClose }) => {
                       </Button>
                     </div>
                   </div>
-                </Form>
+                </form>
               </ModalBody>
             </>
           )}

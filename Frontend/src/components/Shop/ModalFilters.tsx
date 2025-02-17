@@ -9,7 +9,7 @@ import {
   AutocompleteItem,
   Input,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Key, useEffect, useState } from "react";
 import { Rating, RoundedStar } from "@smastrom/react-rating";
 

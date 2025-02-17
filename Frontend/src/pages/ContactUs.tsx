@@ -8,7 +8,7 @@ import Card from "../components/ContactUs/Card";
 import { useAuth } from "../context/auth.context";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Spinner } from "@nextui-org/spinner";
+import { Spinner } from "@heroui/spinner";
 
 export default function ContactUs() {
   const { user } = useAuth();

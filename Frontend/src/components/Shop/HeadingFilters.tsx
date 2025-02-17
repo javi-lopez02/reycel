@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/react"
+import { Button } from "@heroui/react"
 import { useProduct } from "../../context/product.context"
 import ModalFilters from "./ModalFilters"
 import ModalSorting from "./ModalSorting"

@@ -3,9 +3,9 @@ import Card from "../components/Car/Card";
 import { OrderItem } from "../types";
 import { getOrderRequest, updateOrderItemRequest } from "../services/order";
 import axios, { AxiosError } from "axios";
-import { Spinner } from "@nextui-org/spinner";
+import { Spinner } from "@heroui/spinner";
 import { toast } from "sonner";
-import { useDisclosure } from "@nextui-org/react";
+import { useDisclosure } from "@heroui/react";
 import ModalMessage from "../components/Car/ModalMessage";
 
 const App: React.FC = () => {
@@ -65,7 +65,6 @@ const App: React.FC = () => {
         </h2>
 
         <div className="grid grid-cols-[auto_auto] gap-5 max-lg:grid-cols-1">
-
           <div className="bg-white h-max rounded-md p-6 shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] max-lg:w-full lg:max-w-[335px] lg:sticky top-16 ">
             <h3 className="text-xl font-bold text-gray-800">Orden</h3>
 
@@ -94,11 +93,17 @@ const App: React.FC = () => {
               Realizar Pago
             </button>
 
-            <ModalMessage count={count} totalAmount={totalAmount} isOpen={isOpen} onClose={onClose} />
+            <ModalMessage
+              count={count}
+              totalAmount={totalAmount}
+              isOpen={isOpen}
+              onClose={onClose}
+            />
           </div>
 
           <div className="grid  gap-4 relative max-lg:pt-5">
             <div className="lg:col-span-2 space-y-4">
+              {order?.length === 0 && <h1 className="text-2xl font-medium text-neutral-500">No hay productos en el carrito.</h1>}
               {order !== null &&
                 order.map((orderItem) => {
                   return (
@@ -124,7 +129,6 @@ const App: React.FC = () => {
 
               {error && error.map((err) => toast.error(err))}
             </div>
-
           </div>
         </div>
       </div>

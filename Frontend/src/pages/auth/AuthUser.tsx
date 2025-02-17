@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState} from "react";
 import { useAuth } from "../../context/auth.context";
-import { Modal, ModalContent } from "@nextui-org/react";
+import { Modal, ModalContent } from "@heroui/react";
 import ModalRegister from "./ModalRegister";
 import ModalLogin from "./ModalLogin";
 
