@@ -7,9 +7,11 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  Spinner,
 } from "@heroui/react";
 import { BiLock, BiUser } from "react-icons/bi";
 import { MdEmail } from "react-icons/md";
+import { toast } from "sonner";
 
 function ModalRegister({
   onClose,
@@ -25,6 +27,7 @@ function ModalRegister({
   const emailRef = useRef<HTMLInputElement | null>(null);
   const userNameRef = useRef<HTMLInputElement | null>(null);
   const passwordConfirmRef = useRef<HTMLInputElement | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (error.length > 0) {
@@ -39,7 +42,7 @@ function ModalRegister({
     setError(errors);
   }, [errors]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!userNameRef.current?.value) {
       setError([...error, "User name is required"]);
       return;
@@ -57,11 +60,22 @@ function ModalRegister({
       return;
     }
 
+    setLoading(true);
     signUp({
       password: passwordRef.current?.value,
       username: emailRef.current.value,
       email: userNameRef.current.value,
-    });
+    })
+      .then(() => {
+        toast.success("User created successfully");
+        onClose();
+      })
+      .catch((err) => {
+        setError([...error, err]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -157,7 +171,7 @@ function ModalRegister({
             handleSubmit();
           }}
         >
-          Registrar
+          {loading ? <Spinner color="white" /> : "Registrar"}
         </Button>
       </ModalFooter>
     </>

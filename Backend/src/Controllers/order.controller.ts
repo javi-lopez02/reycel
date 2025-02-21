@@ -38,7 +38,7 @@ export const addOrderItem = async (req: Request, res: Response) => {
       (product) => product.productId === productID
     );
 
-    if (productfind && productfind.quantity === quantity) {
+    if (productfind) {
       return res.status(203).json({ message: "Producto repetido" });
     }
 

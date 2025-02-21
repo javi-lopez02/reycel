@@ -10,6 +10,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { BiLock, BiMailSend } from "react-icons/bi";
 import { useAuth } from "../../context/auth.context";
+import { toast } from "sonner";
 
 function ModalLogin({
   onClose,
@@ -51,7 +52,13 @@ function ModalLogin({
     signIn({
       username: userNameRef.current.value,
       password: passwordRef.current?.value,
-    });
+    })
+      .then(() => {
+        toast.success("Inicio de sesión exitoso");
+      })
+      .catch(() => {
+        toast.error("Error al iniciar sesión");
+      });
   };
 
   return (

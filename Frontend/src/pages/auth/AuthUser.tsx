@@ -1,40 +1,41 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/auth.context";
 import { Modal, ModalContent } from "@heroui/react";
 import ModalRegister from "./ModalRegister";
 import ModalLogin from "./ModalLogin";
 
-function AuthUser({ isOpen, onOpenChange, onClose }: { isOpen: boolean, onOpenChange: () => void, onClose: () => void }) {
-  const { isAuth } = useAuth()
-  const [isRegister, setIsRegister] = useState(false)
+interface Props {
+  isOpen: boolean;
+  onOpenChange: () => void;
+  onClose: () => void;
+}
+
+function AuthUser({ isOpen, onOpenChange, onClose }: Props) {
+  const { isAuth } = useAuth();
+  const [isRegister, setIsRegister] = useState(false);
 
   useEffect(() => {
     if (isAuth) {
-      onClose()
+      onClose();
     }
-  }, [isAuth])
+  }, [isAuth]);
 
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        placement="top-center"
-      >
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
         <ModalContent>
           {(onClose) => (
             <>
-            {
-              isRegister && (
-                <ModalRegister onClose={onClose} setIsRegister={setIsRegister}/>
-              )
-            }
-            {
-              !isRegister &&(
-                <ModalLogin onClose={onClose} setIsRegister={setIsRegister}/>
-              )
-            }
+              {isRegister && (
+                <ModalRegister
+                  onClose={onClose}
+                  setIsRegister={setIsRegister}
+                />
+              )}
+              {!isRegister && (
+                <ModalLogin onClose={onClose} setIsRegister={setIsRegister} />
+              )}
             </>
           )}
         </ModalContent>
@@ -43,4 +44,4 @@ function AuthUser({ isOpen, onOpenChange, onClose }: { isOpen: boolean, onOpenCh
   );
 }
 
-export default AuthUser
+export default AuthUser;

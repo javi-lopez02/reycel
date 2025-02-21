@@ -4,7 +4,7 @@ import { FC } from "react";
 interface Props {
   chartdata: {
     month: string;
-    total: number;
+    total: string;
   }[];
   total: number;
   growth: number;

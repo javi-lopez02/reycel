@@ -8,76 +8,134 @@ interface MonthlyData {
   total: number;
 }
 
+interface Metric {
+  month: string;
+  total: string;
+  growth?: string; // Solo para el crecimiento, será opcional
+}
+
 export const generalData = async (req: Request, res: Response) => {
   try {
-    const productsByMonth = await prisma.product.groupBy({
-      by: ["createdAt"],
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+  
+    // Consultas para obtener las métricas de productos, usuarios y categorías
+    const productsPromise = prisma.product.groupBy({
+      by: ['createdAt'],
+      where: {
+        createdAt: {
+          gte: oneYearAgo, // Filtrar productos creados en el último año
+        },
+      },
       _count: {
-        id: true,
+        id: true, // Contar productos
+      },
+      orderBy: {
+        createdAt: 'asc',
       },
     });
-
-    const userByMonth = await prisma.user.groupBy({
-      by: ["createdAt"],
+  
+    const usersPromise = prisma.user.groupBy({
+      by: ['createdAt'],
+      where: {
+        createdAt: {
+          gte: oneYearAgo, // Filtrar usuarios creados en el último año
+        },
+      },
       _count: {
-        id: true,
+        id: true, // Contar usuarios
+      },
+      orderBy: {
+        createdAt: 'asc',
       },
     });
-
-    const categoriesByMonth = await prisma.category.groupBy({
-      by: ["createdAt"],
+  
+    const categoriesPromise = prisma.category.groupBy({
+      by: ['createdAt'],
+      where: {
+        createdAt: {
+          gte: oneYearAgo, // Filtrar categorías creadas en el último año
+        },
+      },
       _count: {
-        id: true,
+        id: true, // Contar categorías
+      },
+      orderBy: {
+        createdAt: 'asc',
       },
     });
-
-    function transformToMonthlyData<
-      T extends { createdAt: Date; _count: { id: number } }
-    >(data: T[]): MonthlyData[] {
-      return data.reduce<MonthlyData[]>((acc, item) => {
-        const month = new Date(item.createdAt).toLocaleString("es-ES", {
-          month: "long",
-          timeZone: "UTC",
-        });
-        const existingMonth = acc.find((entry) => entry.month === month);
-        if (existingMonth) {
-          existingMonth.total += item._count.id;
-        } else {
-          acc.push({ month, total: item._count.id });
-        }
+  
+    // Ejecutar las consultas en paralelo
+    const [products, users, categories] = await Promise.all([productsPromise, usersPromise, categoriesPromise]);
+  
+    // Función para calcular el porcentaje de crecimiento
+    const calculateGrowth = (current: number, previous: number): string => {
+      if (previous === 0) return "0%"; // Si el valor anterior es 0, no podemos calcular el crecimiento
+      const growth = ((current - previous) / previous) * 100;
+      return `${growth.toFixed(2)}%`; // Formatear a 2 decimales
+    };
+  
+    // Función para formatear los resultados y calcular el crecimiento
+    const formatResult = (data: any[]): { totals: Metric[]; growthPercentages: Metric[] } => {
+      const totals: Metric[] = [];
+      const growthPercentages: Metric[] = [];
+  
+      // Agrupar por mes y año
+      const groupedByMonth = data.reduce((acc: any, item: any) => {
+        const month = item.createdAt.getMonth() + 1; // Mes en formato 1-12
+        const year = item.createdAt.getFullYear(); // Año en formato yyyy
+        const monthYear = `${year}-${month < 10 ? `0${month}` : month}`; // Formato YYYY-MM
+  
+        if (!acc[monthYear]) acc[monthYear] = { total: 0, month: monthYear };
+  
+        acc[monthYear].total += item._count.id;
         return acc;
-      }, []);
-    }
-
-    function calculateLastMonthGrowth(data: MonthlyData[]) {
-      if (data.length < 2) return null;
-
-      const lastMonthData = data[0];
-      const previousMonthData = data[1];
-
-      const growth = (previousMonthData.total * 100) / lastMonthData.total;
-
-      return parseFloat(growth.toFixed(2));
-    }
-
-    const dataProductsByMonth = transformToMonthlyData(productsByMonth);
-    const dataUsersByMonth = transformToMonthlyData(userByMonth);
-    const dataCategoriesByMonth = transformToMonthlyData(categoriesByMonth);
-
-    const growthProducts = calculateLastMonthGrowth(dataProductsByMonth);
-    const growthUsers = calculateLastMonthGrowth(dataUsersByMonth);
-    const growthCategories = calculateLastMonthGrowth(dataCategoriesByMonth);
+      }, {});
+  
+      // Convertir los datos agrupados en arrays de métricas
+      const groupedData = Object.values(groupedByMonth).sort((a: any, b: any) => new Date(a.month) - new Date(b.month));
+  
+      groupedData.forEach((item: any, index: number) => {
+        const currentMonthTotal = item.total; // Cantidad actual del mes
+        const previousMonthTotal = index > 0 ? groupedData[index - 1].total : 0; // Cantidad del mes anterior (0 si es el primer mes)
+  
+        const growth = calculateGrowth(currentMonthTotal, previousMonthTotal);
+        const monthName = new Date(item.month).toLocaleString('es-ES', { month: 'long' }); // Obtener el nombre del mes en español
+  
+        // Añadir a `totals`
+        totals.push({
+          month: monthName, // Mes en nombre
+          total: currentMonthTotal.toString(),
+        });
+  
+        // Añadir a `growthPercentages`
+        growthPercentages.push({
+          month: monthName, // Mes en nombre
+          total: currentMonthTotal.toString(),
+          growth, // Crecimiento respecto al mes anterior
+        });
+      });
+  
+      return { totals, growthPercentages };
+    };
+  
+    // Formatear los resultados de productos, usuarios y categorías
+    const { totals: productTotals, growthPercentages: productGrowth } = formatResult(products);
+    const { totals: userTotals, growthPercentages: userGrowth } = formatResult(users);
+    const { totals: categoryTotals, growthPercentages: categoryGrowth } = formatResult(categories);
+  
+    // Devolver todo junto
 
     res.status(200).json({
-      dataProductsByMonth: dataProductsByMonth.reverse(),
-      dataUsersByMonth: dataUsersByMonth.reverse(),
-      dataCategoriesByMonth: dataCategoriesByMonth.reverse(),
-      growthProducts,
-      growthUsers,
-      growthCategories,
-      totalProduct: productsByMonth.length,
-      totalUser: userByMonth.length,
-      totalCategory: categoriesByMonth.length,
+      dataProductsByMonth: productTotals,
+      dataUsersByMonth: userTotals,
+      dataCategoriesByMonth: categoryTotals,
+      growthProducts: productGrowth,
+      growthUsers: userGrowth,
+      growthCategories: categoryGrowth,
+      totalProduct: products.length,
+      totalUser: users.length,
+      totalCategory: categories.length,
     });
   } catch (error) {
     console.log("Error:", error);

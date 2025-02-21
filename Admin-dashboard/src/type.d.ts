@@ -131,9 +131,9 @@ export interface Analytics {
   dataProductsByMonth: DataSByMonth[];
   dataUsersByMonth: DataSByMonth[];
   dataCategoriesByMonth: DataSByMonth[];
-  growthProducts: number;
-  growthUsers: number;
-  growthCategories: number;
+  growthProducts: Growth[];
+  growthUsers: Growth[];
+  growthCategories: Growth[];
   totalProduct: number;
   totalUser: number;
   totalCategory: number;
@@ -141,7 +141,13 @@ export interface Analytics {
 
 export interface DataSByMonth {
   month: string;
-  total: number;
+  total: string;
+}
+
+export interface Growth {
+  month: string;
+  total: string;
+  growth: string;
 }
 
 export interface PaymentAnalytics {
@@ -151,8 +157,8 @@ export interface PaymentAnalytics {
 }
 
 export interface AddPaymentMethodProps {
-  id?:string
-  image: string
-  numberCard: string
-  selected: PaymentOptions
+  id?: string;
+  image: string;
+  numberCard: string;
+  selected: PaymentOptions;
 }
