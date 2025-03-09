@@ -70,6 +70,8 @@ export const searchProduct = async (req: Request, res: Response) => {
 
     const category = (req.query.category as string) || undefined;
 
+    const categories = category?.split(",")
+
     const color = (req.query.color as string) || undefined;
 
     const rating = parseInt(req.query.rating as string) || undefined;
@@ -124,7 +126,9 @@ export const searchProduct = async (req: Request, res: Response) => {
           },
           {
             category: {
-              id: category,
+              id: {
+                in: categories
+              },
             },
           },
           {
@@ -182,7 +186,9 @@ export const searchProduct = async (req: Request, res: Response) => {
           },
           {
             category: {
-              id: category,
+              id: {
+                in: categories
+              },
             },
           },
           {

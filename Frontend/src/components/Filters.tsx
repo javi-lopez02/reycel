@@ -1,74 +1,136 @@
-import { Checkbox, CheckboxGroup, Input, ScrollShadow } from "@heroui/react";
+import {
+  Checkbox,
+  CheckboxGroup,
+  Radio,
+  RadioGroup,
+  ScrollShadow,
+  Slider,
+} from "@heroui/react";
 import { Rating, RoundedStar } from "@smastrom/react-rating";
+import { Category, SortOption } from "../types";
+import { useProduct } from "../context/product.context";
+import { useEffect, useState } from "react";
+import { categoryRequest } from "../services/product";
+import { toast } from "sonner";
+import { useDebouncedCallback } from "use-debounce";
 
 function Filters() {
+  const [categories, setCategories] = useState<Array<Category>>([]);
+  const [rating, setRating] = useState(0);
+  const [selectCategories, setSelectCategories] = useState<string[]>([]);
+  const [rangePrice, setRangePrice] = useState<number[]>([]);
+
+  const { setSortParmas, setCurrentPage, setIsNextPage, setFilters } =
+    useProduct();
+
+   const debounced = useDebouncedCallback((value: number[]) => {
+    setRangePrice(value);
+    }, 800);
+
+  useEffect(() => {
+    categoryRequest()
+      .then((res) => {
+        setCategories(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Error al cargar las Categorias");
+      });
+  }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    setIsNextPage(true);
+    setFilters({
+      rating: rating.toString(),
+      categoriy: selectCategories,
+      minPrice: rangePrice[0],
+      maxPrice: rangePrice[1],
+    });
+  }, [rangePrice, rating, selectCategories, setCurrentPage, setFilters, setIsNextPage]);//revisar dependencias
+
+  const handleSortChange = async (key: string) => {
+    let newSortOptions: Array<SortOption> = [];
+    switch (key) {
+      case "masViejo":
+        newSortOptions = [{ field: "createdAt", order: "asc" }];
+        break;
+      case "masNuevo":
+        newSortOptions = [{ field: "createdAt", order: "desc" }];
+        break;
+      case "precioCreciente":
+        newSortOptions = [
+          { field: "price", order: "asc" },
+          { field: "createdAt", order: "asc" },
+        ];
+        break;
+      case "precioDecreciente":
+        newSortOptions = [
+          { field: "price", order: "desc" },
+          { field: "createdAt", order: "asc" },
+        ];
+        break;
+      case "masPopular":
+        newSortOptions = [
+          { field: "ratingAverage", order: "desc" },
+          { field: "createdAt", order: "asc" },
+        ];
+        break;
+      case "menosPopular":
+        newSortOptions = [
+          { field: "ratingAverage", order: "asc" },
+          { field: "createdAt", order: "asc" },
+        ];
+        break;
+      default:
+        break;
+    }
+    setCurrentPage(1);
+    setIsNextPage(true);
+    setSortParmas(newSortOptions);
+  };
+
   return (
     <div className="h-full py-3 bg-slate-100 w-64 px-3 fixed lg:inline-block hidden">
       <ScrollShadow hideScrollBar size={1} className="h-screen pb-16">
         <div className="flex flex-col gap-4">
-          <CheckboxGroup
-            color="primary"
-            size="sm"
+          <RadioGroup
             label="Filtros"
-            /* value={selected}
-              onValueChange={setSelected} */
+            size="sm"
+            onValueChange={handleSortChange}
           >
-            <Checkbox value="buenos-aires">Más Popular</Checkbox>
-            <Checkbox value="sydney">Menos Popular</Checkbox>
-            <Checkbox value="san-francisco">Precio Creciente</Checkbox>
-            <Checkbox value="san-francisco">Precio Decreciente</Checkbox>
-            <Checkbox value="san-francisco">Más Nuevo</Checkbox>
-            <Checkbox value="san-francisco">Más Viejo</Checkbox>
-          </CheckboxGroup>
-          <div className="grid grid-cols-2 gap-3 w-full">
-            <label className="block text-sm text-neutral-400 dark:text-white">
-              Precio
-            </label>
+            <Radio value="masPopular">Más Popular</Radio>
+            <Radio value="menosPopular">Menos Popular</Radio>
+            <Radio value="precioCreciente">Precio Creciente</Radio>
+            <Radio value="precioDecreciente">Precio Decreciente</Radio>
+            <Radio value="masNuevo">Más Nuevo</Radio>
+            <Radio value="masViejo">Más Viejo</Radio>
+          </RadioGroup>
 
-            <div className="col-span-2 flex items-center justify-between space-x-2">
-              <Input
-                placeholder="0"
-                labelPlacement="outside"
-                color="primary"
-                /* value={minPrice}
-              onValueChange={setMinPrice} */
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">$</span>
-                  </div>
-                }
-                type="number"
-              />
+          <Slider
+            className="max-w-md px-1 pt-3"
+            defaultValue={[0, 1800]}
+            onChange={(value) => debounced(value as number[])}
+            formatOptions={{ style: "currency", currency: "USD" }}
+            label={
+              <h6 className="mb-2 text-base font-medium text-neutral-500 dark:text-white">
+                Precio
+              </h6>
+            }
+            maxValue={2000}
+            minValue={0}
+            step={100}
+          />
 
-              <div className="shrink-0 text-sm font-medium dark:text-gray-300">
-                to
-              </div>
-
-              <Input
-                placeholder="2000"
-                labelPlacement="outside"
-                color="primary"
-                /* value={maxPrice}
-              onValueChange={setMaxPrice} */
-                startContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">$</span>
-                  </div>
-                }
-                type="number"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-2 gap-5 pt-3">
             <div className="w-full">
-              <h6 className="mb-2 text-sm font-medium text-neutral-400 dark:text-white">
+              <h6 className="mb-2 text-base font-medium text-neutral-500 dark:text-white">
                 Rating
               </h6>
               <Rating
                 style={{ maxWidth: 500 }}
-                value={3}
-                /*onChange={setRating} */
+                value={rating}
+                onChange={setRating}
                 itemStyles={{
                   itemShapes: RoundedStar,
                   activeFillColor: "#ffb700",
@@ -79,36 +141,17 @@ function Filters() {
           </div>
 
           <CheckboxGroup
+            className="pt-3"
             color="primary"
             size="sm"
             label="Categorías"
-            /* value={selected}
-              onValueChange={setSelected} */
+            onValueChange={setSelectCategories}
           >
-            <Checkbox value="buenos-aires">Buenos Aires</Checkbox>
-            <Checkbox value="sydney">Sydney</Checkbox>
-            <Checkbox value="san-francisco">San Francisco</Checkbox>
-            <Checkbox value="buenos-aires">Buenos Aires</Checkbox>
-            <Checkbox value="sydney">Sydney</Checkbox>
-            <Checkbox value="san-francisco">San Francisco</Checkbox>
-            <Checkbox value="buenos-aires">Buenos Aires</Checkbox>
-            <Checkbox value="sydney">Sydney</Checkbox>
-            <Checkbox value="san-francisco">San Francisco</Checkbox>
-            <Checkbox value="buenos-aires">Buenos Aires</Checkbox>
-            <Checkbox value="sydney">Sydney</Checkbox>
-            <Checkbox value="san-francisco">San Francisco</Checkbox>
-            <Checkbox value="buenos-aires">Buenos Aires</Checkbox>
-            <Checkbox value="sydney">Sydney</Checkbox>
-            <Checkbox value="san-francisco">San Francisco</Checkbox>
-            <Checkbox value="buenos-aires">Buenos Aires</Checkbox>
-            <Checkbox value="sydney">Sydney</Checkbox>
-            <Checkbox value="san-francisco">San Francisco</Checkbox>
-            <Checkbox value="buenos-aires">Buenos Aires</Checkbox>
-            <Checkbox value="sydney">Sydney</Checkbox>
-            <Checkbox value="san-francisco">San Francisco</Checkbox>
-            <Checkbox value="buenos-aires">Buenos Aires</Checkbox>
-            <Checkbox value="sydney">Sydney</Checkbox>
-            <Checkbox value="san-francisco">Ultima</Checkbox>
+            {categories.map((categori) => (
+              <Checkbox key={categori.id} value={categori.id}>
+                {categori.name}
+              </Checkbox>
+            ))}
           </CheckboxGroup>
         </div>
       </ScrollShadow>

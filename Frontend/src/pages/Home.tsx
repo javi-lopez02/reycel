@@ -6,7 +6,7 @@ function Home() {
   return (
     <section className="bg-gray-50 min-h-screen py-8 antialiased dark:bg-gray-900 md:py-9 grid grid-flow-col">
       <Filters/>
-      <div className="max-w-screen 2xl:px-0 mx-5 lg:ml-72">
+      <div className="max-w-screen 2xl:px-0 mx-5 lg:ml-72 lg:pt-2 pt-5">
         {/* <!-- Heading & Filters --> */}
         <HeadingFilters />
 
