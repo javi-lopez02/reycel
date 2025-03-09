@@ -216,7 +216,7 @@ export const getOrderItemsAdmin = async (req: Request, res: Response) => {
 
     const order = await prisma.order.findUnique({
       where: {
-        id: id,
+        id: Number(id),
       },
       select: {
         id: true,

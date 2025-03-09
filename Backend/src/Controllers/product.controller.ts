@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { SortItem } from "../types";
-import { message } from "./bot.controller";
 
 const prisma = new PrismaClient();
 

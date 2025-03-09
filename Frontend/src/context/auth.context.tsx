@@ -14,12 +14,25 @@ import {
   verifyTokenRequest,
 } from "../services/auth";
 import Cookies from "js-cookie";
-import { type User, AuthContextType, UserAuth } from "../types.d";
+import { type User, UserAuth } from "../types.d";
 import axios, { AxiosError } from "axios";
 import { io } from "socket.io-client";
 import { API_URL } from "../conf";
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+interface AuthContextType {
+  user: User | null;
+  isAuth: boolean;
+  errors: Array<string>;
+  loading: boolean;
+  confirmEmail: (values: string) => Promise<void>;
+  signIn: (values: UserAuth) => Promise<void>;
+  signUp: (values: UserAuth) => Promise<void>;
+  logout: () => Promise<void>;
+/*   requestPasswordReset: (email: string) => Promise<void>;
+  verifyResetToken: (token: string) => Promise<void>;
+  resetPassword: (token: string, newPassword: string) => Promise<void>; */
+}
+export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -120,6 +133,18 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
+  /* const requestPasswordReset = async (email: string) => {
+    await authService.requestPasswordReset(email);
+  };
+
+  const verifyResetToken = async (token: string) => {
+    await authService.verifyResetToken(token);
+  };
+
+  const resetPassword = async (token: string, newPassword: string) => {
+    await authService.resetPassword(token, newPassword);
+  }; */
+
   useEffect(() => {
     if (errors.length > 0) {
       const time = setTimeout(() => {
@@ -157,19 +182,22 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     checkLogin();
   }, []);
 
+  const value = {
+    user,
+    isAuth,
+    errors,
+    loading,
+    confirmEmail,
+    signIn,
+    signUp,
+    logout,
+/*     requestPasswordReset,
+    verifyResetToken,
+    resetPassword, */
+  };
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuth,
-        errors,
-        loading,
-        confirmEmail,
-        signIn,
-        signUp,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
@@ -178,3 +206,5 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
 // AuthProvider.propTypes = {
 //   children: PropTypes.node,
 // };
+
+/*hola */

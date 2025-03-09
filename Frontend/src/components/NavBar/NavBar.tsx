@@ -58,13 +58,13 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-white dark:bg-zinc-800 pl-3 h-14 w-full shadow flex flex-row items-center justify-between fixed top-0 z-50 border-b dark:border-neutral-700">
+      <nav className="bg-white dark:bg-zinc-800 pl-3 h-11 w-full shadow flex flex-row items-center justify-between fixed top-0 z-50 border-b dark:border-neutral-700">
         <div className="flex items-center space-x-3 md:w-60">
           <Link to="/" className="flex items-center">
             <img
               src="./logo.webp"
               alt="logo"
-              className="min-w-12 w-10 md:w-8 h-9"
+              className="min-w-12 w-9 md:w-8 h-8"
             />
             <h1 className="hidden md:inline text-xl ml-2 sm:text-2xl font-bold">
               REYCEL
@@ -79,7 +79,7 @@ const Navbar = () => {
               ref={inputRef}
               placeholder="Buscar..."
               onChange={handleSearch}
-              className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-8 pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <div className="absolute h-5 w-5 text-gray-800">
               <svg

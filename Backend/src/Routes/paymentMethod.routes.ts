@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../Middlewares/middlewareAdmin";
+import { authMiddleware as middleware } from "../Middlewares/middlewares";
 import {
   createPaymentMethod,
   deletePaymentMethod,
@@ -8,7 +9,7 @@ import {
 } from "../Controllers/paymentMethod.controller";
 const router = Router();
 
-router.get("/paymentMethod", authMiddleware, getPaymentMethod);
+router.get("/paymentMethod", middleware, getPaymentMethod);
 
 router.post("/paymentMethod", authMiddleware, createPaymentMethod);
 

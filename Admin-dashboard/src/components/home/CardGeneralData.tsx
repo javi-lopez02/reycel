@@ -15,9 +15,7 @@ export const CardGeneralData:FC<Props> = ({chartdata, total, growth, title}) => 
   return (
     <Card className="mx-auto flex max-w-lg flex-col justify-between px-4 py-3.5">
       <div className="flex items-center space-x-2.5">
-        <p className="text-tremor-content-strong dark:text-dark-tremor-content-strong font-medium">
-          CANTIDAD
-        </p>
+        
         <span className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
           {title}
         </span>

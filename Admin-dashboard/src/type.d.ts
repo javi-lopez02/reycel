@@ -131,9 +131,9 @@ export interface Analytics {
   dataProductsByMonth: DataSByMonth[];
   dataUsersByMonth: DataSByMonth[];
   dataCategoriesByMonth: DataSByMonth[];
-  growthProducts: Growth[];
-  growthUsers: Growth[];
-  growthCategories: Growth[];
+  growthProducts: number;
+  growthUsers: number;
+  growthCategories: number;
   totalProduct: number;
   totalUser: number;
   totalCategory: number;
@@ -152,8 +152,7 @@ export interface Growth {
 
 export interface PaymentAnalytics {
   date: string;
-  octubre: number;
-  diciembre: number;
+  total: number;
 }
 
 export interface AddPaymentMethodProps {

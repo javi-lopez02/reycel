@@ -18,3 +18,22 @@ export const confirmEmailRequest = (value: string) => {
 }
 
 export const verifyTokenRequest = async () => axios.get(`/auth/verify`);
+
+
+
+export const requestPasswordReset = async (email: string) => {
+  const response = await axios.post('/auth/forgot-password', { email });
+  return response.data;
+};
+
+export const verifyResetToken = async (token: string) => {
+  const response = await axios.get(`/auth/reset-password/${token}`);
+  return response.data;
+};
+
+export const resetPassword = async (token: string, newPassword: string) => {
+  const response = await axios.post(`/auth/reset-password/${token}`, {
+    password: newPassword,
+  });
+  return response.data;
+};

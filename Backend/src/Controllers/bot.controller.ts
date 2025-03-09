@@ -12,6 +12,21 @@ dotenv.config();
 const TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(`${TOKEN}`);
 
+const confirmTransaction = async (userID: string, orderID: number) => {
+  try {
+    await prisma.order.update({
+      where: {
+        id: orderID,
+      },
+      data: {
+        pending: false,
+      },
+    });
+  } catch (error) {
+    console.error("Error al enviar mensaje de confirmación:", error);
+  }
+};
+
 export const initBot = () => {
   bot.start((ctx) => {
     ctx.reply("HOLA REYCEL, ESPEREMOS A QUE NOS TRANSFIERAN...");
@@ -27,6 +42,8 @@ export const initBot = () => {
 
         if (callbackData.startsWith("confirm_")) {
           const transactionID = callbackData.split("_")[1];
+          const userID = callbackData.split("_")[2];
+          const orderID = callbackData.split("_")[3];
 
           await ctx.reply(`Transacción ${transactionID} confirmada.`);
           await ctx.answerCbQuery();
@@ -39,7 +56,7 @@ export const initBot = () => {
               status: "confirmed",
             });
             console.log(
-              `Transacción ${transactionID} confirmada y enviada al usuario con socket ${socketID}`
+              `Transacción ${transactionID} confirmada y enviada al usuario con socket ${socketID} e id ${userID}, identificador de la orden ${orderID}`
             );
           } else {
             console.log(
@@ -79,29 +96,58 @@ export const initBot = () => {
 
 export const message = async (req: Request, res: Response) => {
   try {
-    const transactionID: number = req.body.transactionID;
-    const price: number = req.body.price;
-    const productCount = req.body.productCount;
-    const fastDelivery: boolean = req.body.fastDelivery;
-    const address = req.body.address;
-    const town: boolean = req.body.town;
+    const {
+      transactionID,
+      price,
+      productCount,
+      fastDelivery,
+      address,
+      town,
+      userID,
+      orderID,
+      paymentMethodId,
+    } = req.body;
 
     const message = `Se ha registrado una nueva transacción con los siguientes detalles:
-    - **ID de Transacción:** ${transactionID}
-    - **Cantidad de Productos:** ${productCount}
-    - **Precio Total:** $${price.toFixed(2)}
-    - **Entrega Rápida:** ${fastDelivery ? "Si" : "No"}
-    - **Direccion:** ${address}
-    - **Poblado:** ${town}
+    - ID de Transacción: ${transactionID}
+    - Cantidad de Productos: ${productCount}
+    - Precio Total: $${price.toFixed(2)}
+    - Entrega Rápida: ${fastDelivery ? "Si" : "No"}
+    - Direccion: ${address}
+    - Poblado: ${town}
     
     Por favor, confirma o deniega esta transacción.`;
+
+    await prisma.order.update({
+      where: {
+        id: orderID,
+      },
+      data: {
+        pending: false,
+      },
+    });
+
+    const payment = await prisma.payment.create({
+      data: {
+        orderId: orderID,
+        amount: price,
+        paymentMethodId,
+        userId: userID,
+      },
+    });
 
     await bot.telegram.sendMessage(
       BOT_ID,
       message,
       Markup.inlineKeyboard([
-        Markup.button.callback("Confirmar", `confirm_${transactionID}`),
-        Markup.button.callback("Denegar", `deny_${transactionID}`),
+        Markup.button.callback(
+          "Confirmar",
+          `confirm_${transactionID}_${userID}_${payment.id}`
+        ),
+        Markup.button.callback(
+          "Denegar",
+          `deny_${transactionID}_${userID}_${payment.id}`
+        ),
       ])
     );
     res.status(200).send({ message: "Espere confirmacion de la Compra." });

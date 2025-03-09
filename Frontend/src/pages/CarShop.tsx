@@ -12,6 +12,7 @@ const App: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [order, setOrder] = useState<OrderItem[] | null>(null);
+  const [orderID, setOrderID] = useState<number | null>(null)
   const [totalAmount, setTotalAmount] = useState(0);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -24,6 +25,7 @@ const App: React.FC = () => {
     getOrderRequest()
       .then((res) => {
         setOrder(res.data.data.orderItems);
+        setOrderID(res.data.data.id)
         setTotalAmount(res.data.data.totalAmount);
         setCount(res.data.data._count.orderItems);
       })
@@ -96,6 +98,7 @@ const App: React.FC = () => {
             <ModalMessage
               count={count}
               totalAmount={totalAmount}
+              orderID={orderID}
               isOpen={isOpen}
               onClose={onClose}
             />

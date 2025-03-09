@@ -3,7 +3,7 @@ export type User = {
   userId: string;
   password?: string;
   status?: boolean;
-  image: string
+  image: string;
 };
 
 export type Specs = {
@@ -102,6 +102,9 @@ export interface TransactionType {
   fastDelivery: boolean;
   address: string;
   town: string;
+  userID: string | undefined;
+  orderID: number | null;
+  paymentMethodId: string | undefined
 }
 
 export interface Category {

@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  Form,
   Input,
   Modal,
   ModalBody,
@@ -14,18 +15,36 @@ import {
   Spinner,
   Tooltip,
 } from "@heroui/react";
-import { FC, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { transactionRequest } from "../../services/transaction";
+import {
+  getPaymentMethodRequest,
+  transactionRequest,
+} from "../../services/transaction";
 import { TransactionType } from "../../types";
 import { io } from "socket.io-client";
 import { API_URL } from "../../conf";
+import { useAuth } from "../../context/auth.context";
 
 interface Props {
   count: number;
+  orderID: number | null;
   totalAmount: number;
   isOpen: boolean;
   onClose: () => void;
+}
+
+interface PaymentMethod {
+  id: string;
+  cardImage: string;
+  cardNumber: null;
+  createdAt: Date;
+  paymentOptions: string;
+  _count: Count;
+}
+
+export interface Count {
+  payment: number;
 }
 
 export const domicilios = [
@@ -37,12 +56,34 @@ export const domicilios = [
   { key: "Cardenas", label: "Cardenas" },
 ];
 
-const ModalMessage: FC<Props> = ({ count, totalAmount, isOpen, onClose }) => {
+const ModalMessage: FC<Props> = ({
+  count,
+  orderID,
+  totalAmount,
+  isOpen,
+  onClose,
+}) => {
   const [loading, setLoading] = useState(false);
   const [fastDelivery, setFastDelivery] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState("CUP");
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(
+    null
+  );
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod[] | null>(
+    null
+  );
 
-  const inputID = useRef<HTMLInputElement | null>(null);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    getPaymentMethodRequest()
+      .then((res) => {
+        setPaymentMethod(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error al cargar los metodos de pago");
+      });
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -51,9 +92,9 @@ const ModalMessage: FC<Props> = ({ count, totalAmount, isOpen, onClose }) => {
 
     const inputMunicipio = data["municipio"] as string;
     const inputDireccion = data["direccion"] as string;
+    const inputTransaction = data["transactionID"] as string
 
-    //Validaciones
-    if (!inputID.current?.value) {
+    if (!inputTransaction) {
       toast.error("Debe introducir el id de la transferencia.");
       setLoading(false);
       return;
@@ -73,8 +114,7 @@ const ModalMessage: FC<Props> = ({ count, totalAmount, isOpen, onClose }) => {
 
     const socket = io(API_URL);
 
-    const transactionID = inputID.current.value;
-    socket.emit("registerTransaction", transactionID);
+    socket.emit("registerTransaction", inputTransaction);
 
     socket.on("transactionStatus", (data) => {
       console.log("Estado de la transacción recibido:", data);
@@ -85,26 +125,34 @@ const ModalMessage: FC<Props> = ({ count, totalAmount, isOpen, onClose }) => {
       }
     });
 
-    console.log(inputID.current.value);
+    console.log(orderID);
+
     const value: TransactionType = {
       price: totalAmount,
       productCount: count,
-      transactionID,
+      transactionID: inputTransaction,
       fastDelivery,
       address: inputDireccion,
       town: inputMunicipio,
+      userID: user?.userId,
+      orderID: orderID,
+      paymentMethodId: selectedMethod?.id
     };
 
     await transactionRequest(value)
       .then((res) => {
         toast.success(res.data.message);
-        setLoading(false)
       })
       .catch((error) => {
         console.log(error);
         toast.error("Error con la confirmacion de la transferencia.");
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
+
+
 
   return (
     <>
@@ -117,7 +165,7 @@ const ModalMessage: FC<Props> = ({ count, totalAmount, isOpen, onClose }) => {
                 <h1 className="text-2xl font-bold">Confirme su Compra</h1>
               </ModalHeader>
               <ModalBody>
-                <form onSubmit={handleSubmit}>
+                <Form onSubmit={handleSubmit}>
                   <div className="w-full">
                     <ul>
                       <li className="flex space-x-2">
@@ -199,54 +247,38 @@ const ModalMessage: FC<Props> = ({ count, totalAmount, isOpen, onClose }) => {
                         <h1 className="text-neutral-700/80 font-semibold gap-2">
                           Metodo de pago
                         </h1>
-                        <RadioGroup
-                          onValueChange={setSelectedMethod}
-                          defaultValue={selectedMethod}
-                        >
-                          <Radio value="CUP">CUP</Radio>
-                          <Radio value="MLC">MLC</Radio>
-                          <Radio value="Zelle">Zelle</Radio>
-                          <Radio value="CASH">CASH</Radio>
-                        </RadioGroup>
+                        {paymentMethod && (
+                          <RadioGroup
+                            onValueChange={(id) => {
+                              const result = paymentMethod.filter(
+                                (method) => method.id === id
+                              );
+                              setSelectedMethod(result[0]);
+                            }}
+                            defaultValue={paymentMethod[0].id}
+                          >
+                            {paymentMethod.map((method) => (
+                              <Radio value={method.id} key={method.id}>
+                                {method.paymentOptions}
+                              </Radio>
+                            ))}
+                          </RadioGroup>
+                        )}
                       </div>
                       <div className="flex justify-center items-center pt-4">
-                        {selectedMethod === "CUP" && (
+                        {selectedMethod && (
                           <div className="flex flex-col md:w-64 w-52 space-y-1">
                             <img
                               className="rounded-md md:w-64 w-52 h-25"
-                              src="https://lademajagua.cu/wp-content/uploads/2024/02/unnamed-1-2.jpg"
-                              alt="Tarjeta bpa"
-                            />
-                            <Snippet className="w-full" symbol="CUP:" size="sm">
-                              XXXX-XXXX-XXXX-XXXX
-                            </Snippet>
-                          </div>
-                        )}
-                        {selectedMethod === "MLC" && (
-                          <div className="flex flex-col md:w-64 w-52 space-y-1">
-                            <img
-                              className="rounded-md md:w-64 w-52 h-25"
-                              src="https://lademajagua.cu/wp-content/uploads/2024/02/unnamed-1-2.jpg"
-                              alt="Tarjeta bpa"
-                            />
-                            <Snippet className="w-full" symbol="MLC:" size="sm">
-                              XXXX-XXXX-XXXX-XXXX
-                            </Snippet>
-                          </div>
-                        )}
-                        {selectedMethod === "Zelle" && (
-                          <div className="flex flex-col md:w-64 w-52 space-y-1">
-                            <img
-                              className="rounded-md md:w-64 w-52 h-25"
-                              src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Zelle_logo.svg"
-                              alt="Tarjeta bpa"
+                              src={selectedMethod.cardImage}
+                              alt={selectedMethod.paymentOptions}
                             />
                             <Snippet
                               className="w-full"
-                              symbol="Zelle:"
+                              symbol={`${selectedMethod.paymentOptions}:`}
                               size="sm"
                             >
-                              XXXX-XXXX-XXXX-XXXX
+                              {selectedMethod.cardNumber}
                             </Snippet>
                           </div>
                         )}
@@ -326,7 +358,8 @@ const ModalMessage: FC<Props> = ({ count, totalAmount, isOpen, onClose }) => {
                         </Tooltip>
                       </div>
                       <input
-                        ref={inputID}
+                        name="transactionID"
+                        id="transactionID"
                         className="p-2 pl-4 border focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg w-full flex"
                         type="text"
                         placeholder="ID Transacción"
@@ -342,7 +375,7 @@ const ModalMessage: FC<Props> = ({ count, totalAmount, isOpen, onClose }) => {
                       </Button>
                     </div>
                   </div>
-                </form>
+                </Form>
               </ModalBody>
             </>
           )}

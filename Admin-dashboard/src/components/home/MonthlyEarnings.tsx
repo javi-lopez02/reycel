@@ -12,8 +12,8 @@ import { toast } from "sonner";
 
 export function MonthlyEarnings() {
   const [value, setValue] = useState<DateRangePickerValue>({
-    from: new Date(2023, 1, 1),
-    to: new Date(),
+    from: new Date(new Date().getFullYear(), 0, 1),
+    to: new Date(new Date().getFullYear(), 11, 31),
   });
   const [payments, setPayments] = useState<PaymentAnalytics[] | null>(null);
   useEffect(() => {
@@ -52,41 +52,33 @@ export function MonthlyEarnings() {
           color="rose"
         >
           <DateRangePickerItem
-            key="ytd"
-            value="ytd"
-            from={new Date(2023, 0, 1)}
+            key="lastYear"
+            value="lastYear"
+            from={new Date(new Date().getFullYear() - 1, 0, 1)}
+            to={new Date(new Date().getFullYear() - 1, 11, 31)}
           >
-            Año transcurrido
+            Año anterior
           </DateRangePickerItem>
           <DateRangePickerItem
             key="half"
             value="half"
-            from={new Date(2023, 0, 1)}
-            to={new Date(2023, 5, 31)}
+            from={new Date(new Date().getFullYear(), 0, 1)}
+            to={new Date(new Date().getFullYear(), 11, 31)}
           >
-            Primer semestre
+            Año Presente
           </DateRangePickerItem>
         </DateRangePicker>
       </div>
-      {payments && value.from && value.to &&(
+      {payments && value.from && value.to && (
         <AreaChart
-          className="mt-4 h-72"
           data={payments}
           index="date"
-          categories={[
-            value.from.toLocaleString("default", {
-              month: "long",
-              timeZone: "UTC",
-            }),
-            value.to.toLocaleString("default", {
-              month: "long",
-              timeZone: "UTC",
-            })
-          ]}
-          colors={["blue", "red"]}
-          yAxisWidth={30}
-          //onValueChange={(v) => setValue(v)}
-          connectNulls={true}
+          categories={["total"]}
+          colors={["red"]}
+          showLegend={false}
+          showYAxis={false}
+          startEndOnly={true}
+          className="-mb-2 mt-8 h-48"
         />
       )}
     </>

@@ -27,7 +27,8 @@ export const register = async (req: Request, res: Response) => {
     });
 
     if (userfind) {
-      return res.status(500).json(["Email o Username en uso"]);
+      console.log("email en uso")
+      return res.status(400).json(["Email o Username en uso"]);
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
@@ -118,7 +119,7 @@ export const login = async (req: Request, res: Response) => {
     if (!username || !password) {
       return res
         .status(401)
-        .json(["Nesecita email y contraseña para logearce"]);
+        .json(["Nesecita user name y contraseña para logearce"]);
     }
 
     const user = await prisma.user.findFirst({
