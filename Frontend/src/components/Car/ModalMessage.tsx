@@ -21,7 +21,7 @@ import {
   getPaymentMethodRequest,
   transactionRequest,
 } from "../../services/transaction";
-import { TransactionType } from "../../types";
+import { Order, TransactionType } from "../../types";
 import { io } from "socket.io-client";
 import { API_URL } from "../../conf";
 import { useAuth } from "../../context/auth.context";
@@ -30,6 +30,7 @@ interface Props {
   count: number;
   orderID: number | null;
   totalAmount: number;
+  updateOrder: (order: Order) => void;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -61,6 +62,7 @@ const ModalMessage: FC<Props> = ({
   orderID,
   totalAmount,
   isOpen,
+  updateOrder,
   onClose,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -125,8 +127,6 @@ const ModalMessage: FC<Props> = ({
       }
     });
 
-    console.log(orderID);
-
     const value: TransactionType = {
       price: totalAmount,
       productCount: count,
@@ -142,6 +142,7 @@ const ModalMessage: FC<Props> = ({
     await transactionRequest(value)
       .then((res) => {
         toast.success(res.data.message);
+        updateOrder(res.data.order);
       })
       .catch((error) => {
         console.log(error);

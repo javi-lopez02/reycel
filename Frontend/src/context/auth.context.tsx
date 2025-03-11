@@ -19,20 +19,32 @@ import axios, { AxiosError } from "axios";
 import { io } from "socket.io-client";
 import { API_URL } from "../conf";
 
+interface Notifications {
+  id: number;
+  message: string;
+  type: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuth: boolean;
+  notifications: Array<Notifications>;
   errors: Array<string>;
   loading: boolean;
+  addNotifications: (notification: Notifications) => void;
   confirmEmail: (values: string) => Promise<void>;
   signIn: (values: UserAuth) => Promise<void>;
   signUp: (values: UserAuth) => Promise<void>;
   logout: () => Promise<void>;
-/*   requestPasswordReset: (email: string) => Promise<void>;
+  /*   requestPasswordReset: (email: string) => Promise<void>;
   verifyResetToken: (token: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>; */
 }
-export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+export const AuthContext = createContext<AuthContextType>(
+  {} as AuthContextType
+);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -46,6 +58,7 @@ export const useAuth = () => {
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuth, setIsAuth] = useState(false);
+  const [notifications, setNotifications] = useState<Notifications[]>([]);
   const [errors, setErrors] = useState<Array<string>>([]);
   const [loading, setLoading] = useState(true);
 
@@ -90,6 +103,10 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
+  const addNotifications = (notification: Notifications) => {
+    setNotifications([...notifications, notification]);
+  };
+
   const confirmEmail = async (values: string) => {
     setLoading(true);
     try {
@@ -125,7 +142,6 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       console.log("logout");
       setUser(null);
       setIsAuth(false);
-
     } catch (error) {
       console.log("error");
       console.log(error);
@@ -169,6 +185,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         if (!res.data) return setIsAuth(false);
         setIsAuth(true);
         setUser(res.data);
+        setNotifications(res.data.notifications);
         setLoading(false);
 
         const socket = io(API_URL);
@@ -187,24 +204,20 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     isAuth,
     errors,
     loading,
+    notifications,
+    addNotifications,
     confirmEmail,
     signIn,
     signUp,
     logout,
-/*     requestPasswordReset,
+    /*     requestPasswordReset,
     verifyResetToken,
     resetPassword, */
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 // AuthProvider.propTypes = {
 //   children: PropTypes.node,
 // };
-
-/*hola */

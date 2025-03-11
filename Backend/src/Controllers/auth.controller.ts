@@ -126,6 +126,15 @@ export const login = async (req: Request, res: Response) => {
       where: {
         username: username,
       },
+      select: {
+        id: true,
+        username: true,
+        status: true,
+        role: true,
+        image: true,
+        notification: true,
+        password: true,
+      },
     });
 
     if (user?.status === false) {
@@ -153,6 +162,7 @@ export const login = async (req: Request, res: Response) => {
       username: user.username,
       status: user.status,
       userId: user.id,
+      notifications: user.notification,
       userRole: user.role,
       image: user.image,
     });
@@ -172,12 +182,19 @@ export const verifyToken = async (req: Request, res: Response) => {
 
     const userFound = await prisma.user.findUnique({
       where: { id: decode.id },
+      select: {
+        id: true,
+        username: true,
+        status: true,
+        notification: true,
+      },
     });
 
     if (!userFound) return res.status(401).json(["User Not found"]);
 
     return res.json({
       userId: userFound.id,
+      notifications: userFound.notification,
       username: userFound.username,
       status: userFound.status,
     });

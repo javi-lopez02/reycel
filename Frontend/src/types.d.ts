@@ -71,7 +71,7 @@ export interface OrderItem {
 
 export interface Order {
   totalAmount: number;
-  id: string;
+  id: number;
   _count: {
     orderItems: number;
   };

@@ -127,15 +127,10 @@ function ModalLogin({
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="danger" variant="flat" onClick={onClose}>
+        <Button color="danger" variant="flat" onPress={onClose}>
           Cancelar
         </Button>
-        <Button
-          color="primary"
-          onClick={() => {
-            handleSubmit();
-          }}
-        >
+        <Button color="primary" onPress={handleSubmit}>
           Entrar
         </Button>
       </ModalFooter>

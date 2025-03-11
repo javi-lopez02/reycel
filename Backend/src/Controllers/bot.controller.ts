@@ -12,18 +12,40 @@ dotenv.config();
 const TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(`${TOKEN}`);
 
-const confirmTransaction = async (userID: string, orderID: number) => {
+const confirmTransaction = async (userID: string, paymentID: number, socketID: string, transactionID: string) => {
   try {
-    await prisma.order.update({
+    await prisma.payment.update({
       where: {
-        id: orderID,
+        id: paymentID,
       },
       data: {
-        pending: false,
+        paymentStatus: "COMPLETED",
       },
     });
+
+    const notification = await prisma.notification.create({
+      data: {
+        userId: userID,
+        message: "Tu pago ha sido confirmado.",
+        type: "PAYMENT_STATUS",
+      },
+    });
+
+    io.to(socketID).emit("transactionStatus", {
+      transactionID,
+      notification,
+      status: "confirmed",
+    });
+
+    //enviar el email
+
+
   } catch (error) {
-    console.error("Error al enviar mensaje de confirmación:", error);
+    console.error("Error al confirmar el pago: ", error);
+    io.to(socketID).emit("transactionStatus", {
+      transactionID,
+      status: "error",
+    });
   }
 };
 
@@ -43,7 +65,7 @@ export const initBot = () => {
         if (callbackData.startsWith("confirm_")) {
           const transactionID = callbackData.split("_")[1];
           const userID = callbackData.split("_")[2];
-          const orderID = callbackData.split("_")[3];
+          const paymentID = callbackData.split("_")[3];
 
           await ctx.reply(`Transacción ${transactionID} confirmada.`);
           await ctx.answerCbQuery();
@@ -51,12 +73,9 @@ export const initBot = () => {
           const socketID = userSockets.get(transactionID);
 
           if (socketID) {
-            io.to(socketID).emit("transactionStatus", {
-              transactionID,
-              status: "confirmed",
-            });
+            confirmTransaction(userID, parseInt(paymentID), socketID, transactionID);
             console.log(
-              `Transacción ${transactionID} confirmada y enviada al usuario con socket ${socketID} e id ${userID}, identificador de la orden ${orderID}`
+              `Transacción ${transactionID} confirmada y enviada al usuario con socket ${socketID}`
             );
           } else {
             console.log(
@@ -127,10 +146,43 @@ export const message = async (req: Request, res: Response) => {
       },
     });
 
+    const order = await prisma.order.create({
+      data: {
+        userId: userID,
+        pending: true,
+      },
+      select: {
+        _count: true,
+        totalAmount: true,
+        id: true,
+        orderItems: {
+          orderBy: {
+            createdAt: "asc",
+          },
+          select: {
+            id: true,
+            price: true,
+            quantity: true,
+            product: {
+              include: {
+                category: {
+                  select: {
+                    name: true,
+                    id: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
     const payment = await prisma.payment.create({
       data: {
         orderId: orderID,
         amount: price,
+        transactionID,
         paymentMethodId,
         userId: userID,
       },
@@ -150,7 +202,7 @@ export const message = async (req: Request, res: Response) => {
         ),
       ])
     );
-    res.status(200).send({ message: "Espere confirmacion de la Compra." });
+    res.status(200).send({order, message: "Su pago a sido realizado con exito espere a que se confirme."});
   } catch (error) {
     console.error("Error al enviar mensaje a Telegram:", error);
     res

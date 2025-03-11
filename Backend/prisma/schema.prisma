@@ -27,7 +27,7 @@ model User {
   payment      Payment[]
   Sede         Sede?          @relation(fields: [sedeId], references: [id])
   sedeId       String?
-  Notification Notification[]
+  notification Notification[]
 }
 
 enum Role {
@@ -66,6 +66,8 @@ model Product {
   updatedAt             DateTime               @updatedAt
   Rating                Rating[]
   comment               Comment[]
+  Sede                  Sede?                  @relation(fields: [sedeId], references: [id])
+  sedeId                String?
 }
 
 model Comment {
@@ -126,10 +128,11 @@ model OrderItem {
 }
 
 model Payment {
-  id              String        @id @default(uuid())
-  orderId         Int        @unique
+  id              Int           @id @default(autoincrement())
+  orderId         Int           @unique
   order           Order         @relation(fields: [orderId], references: [id])
   amount          Float
+  transactionID   String?
   paymentStatus   PaymentStatus @default(PENDING)
   createdAt       DateTime      @default(now())
   PaymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
@@ -162,11 +165,12 @@ enum PaymentStatus {
 }
 
 model Sede {
-  id        String @id @default(uuid())
+  id        String    @id @default(uuid())
   image     String
-  phone     Int    @unique
+  phone     Int       @unique
   direction String
   workers   User[]
+  producto  Product[]
 }
 
 model CurrencyExchange {

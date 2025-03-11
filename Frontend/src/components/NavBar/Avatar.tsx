@@ -19,7 +19,7 @@ const Avatar = () => {
       <PopoverTrigger>
         <button
           type="button"
-          className="sm:p-3 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer"
+          className="sm:p-2 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer"
           id="user-menu-button"
           aria-expanded="false"
           data-dropdown-toggle="dropdown"

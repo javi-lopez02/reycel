@@ -14,6 +14,7 @@ import {
 } from "@heroui/react";
 import AuthUser from "../../pages/auth/AuthUser";
 import Avatar from "./Avatar";
+import Notifications from "./Notifications";
 
 const Navbar = () => {
   const { setCurrentPage, setQuerySeach, setIsNextPage, setErrorSearch } =
@@ -116,16 +117,17 @@ const Navbar = () => {
           <div className="flex w-auto gap-1">
             {isAuth && (
               <div className="hidden lg:flex font-semibold text-lg">
+                <Notifications/>
                 <Link
                   to="/shopCar"
-                  className="sm:p-3 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer"
+                  className="sm:p-2 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer"
                 >
                   <TiShoppingCart className="min-h-6 min-w-6" />
                 </Link>
+                <Avatar />
               </div>
             )}
             <div className="hidden lg:flex lg:items-center font-semibold text-lg mr-2">
-              {isAuth && <Avatar />}
               {!isAuth && (
                 <button
                   onClick={onOpen}

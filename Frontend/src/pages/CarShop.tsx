@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Card from "../components/Car/Card";
-import { OrderItem } from "../types";
+import { Order, OrderItem } from "../types";
 import { getOrderRequest, updateOrderItemRequest } from "../services/order";
 import axios, { AxiosError } from "axios";
 import { Spinner } from "@heroui/spinner";
@@ -47,6 +47,13 @@ const App: React.FC = () => {
         setLoading(false);
       });
   }, []);
+
+  const updateOrder = (order: Order)=>{
+    setOrder(order.orderItems);
+    setOrderID(order.id);
+    setTotalAmount(order.totalAmount);
+    setCount(order._count.orderItems);
+  }
 
   const handleQuantity = (value: string, id: string, price: number) => {
     try {
@@ -101,6 +108,7 @@ const App: React.FC = () => {
               orderID={orderID}
               isOpen={isOpen}
               onClose={onClose}
+              updateOrder={updateOrder}
             />
           </div>
 
