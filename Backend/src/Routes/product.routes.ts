@@ -15,8 +15,10 @@ import {
   updateCategory,
 } from "../Controllers/category.controller";
 const router = Router();
-
-/* const prisma = new PrismaClient();
+/* 
+import { PrismaClient } from "@prisma/client";
+import  products  from "../Data/moviles.json";
+const prisma = new PrismaClient();
 
 router.get("/products", async (req, res) => {
   try {
@@ -30,7 +32,7 @@ router.get("/products", async (req, res) => {
           ram: product.ram,
           storage: product.almacenamiento,
           description: "",
-          categoryId: "d6d2816f-e8c3-4163-957a-ebd7f988bf85",
+          categoryId: "88396c41-b70d-4b39-a042-d90209425042",
         },
       });
       console.log("Producto creado:", createdProduct);
@@ -40,8 +42,8 @@ router.get("/products", async (req, res) => {
   } finally {
     await prisma.$disconnect();
   }
-}); */
-
+});
+ */
 router.get("/products/search", searchProduct);
 
 router.get("/products", getProductID);

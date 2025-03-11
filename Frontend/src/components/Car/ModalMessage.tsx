@@ -74,9 +74,10 @@ const ModalMessage: FC<Props> = ({
     null
   );
 
-  const { user } = useAuth();
+  const { user, addNotifications, isAuth } = useAuth();
 
   useEffect(() => {
+    if (!isAuth) return;
     getPaymentMethodRequest()
       .then((res) => {
         setPaymentMethod(res.data.data);
@@ -85,7 +86,7 @@ const ModalMessage: FC<Props> = ({
         console.log(err);
         toast.error("Error al cargar los metodos de pago");
       });
-  }, []);
+  }, [isAuth]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -94,7 +95,7 @@ const ModalMessage: FC<Props> = ({
 
     const inputMunicipio = data["municipio"] as string;
     const inputDireccion = data["direccion"] as string;
-    const inputTransaction = data["transactionID"] as string
+    const inputTransaction = data["transactionID"] as string;
 
     if (!inputTransaction) {
       toast.error("Debe introducir el id de la transferencia.");
@@ -122,6 +123,7 @@ const ModalMessage: FC<Props> = ({
       console.log("Estado de la transacción recibido:", data);
       if (data.status === "confirmed") {
         toast.success(`Transacción ${data.transactionID} confirmada.`);
+        addNotifications(data.notification);
       } else if (data.status === "denied") {
         toast.error(`Transacción ${data.transactionID} denegada.`);
       }
@@ -136,13 +138,14 @@ const ModalMessage: FC<Props> = ({
       town: inputMunicipio,
       userID: user?.userId,
       orderID: orderID,
-      paymentMethodId: selectedMethod?.id
+      paymentMethodId: selectedMethod?.id,
     };
 
     await transactionRequest(value)
       .then((res) => {
         toast.success(res.data.message);
         updateOrder(res.data.order);
+        onClose();
       })
       .catch((error) => {
         console.log(error);
@@ -152,8 +155,6 @@ const ModalMessage: FC<Props> = ({
         setLoading(false);
       });
   };
-
-
 
   return (
     <>

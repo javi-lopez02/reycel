@@ -34,6 +34,7 @@ interface AuthContextType {
   errors: Array<string>;
   loading: boolean;
   addNotifications: (notification: Notifications) => void;
+  checkNotification: (id: number) => void;
   confirmEmail: (values: string) => Promise<void>;
   signIn: (values: UserAuth) => Promise<void>;
   signUp: (values: UserAuth) => Promise<void>;
@@ -104,7 +105,17 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   const addNotifications = (notification: Notifications) => {
-    setNotifications([...notifications, notification]);
+    setNotifications([notification, ...notifications]);
+  };
+
+  const checkNotification = (id: number) => {
+    const newNotifications = notifications.map((notification) => {
+      if (notification.id === id) {
+        notification.isRead = true;
+      }
+      return notification;
+    });
+    setNotifications(newNotifications);
   };
 
   const confirmEmail = async (values: string) => {
@@ -205,6 +216,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     errors,
     loading,
     notifications,
+    checkNotification,
     addNotifications,
     confirmEmail,
     signIn,

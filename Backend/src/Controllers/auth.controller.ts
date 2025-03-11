@@ -162,7 +162,7 @@ export const login = async (req: Request, res: Response) => {
       username: user.username,
       status: user.status,
       userId: user.id,
-      notifications: user.notification,
+      notifications: user.notification.reverse(),
       userRole: user.role,
       image: user.image,
     });
@@ -194,7 +194,7 @@ export const verifyToken = async (req: Request, res: Response) => {
 
     return res.json({
       userId: userFound.id,
-      notifications: userFound.notification,
+      notifications: userFound.notification.reverse(),
       username: userFound.username,
       status: userFound.status,
     });
