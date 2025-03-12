@@ -3,7 +3,7 @@ export type User = {
   userId: string;
   password?: string;
   status?: boolean;
-  image: string
+  image: string;
 };
 
 export type Specs = {
@@ -71,7 +71,7 @@ export interface OrderItem {
 
 export interface Order {
   totalAmount: number;
-  id: string;
+  id: number;
   _count: {
     orderItems: number;
   };
@@ -79,6 +79,7 @@ export interface Order {
 }
 
 interface UserAuth {
+  email?: string;
   password: string;
   username: string;
 }
@@ -88,6 +89,7 @@ export type AuthContextType = {
   isAuth: boolean;
   loading: boolean;
   errors: Array<string>;
+  confirmEmail: (values: string) => Promise<void>;
   signIn: (value: UserAuth) => Promise<void>;
   signUp: (value: UserAuth) => Promise<void>;
   logout: () => void;
@@ -100,6 +102,9 @@ export interface TransactionType {
   fastDelivery: boolean;
   address: string;
   town: string;
+  userID: string | undefined;
+  orderID: number | null;
+  paymentMethodId: string | undefined
 }
 
 export interface Category {
@@ -108,9 +113,9 @@ export interface Category {
 }
 
 export interface FiltersType {
-  minPrice?: string;
-  maxPrice?: string;
-  categoriy?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  categoriy?: string[];
   rating?: string;
   color?: string;
 }

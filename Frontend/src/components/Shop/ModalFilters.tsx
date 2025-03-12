@@ -9,7 +9,7 @@ import {
   AutocompleteItem,
   Input,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Key, useEffect, useState } from "react";
 import { Rating, RoundedStar } from "@smastrom/react-rating";
 
@@ -41,8 +41,8 @@ function ModalFilters() {
     setFilters({
       rating: rating.toString(),
       categoriy: categoria?.toString(),
-      minPrice,
-      maxPrice,
+      minPrice: parseInt(minPrice),
+      maxPrice: parseInt(maxPrice),
     });
     onClose();
   };
@@ -56,8 +56,8 @@ function ModalFilters() {
   };
 
   useEffect(() => {
-    setMinPrice(filters.minPrice as string);
-    setMaxPrice(filters.maxPrice as string);
+    setMinPrice(filters.minPrice);
+    setMaxPrice(filters.maxPrice);
     setCategoria(filters.categoriy);
     //setSelectedColor(new Set([filters.color || "Selecciona un color"]))
   }, [filters]);
@@ -291,7 +291,7 @@ function ModalFilters() {
                     </ModalBody>
                     <ModalFooter>
                       <div className="flex items-center space-x-4 rounded-b p-4 dark:border-gray-600 md:p-5">
-                        <Button color="primary" onClick={handleResult}>
+                        <Button color="primary" onPress={handleResult}>
                           Mostrar Resultados
                         </Button>
                         <button

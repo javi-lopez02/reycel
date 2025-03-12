@@ -11,21 +11,23 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  username  String    @unique
-  password  String
-  image     String?
-  status    Boolean
-  isDeleted Boolean   @default(false)
-  role      Role      @default(USER)
-  orders    Order[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Rating    Rating[]
-  comment   Comment[]
-  payment   Payment[]
-  Sede      Sede?     @relation(fields: [sedeId], references: [id])
-  sedeId    String?
+  id           String         @id @default(uuid())
+  email        String         @unique
+  username     String         @unique
+  password     String
+  image        String?
+  status       Boolean
+  isDeleted    Boolean        @default(false)
+  role         Role           @default(USER)
+  orders       Order[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Rating       Rating[]
+  comment      Comment[]
+  payment      Payment[]
+  Sede         Sede?          @relation(fields: [sedeId], references: [id])
+  sedeId       String?
+  notification Notification[]
 }
 
 enum Role {
@@ -64,6 +66,8 @@ model Product {
   updatedAt             DateTime               @updatedAt
   Rating                Rating[]
   comment               Comment[]
+  Sede                  Sede?                  @relation(fields: [sedeId], references: [id])
+  sedeId                String?
 }
 
 model Comment {
@@ -102,7 +106,7 @@ enum TransactionType {
 }
 
 model Order {
-  id          String      @id @default(uuid())
+  id          Int         @id @default(autoincrement())
   userId      String
   pending     Boolean     @default(true)
   user        User        @relation(fields: [userId], references: [id])
@@ -114,7 +118,7 @@ model Order {
 
 model OrderItem {
   id        String   @id @default(uuid())
-  orderId   String
+  orderId   Int
   order     Order    @relation(fields: [orderId], references: [id])
   productId String
   product   Product  @relation(fields: [productId], references: [id])
@@ -124,10 +128,11 @@ model OrderItem {
 }
 
 model Payment {
-  id              String        @id @default(uuid())
-  orderId         String        @unique
+  id              Int           @id @default(autoincrement())
+  orderId         Int           @unique
   order           Order         @relation(fields: [orderId], references: [id])
   amount          Float
+  transactionID   String?
   paymentStatus   PaymentStatus @default(PENDING)
   createdAt       DateTime      @default(now())
   PaymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
@@ -160,11 +165,12 @@ enum PaymentStatus {
 }
 
 model Sede {
-  id        String @id @default(uuid())
+  id        String    @id @default(uuid())
   image     String
-  phone     Int    @unique
+  phone     Int       @unique
   direction String
-  workers    User[]
+  workers   User[]
+  producto  Product[]
 }
 
 model CurrencyExchange {
@@ -173,4 +179,21 @@ model CurrencyExchange {
   eur       Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  message   String
+  isRead    Boolean          @default(false)
+  type      NotificationType
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+enum NotificationType {
+  PAYMENT_SUCCESS
+  PAYMENT_FAILED
+  REGISTER_SUCCESS
 }

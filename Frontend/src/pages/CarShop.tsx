@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import Card from "../components/Car/Card";
-import { OrderItem } from "../types";
+import { Order, OrderItem } from "../types";
 import { getOrderRequest, updateOrderItemRequest } from "../services/order";
 import axios, { AxiosError } from "axios";
-import { Spinner } from "@nextui-org/spinner";
+import { Spinner } from "@heroui/spinner";
 import { toast } from "sonner";
-import { useDisclosure } from "@nextui-org/react";
+import { useDisclosure } from "@heroui/react";
 import ModalMessage from "../components/Car/ModalMessage";
+import { useAuth } from "../context/auth.context";
 
 const App: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const {isAuth} = useAuth();
+
   const [order, setOrder] = useState<OrderItem[] | null>(null);
+  const [orderID, setOrderID] = useState<number | null>(null)
   const [totalAmount, setTotalAmount] = useState(0);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -21,9 +25,14 @@ const App: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     setError(null);
+    if (!isAuth) {
+      setLoading(false);
+      return;
+    }
     getOrderRequest()
       .then((res) => {
         setOrder(res.data.data.orderItems);
+        setOrderID(res.data.data.id)
         setTotalAmount(res.data.data.totalAmount);
         setCount(res.data.data._count.orderItems);
       })
@@ -44,7 +53,14 @@ const App: React.FC = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [isAuth]);
+
+  const updateOrder = (order: Order)=>{
+    setOrder(order.orderItems);
+    setOrderID(order.id);
+    setTotalAmount(order.totalAmount);
+    setCount(order._count.orderItems);
+  }
 
   const handleQuantity = (value: string, id: string, price: number) => {
     try {
@@ -65,7 +81,6 @@ const App: React.FC = () => {
         </h2>
 
         <div className="grid grid-cols-[auto_auto] gap-5 max-lg:grid-cols-1">
-
           <div className="bg-white h-max rounded-md p-6 shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] max-lg:w-full lg:max-w-[335px] lg:sticky top-16 ">
             <h3 className="text-xl font-bold text-gray-800">Orden</h3>
 
@@ -94,11 +109,19 @@ const App: React.FC = () => {
               Realizar Pago
             </button>
 
-            <ModalMessage count={count} totalAmount={totalAmount} isOpen={isOpen} onClose={onClose} />
+            <ModalMessage
+              count={count}
+              totalAmount={totalAmount}
+              orderID={orderID}
+              isOpen={isOpen}
+              onClose={onClose}
+              updateOrder={updateOrder}
+            />
           </div>
 
           <div className="grid  gap-4 relative max-lg:pt-5">
             <div className="lg:col-span-2 space-y-4">
+              {order?.length === 0 && <h1 className="text-2xl font-medium text-neutral-500">No hay productos en el carrito.</h1>}
               {order !== null &&
                 order.map((orderItem) => {
                   return (
@@ -124,7 +147,6 @@ const App: React.FC = () => {
 
               {error && error.map((err) => toast.error(err))}
             </div>
-
           </div>
         </div>
       </div>

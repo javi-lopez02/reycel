@@ -11,12 +11,24 @@ const prisma = new PrismaClient();
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
 
-    const userfind = await prisma.user.findFirst({ where: { username } });
+    const userfind = await prisma.user.findFirst({
+      where: {
+        OR: [
+          {
+            username: username,
+          },
+          {
+            email: email,
+          },
+        ],
+      },
+    });
 
     if (userfind) {
-      return res.status(500).json(["Email o Username en uso"]);
+      console.log("email en uso")
+      return res.status(400).json(["Email o Username en uso"]);
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
@@ -24,31 +36,22 @@ export const register = async (req: Request, res: Response) => {
     const newUser = await prisma.user.create({
       data: {
         username,
+        email,
         password: hashedPassword,
         status: false,
-        orders:{
+        orders: {
           create: {
-            totalAmount: 0
-          }
-        }
+            totalAmount: 0,
+          },
+        },
       },
     });
 
     const token = await createToken(String(newUser.id));
 
-    //await sendEmail(email, username, token);
+    await sendEmail(email, username, token);
 
-    res.cookie("token", token, {
-      httpOnly: false,
-      secure: true,
-      sameSite: "none",
-    });
-
-    res.json({
-      userId: newUser.id,
-      usermane: newUser.username,
-      status: newUser.status,
-    });
+    res.json({ message: "Usuario creado, verifique su email" });
   } catch (error) {
     console.log(error);
 
@@ -86,14 +89,19 @@ export const confirmEmail = async (req: Request, res: Response) => {
     });
 
     res.cookie("token", token, {
-      maxAge: 24 * 60 * 60 * 1000,
-      sameSite: "none",
+      httpOnly: false,
       secure: true,
-      httpOnly: true,
+      sameSite: "none",
     });
-
-    return res.json(["Usuario Verificado "]);
+    res.json({
+      username: user.username,
+      status: user.status,
+      userId: user.id,
+      userRole: user.role,
+      image: user.image,
+    });
   } catch (error) {
+    console.log(error);
     if (error instanceof jwt.JsonWebTokenError) {
       console.error("Error de JWT", error);
       return res.status(401).json(["Token is not valid"]);
@@ -111,14 +119,27 @@ export const login = async (req: Request, res: Response) => {
     if (!username || !password) {
       return res
         .status(401)
-        .json(["Nesecita email y contraseña para logearce"]);
+        .json(["Nesecita user name y contraseña para logearce"]);
     }
 
     const user = await prisma.user.findFirst({
       where: {
         username: username,
       },
+      select: {
+        id: true,
+        username: true,
+        status: true,
+        role: true,
+        image: true,
+        notification: true,
+        password: true,
+      },
     });
+
+    if (user?.status === false) {
+      return res.status(401).json(["Usuario no verificado"]);
+    }
 
     if (!user) {
       return res.status(401).json(["Usuario no encontrado"]);
@@ -141,8 +162,9 @@ export const login = async (req: Request, res: Response) => {
       username: user.username,
       status: user.status,
       userId: user.id,
+      notifications: user.notification.reverse(),
       userRole: user.role,
-      image: user.image
+      image: user.image,
     });
   } catch (error) {
     console.log(error);
@@ -160,12 +182,19 @@ export const verifyToken = async (req: Request, res: Response) => {
 
     const userFound = await prisma.user.findUnique({
       where: { id: decode.id },
+      select: {
+        id: true,
+        username: true,
+        status: true,
+        notification: true,
+      },
     });
 
     if (!userFound) return res.status(401).json(["User Not found"]);
 
     return res.json({
       userId: userFound.id,
+      notifications: userFound.notification.reverse(),
       username: userFound.username,
       status: userFound.status,
     });

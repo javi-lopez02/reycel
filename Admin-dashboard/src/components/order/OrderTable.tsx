@@ -48,10 +48,10 @@ export function Capitalize(s: string) {
 
 const columns = [
   { name: "USUARIO", uid: "username", sortable: true },
-  { name: "ROLE", uid: "role", sortable: true },
+  { name: "ROL", uid: "role", sortable: true },
   { name: "PRECIO TOTAL", uid: "totalAmount", sortable: true },
   { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
-  { name: "STATUS", uid: "pending", sortable: true },
+  { name: "ESTADO", uid: "pending", sortable: true },
   { name: "FECHA", uid: "createdAt" },
   { name: "ACTIONS", uid: "actions" },
 ];

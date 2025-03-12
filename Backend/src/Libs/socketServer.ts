@@ -25,7 +25,13 @@ io.on("connection", (socket) => {
 
   socket.on("registerTransaction", (transactionID) => {
     userSockets.set(transactionID, socket.id);
-    console.log(`Transacción ${transactionID} registrada con socket ID ${socket.id}`);
+    console.log(
+      `Transacción ${transactionID} registrada con socket ID ${socket.id}`
+    );
+  });
+
+  socket.on("usuario-conectado", (id) => {
+    console.log(id);
   });
 
   socket.on("disconnect", () => {

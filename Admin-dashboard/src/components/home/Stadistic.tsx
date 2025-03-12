@@ -24,7 +24,7 @@ export default function Stadistic() {
             <CardGeneralData
               title="Productos"
               chartdata={analytics?.dataProductsByMonth}
-              growth={analytics.growthProducts}
+              growth={Number(analytics.growthProducts)}
               total={analytics.totalProduct}
             />
           )}
@@ -32,7 +32,7 @@ export default function Stadistic() {
             <CardGeneralData
               title="Usuario"
               chartdata={analytics?.dataUsersByMonth}
-              growth={analytics.growthUsers}
+              growth={Number(analytics.growthUsers)}
               total={analytics.totalUser}
             />
           )}
@@ -40,7 +40,7 @@ export default function Stadistic() {
             <CardGeneralData
               title="Categorias"
               chartdata={analytics?.dataCategoriesByMonth}
-              growth={analytics.growthCategories}
+              growth={Number(analytics.growthCategories)}
               total={analytics.totalCategory}
             />
           )}

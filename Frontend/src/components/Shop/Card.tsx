@@ -1,39 +1,39 @@
 import { FC } from "react";
-import { type Products } from '../../types'
+import { type Products } from "../../types";
 import { Link } from "react-router-dom";
 import { addItemOrderRequest } from "../../services/order";
 import { useAuth } from "../../context/auth.context";
 //import ModalLogin from "../../pages/auth/ModalLogin";
-import { useDisclosure } from "@nextui-org/react";
-import { toast } from 'sonner'
+import { useDisclosure } from "@heroui/react";
+import { toast } from "sonner";
 import AuthUser from "../../pages/auth/AuthUser";
 
-
 const Card: FC<Products> = (product) => {
-
-  const { isAuth } = useAuth()
+  const { isAuth } = useAuth();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const handleClikAddProduct = () => {
     if (!isAuth) {
-      onOpen()
-      return
+      onOpen();
+      return;
     }
-    toast.promise(addItemOrderRequest(product.id, 1), {
-      loading: 'Loading...',
-      success: (res) => {
-        if (res.status !== 200) {
-          toast.warning(`Aviso: ${res.data.message || 'Hubo un problema con la solicitud.'}`);
-          return 'La operación no fue completamente exitosa.';
+
+    addItemOrderRequest(product.id, 1)
+      .then((res) => {
+        if (res.status === 200) {
+          toast.success(res.data.message);
         }
-        return `${res.data.message}`;
-      },
-      error: 'Error al añadir un producto al carrito.',
-    });
-
-
-  }
-
+        if (res.status === 203) {
+          toast.warning(
+            `Aviso: ${res.data.message || "Hubo un problema con la solicitud."}`
+          );
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error al añadir un producto al carrito.");
+      });
+  };
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm ">
@@ -48,23 +48,18 @@ const Card: FC<Products> = (product) => {
       </div>
       <div className="pt-6">
         <div className=" flex items-center justify-between gap-4">
-          {
-            product.inventoryCount !== 0 && (
-              <span className="me-2 rounded bg-emerald-300 px-2.5 py-0.5 text-xs font-medium text-neutral-700">
-                {" "}
-                En Stock{" "}
-              </span>
-            )
-
-          }
-          {
-            product.inventoryCount === 0 && (
-              <span className="me-2 rounded bg-red-400 px-2.5 py-0.5 text-xs font-medium text-zinc-100">
-                {" "}
-                No hay uniddades{" "}
-              </span>
-            )
-          }
+          {product.inventoryCount !== 0 && (
+            <span className="me-2 rounded bg-emerald-300 px-2.5 py-0.5 text-xs font-medium text-neutral-700">
+              {" "}
+              En Stock{" "}
+            </span>
+          )}
+          {product.inventoryCount === 0 && (
+            <span className="me-2 rounded bg-red-400 px-2.5 py-0.5 text-xs font-medium text-zinc-100">
+              {" "}
+              No hay uniddades{" "}
+            </span>
+          )}
 
           <div className="flex items-center justify-end gap-1">
             <button
@@ -136,35 +131,23 @@ const Card: FC<Products> = (product) => {
         </div>
 
         <div className="w-full h-8 flex items-center">
-          {
-            product.inventoryCount <= 4 && product.inventoryCount !== 0 && (
-              <span className="me-2 py-3 text-sm font-medium text-red-400">
-                {`Queda(n) ${product.inventoryCount}, más en camino.`}
-              </span>
-
-            )
-          }
+          {product.inventoryCount <= 4 && product.inventoryCount !== 0 && (
+            <span className="me-2 py-3 text-sm font-medium text-red-400">
+              {`Queda(n) ${product.inventoryCount}, más en camino.`}
+            </span>
+          )}
         </div>
         <Link
           to={`/details?p=${product.id}`}
           className="text-lg overflow-hidden font-semibold min-h-12 leading-tight text-gray-900 hover:underline line-clamp-2"
         >
-          {
-            product.category?.name === "Moviles" && (
-              <>
-                {`${product.name},  Ram ${product.ram}GB, Almacenamiento ${product.storage}GB `}
-              </>
-            )
-          }
+          {product.category?.name === "Moviles" && (
+            <>
+              {`${product.name},  Ram ${product.ram}GB, Almacenamiento ${product.storage}GB `}
+            </>
+          )}
 
-          {
-            product.category?.name !== "Moviles" && (
-              <>
-                {`${product.name} `}
-              </>
-            )
-          }
-
+          {product.category?.name !== "Moviles" && <>{`${product.name} `}</>}
         </Link>
 
         <div className="mt-2 flex items-center gap-2">
@@ -173,8 +156,11 @@ const Card: FC<Products> = (product) => {
               {[...Array(5)].map((_, index) => (
                 <svg
                   key={index}
-                  className={`h-5 w-5 fill-current ${product.rating -0.5 > index ? "text-yellow-500" : "text-gray-300"
-                    }`}
+                  className={`h-5 w-5 fill-current ${
+                    product.rating - 0.5 > index
+                      ? "text-yellow-500"
+                      : "text-gray-300"
+                  }`}
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                 >
@@ -218,7 +204,11 @@ const Card: FC<Products> = (product) => {
           </button>
         </div>
       </div>
-      <AuthUser isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}></AuthUser>
+      <AuthUser
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        onClose={onClose}
+      ></AuthUser>
     </div>
   );
 };

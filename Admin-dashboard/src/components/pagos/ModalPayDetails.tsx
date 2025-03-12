@@ -1,5 +1,6 @@
 import {
   Button,
+  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -31,7 +32,7 @@ const columns = [
   { name: "PRECIO TOTAL", uid: "totalPrice" },
 ];
 
-const ModalProductsView: FC<Props> = ({ id, isOpen, onClose }) => {
+const ModalPayDetails: FC<Props> = ({ id, isOpen, onClose }) => {
   const [items, setItems] = useState<OrderItem[] | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -39,17 +40,18 @@ const ModalProductsView: FC<Props> = ({ id, isOpen, onClose }) => {
     setLoading(true);
     getOrderItemsRequest(id)
       .then((res) => {
-        setItems(res.data.data.orderItems);
+        setItems(res.data.data);
       })
       .catch((err) => {
         console.log(err);
         toast.error("Error al cargar los productos");
-      }).finally(()=>{
-        setLoading(false)
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [id]);
 
-  const itemsFilter = useMemo(():OrderItem[] => {
+  const itemsFilter = useMemo((): OrderItem[] => {
     if (!items) {
       return [];
     }
@@ -124,9 +126,47 @@ const ModalProductsView: FC<Props> = ({ id, isOpen, onClose }) => {
             <>
               <ModalHeader className="flex items-end  space-x-2 gap-1 font-[sans-serif] ">
                 <img src="./logo.webp" alt="Logo reycel" className="w-10 h-8" />
-                <h1 className="text-2xl font-bold">Productos de la Orden</h1>
+                <h1 className="text-2xl font-bold">Detalles del Pago</h1>
               </ModalHeader>
               <ModalBody>
+                <div className="w-full flex flex-col gap-2">
+                  <div className="flex w-full gap-2">
+                    <Input
+                      disabled
+                      name="town"
+                      labelPlacement="inside"
+                      label="Poblado"
+                      variant="flat"
+                      size="md"
+                    />
+                    <Input
+                      disabled
+                      name="address"
+                      labelPlacement="inside"
+                      label="Direccion"
+                      variant="flat"
+                      size="md"
+                    />
+                  </div>
+                  <div className="flex w-full gap-2">
+                    <Input
+                      disabled
+                      name="phone"
+                      labelPlacement="inside"
+                      label="Telefono"
+                      variant="flat"
+                      size="md"
+                    />
+                    <Input
+                      disabled
+                      name="transferenceId"
+                      labelPlacement="inside"
+                      label="ID Transferencia"
+                      variant="flat"
+                      size="md"
+                    />
+                  </div>
+                </div>
                 <Table
                   aria-label="Example table with custom cells"
                   shadow="none"
@@ -176,4 +216,4 @@ const ModalProductsView: FC<Props> = ({ id, isOpen, onClose }) => {
   );
 };
 
-export default ModalProductsView;
+export default ModalPayDetails;

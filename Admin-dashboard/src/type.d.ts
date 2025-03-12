@@ -141,18 +141,23 @@ export interface Analytics {
 
 export interface DataSByMonth {
   month: string;
-  total: number;
+  total: string;
+}
+
+export interface Growth {
+  month: string;
+  total: string;
+  growth: string;
 }
 
 export interface PaymentAnalytics {
   date: string;
-  octubre: number;
-  diciembre: number;
+  total: number;
 }
 
 export interface AddPaymentMethodProps {
-  id?:string
-  image: string
-  numberCard: string
-  selected: PaymentOptions
+  id?: string;
+  image: string;
+  numberCard: string;
+  selected: PaymentOptions;
 }

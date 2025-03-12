@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../context/auth.context";
 import Autorizer from "./Autorizer";
-//import { Spinner } from '@nextui-org/react'
+//import { Spinner } from '@heroui/react'
 export const ProtectedRoutes = () => {
   const { loading, isAuth } = useAuth();
 

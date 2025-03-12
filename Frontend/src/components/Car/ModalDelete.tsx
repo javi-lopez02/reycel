@@ -1,4 +1,4 @@
-import { Modal, ModalContent } from "@nextui-org/react";
+import { Modal, ModalContent } from "@heroui/react";
 
 export default function ModalDelete({ isOpen, handleOrderDelte, onClose }: { isOpen: boolean, handleOrderDelte: () => void, onClose: () => void }) {
 

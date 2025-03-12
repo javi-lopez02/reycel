@@ -8,10 +8,19 @@ import {
   searchProduct,
   updateProduct,
 } from "../Controllers/product.controller";
-import { createCategory, deleteCategory, getCategory, updateCategory } from "../Controllers/category.controller";
+import {
+  createCategory,
+  deleteCategory,
+  getCategory,
+  updateCategory,
+} from "../Controllers/category.controller";
 const router = Router();
+/* 
+import { PrismaClient } from "@prisma/client";
+import  products  from "../Data/moviles.json";
+const prisma = new PrismaClient();
 
-/* router.get("/products", async (req, res)=>{
+router.get("/products", async (req, res) => {
   try {
     // Itera sobre el array `products` correctamente
     for (const product of products) {
@@ -23,7 +32,7 @@ const router = Router();
           ram: product.ram,
           storage: product.almacenamiento,
           description: "",
-          categoryId: "090ad538-f867-4481-9b34-da62de267d03"
+          categoryId: "88396c41-b70d-4b39-a042-d90209425042",
         },
       });
       console.log("Producto creado:", createdProduct);
@@ -33,8 +42,8 @@ const router = Router();
   } finally {
     await prisma.$disconnect();
   }
-}); */
-
+});
+ */
 router.get("/products/search", searchProduct);
 
 router.get("/products", getProductID);
@@ -47,8 +56,6 @@ router.put("/product/:id", authMiddleware, updateProduct);
 
 router.delete("/product/:id", authMiddleware, deleteProduct);
 
-
-
 router.get("/products/category", getCategory);
 
 router.post("/products/category", authMiddleware, createCategory);
@@ -56,7 +63,5 @@ router.post("/products/category", authMiddleware, createCategory);
 router.put("/products/category/:id", authMiddleware, updateCategory);
 
 router.delete("/products/category/:id", authMiddleware, deleteCategory);
-
-
 
 export default router;

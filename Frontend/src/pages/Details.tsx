@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Spinner } from "@nextui-org/spinner";
+import { Spinner } from "@heroui/spinner";
 import { useAuth } from "../context/auth.context";
 import { toast } from "sonner";
 import { useProductDetails } from "../customHooks/useProductDetails";
 import Comment from "../components/Details/Comment";
 import FormComment from "../components/Details/FormComment";
 import Star from "../components/Details/Star";
-import { Input, useDisclosure } from "@nextui-org/react";
+import { Input, useDisclosure } from "@heroui/react";
 import AuthUser from "./auth/AuthUser";
 // import ModalLogin from "./auth/ModalLogin";
 
@@ -60,19 +60,21 @@ export default function Details() {
       onOpen();
       return;
     }
-    toast.promise(addItemCarShop(parseInt(quantity)), {
-      loading: "Loading...",
-      success: (res) => {
-        if (res.status !== 200) {
+    addItemCarShop(parseInt(quantity))
+      .then((res) => {
+        if (res.status === 200) {
+          toast.success(res.data.message);
+        }
+        if (res.status === 203) {
           toast.warning(
             `Aviso: ${res.data.message || "Hubo un problema con la solicitud."}`
           );
-          return "La operación no fue completamente exitosa.";
         }
-        return `${res.data.message}`;
-      },
-      error: "Error al añadir un producto al carrito.",
-    });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error al añadir un producto al carrito.");
+      });
   };
 
   return (

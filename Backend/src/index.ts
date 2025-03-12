@@ -56,15 +56,7 @@ app.use("/api/analytics", analytics);
 
 app.use("/public", express.static(path.join(__dirname, "/Upload")));
 
-//initBot();
-
-io.on("connection", (socket: any) => {
-  console.log("Cliente conectado:", socket.id);
-
-  socket.on("disconnect", () => {
-    console.log("Cliente desconectado:", socket.id);
-  });
-});
+initBot();
 
 server.listen(port, () => {
   console.log(`Server on port ${port}`);

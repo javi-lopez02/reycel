@@ -6,10 +6,11 @@ import {
   Checkbox,
   Input,
   Link,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useEffect, useRef, useState } from "react";
 import { BiLock, BiMailSend } from "react-icons/bi";
 import { useAuth } from "../../context/auth.context";
+import { toast } from "sonner";
 
 function ModalLogin({
   onClose,
@@ -51,7 +52,13 @@ function ModalLogin({
     signIn({
       username: userNameRef.current.value,
       password: passwordRef.current?.value,
-    });
+    })
+      .then(() => {
+        toast.success("Inicio de sesión exitoso");
+      })
+      .catch(() => {
+        toast.error("Error al iniciar sesión");
+      });
   };
 
   return (
@@ -120,15 +127,10 @@ function ModalLogin({
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="danger" variant="flat" onClick={onClose}>
+        <Button color="danger" variant="flat" onPress={onClose}>
           Cancelar
         </Button>
-        <Button
-          color="primary"
-          onClick={() => {
-            handleSubmit();
-          }}
-        >
+        <Button color="primary" onPress={handleSubmit}>
           Entrar
         </Button>
       </ModalFooter>

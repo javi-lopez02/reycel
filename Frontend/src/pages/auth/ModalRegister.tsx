@@ -4,12 +4,14 @@ import {
   Button,
   Checkbox,
   Input,
-  Link,
   ModalBody,
   ModalFooter,
   ModalHeader,
-} from "@nextui-org/react";
+  Spinner,
+} from "@heroui/react";
 import { BiLock, BiUser } from "react-icons/bi";
+import { MdEmail } from "react-icons/md";
+import { toast } from "sonner";
 
 function ModalRegister({
   onClose,
@@ -22,8 +24,10 @@ function ModalRegister({
   const { errors, signUp } = useAuth();
 
   const passwordRef = useRef<HTMLInputElement | null>(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
   const userNameRef = useRef<HTMLInputElement | null>(null);
   const passwordConfirmRef = useRef<HTMLInputElement | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (error.length > 0) {
@@ -38,24 +42,40 @@ function ModalRegister({
     setError(errors);
   }, [errors]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!userNameRef.current?.value) {
       setError([...error, "User name is required"]);
+      return;
+    }
+    if (!emailRef.current?.value) {
+      setError([...error, "Emial name is required"]);
       return;
     }
     if (!passwordRef.current?.value) {
       setError([...error, "Password is required"]);
       return;
     }
-    if( passwordRef.current?.value !== passwordConfirmRef.current?.value){
+    if (passwordRef.current?.value !== passwordConfirmRef.current?.value) {
       setError([...error, "Passwords do not match"]);
       return;
     }
 
+    setLoading(true);
     signUp({
       password: passwordRef.current?.value,
-      username: userNameRef.current.value,
-    });
+      username: emailRef.current.value,
+      email: userNameRef.current.value,
+    })
+      .then(() => {
+        toast.success("User created successfully");
+        onClose();
+      })
+      .catch((err) => {
+        setError([...error, err]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -81,12 +101,22 @@ function ModalRegister({
               </div>
             );
           })}
+
         <Input
           autoFocus
           ref={userNameRef}
-          label="User Name"
+          label="Email"
           endContent={
             <BiUser className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+          }
+          placeholder="Enter your Email"
+          variant="bordered"
+        />
+        <Input
+          ref={emailRef}
+          label="User Name"
+          endContent={
+            <MdEmail className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
           }
           placeholder="Enter your User Name"
           variant="bordered"
@@ -120,9 +150,6 @@ function ModalRegister({
           >
             Recordar
           </Checkbox>
-          <Link color="primary" href="#" size="sm">
-            ¿Olvidaste tu contraseña?
-          </Link>
         </div>
         <div className="flex items-center  text-sm font-light text-gray-500 dark:text-gray-400">
           ¿Ya tienes una cuentas?
@@ -135,16 +162,16 @@ function ModalRegister({
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="danger" variant="flat" onClick={onClose}>
+        <Button color="danger" variant="flat" onPress={onClose}>
           Cancelar
         </Button>
         <Button
           color="primary"
-          onClick={() => {
+          onPress={() => {
             handleSubmit();
           }}
         >
-          Registrar
+          {loading ? <Spinner color="white" /> : "Registrar"}
         </Button>
       </ModalFooter>
     </>

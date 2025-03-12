@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { SortItem } from "../types";
-import { message } from "./bot.controller";
 
 const prisma = new PrismaClient();
 
@@ -71,6 +70,8 @@ export const searchProduct = async (req: Request, res: Response) => {
 
     const category = (req.query.category as string) || undefined;
 
+    const categories = category?.split(",")
+
     const color = (req.query.color as string) || undefined;
 
     const rating = parseInt(req.query.rating as string) || undefined;
@@ -125,7 +126,9 @@ export const searchProduct = async (req: Request, res: Response) => {
           },
           {
             category: {
-              id: category,
+              id: {
+                in: categories
+              },
             },
           },
           {
@@ -183,7 +186,9 @@ export const searchProduct = async (req: Request, res: Response) => {
           },
           {
             category: {
-              id: category,
+              id: {
+                in: categories
+              },
             },
           },
           {
