@@ -43,7 +43,7 @@ function Filters() {
     setIsNextPage(true);
     setFilters({
       rating: rating.toString(),
-      categoriy: selectCategories,
+      category: selectCategories,
       minPrice: rangePrice[0],
       maxPrice: rangePrice[1],
     });
