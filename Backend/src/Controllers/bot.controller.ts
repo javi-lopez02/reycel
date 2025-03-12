@@ -27,7 +27,7 @@ const confirmTransaction = async (userID: string, paymentID: number, socketID: s
       data: {
         userId: userID,
         message: "Tu pago ha sido confirmado.",
-        type: "PAYMENT_STATUS",
+        type: "PAYMENT_SUCCESS",
       },
     });
 
@@ -48,6 +48,40 @@ const confirmTransaction = async (userID: string, paymentID: number, socketID: s
     });
   }
 };
+
+const deniedTransaction = async (userID: string, paymentID: number, socketID: string, transactionID: string) => {
+  try {
+    await prisma.payment.update({
+      where: {
+        id: paymentID,
+      },
+      data: {
+        paymentStatus: "FAILED",
+      },
+    });
+
+    const notification = await prisma.notification.create({
+      data: {
+        userId: userID,
+        message: "Tu pago ha sido denegado.",
+        type: "PAYMENT_FAILED",
+      },
+    });
+
+    io.to(socketID).emit("transactionStatus", {
+      transactionID,
+      notification,
+      status: "denied",
+    });
+
+  } catch (error) {
+    console.error("Error al denegar el pago: ", error);
+    io.to(socketID).emit("transactionStatus", {
+      transactionID,
+      status: "error",
+    });
+  }
+}
 
 export const initBot = () => {
   bot.start((ctx) => {
@@ -84,6 +118,8 @@ export const initBot = () => {
           }
         } else if (callbackData.startsWith("deny_")) {
           const transactionID = callbackData.split("_")[1];
+          const userID = callbackData.split("_")[2];
+          const paymentID = callbackData.split("_")[3];
 
           await ctx.reply(`Transacción ${transactionID} denegada.`);
           await ctx.answerCbQuery();
@@ -91,10 +127,7 @@ export const initBot = () => {
           const socketID = userSockets.get(transactionID);
 
           if (socketID) {
-            io.to(socketID).emit("transactionStatus", {
-              transactionID,
-              status: "denied",
-            });
+            deniedTransaction(userID, parseInt(paymentID), socketID, transactionID);
             console.log(
               `Transacción ${transactionID} denegada y enviada al usuario con socket ${socketID}`
             );

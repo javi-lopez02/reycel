@@ -6,14 +6,16 @@ import NotificationCard from "./NotificationCard";
 export default function Notifications() {
   const { notifications } = useAuth();
 
+  const notificationsNotRead = notifications.filter((notification) => !notification.isRead);
+
   return (
     <Popover placement="bottom-end">
       <PopoverTrigger>
         <button className="sm:p-2 flex items-center justify-center border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer">
           <Badge
             color="danger"
-            content={notifications.length}
-            isInvisible={notifications.length === 0}
+            content={notificationsNotRead.length}
+            isInvisible={notificationsNotRead.length === 0}
             size="sm"
           >
             <IoIosNotifications size={25} />

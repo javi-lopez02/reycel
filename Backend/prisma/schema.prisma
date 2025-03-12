@@ -193,6 +193,7 @@ model Notification {
 }
 
 enum NotificationType {
-  ORDER_STATUS
-  PAYMENT_STATUS
+  PAYMENT_SUCCESS
+  PAYMENT_FAILED
+  REGISTER_SUCCESS
 }

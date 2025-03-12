@@ -7,9 +7,12 @@ import { Spinner } from "@heroui/spinner";
 import { toast } from "sonner";
 import { useDisclosure } from "@heroui/react";
 import ModalMessage from "../components/Car/ModalMessage";
+import { useAuth } from "../context/auth.context";
 
 const App: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const {isAuth} = useAuth();
 
   const [order, setOrder] = useState<OrderItem[] | null>(null);
   const [orderID, setOrderID] = useState<number | null>(null)
@@ -22,6 +25,10 @@ const App: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     setError(null);
+    if (!isAuth) {
+      setLoading(false);
+      return;
+    }
     getOrderRequest()
       .then((res) => {
         setOrder(res.data.data.orderItems);
@@ -46,7 +53,7 @@ const App: React.FC = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [isAuth]);
 
   const updateOrder = (order: Order)=>{
     setOrder(order.orderItems);
