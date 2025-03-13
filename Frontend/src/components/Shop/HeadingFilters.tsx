@@ -1,7 +1,6 @@
 import { Button } from "@heroui/react";
 import { useProduct } from "../../context/product.context";
 import ModalFilters from "./ModalFilters";
-import ModalSorting from "./ModalSorting";
 
 function HeadingFilters() {
   const {
@@ -28,7 +27,6 @@ function HeadingFilters() {
         <div className="flex items-center space-x-4 lg:hidden">
           <ModalFilters />
 
-          <ModalSorting />
           {/* Modal sorting */}
         </div>
       </div>

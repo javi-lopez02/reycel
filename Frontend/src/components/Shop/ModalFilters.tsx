@@ -9,6 +9,8 @@ import {
   AutocompleteItem,
   Input,
   Button,
+  RadioGroup,
+  Radio,
 } from "@heroui/react";
 import { Key, useEffect, useState } from "react";
 import { Rating, RoundedStar } from "@smastrom/react-rating";
@@ -16,16 +18,16 @@ import { Rating, RoundedStar } from "@smastrom/react-rating";
 import "@smastrom/react-rating/style.css";
 import { useProduct } from "../../context/product.context";
 import { categoryRequest } from "../../services/product";
-import { Category } from "../../types";
+import { Category, SortOption } from "../../types";
 import { toast } from "sonner";
 
 function ModalFilters() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [rating, setRating] = useState(3);
   const [categoria, setCategoria] = useState<Key | null>();
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [categories, setCategories] = useState<Array<Category>>([]);
+  const [minPrice, setMinPrice] = useState<string>("");
+  const [maxPrice, setMaxPrice] = useState<string>("");
+  const [categories, setCategories] = useState<Array<Category> >([]);
   const [error, setError] = useState<Array<string> | null>(null);
 
   const { filters, setFilters, setCurrentPage, setIsNextPage, setSortParmas } =
@@ -35,12 +37,53 @@ function ModalFilters() {
     onOpen();
   };
 
+  const handleSortChange = async (key: Key) => {
+    let newSortOptions: Array<SortOption> = [];
+    switch (key) {
+      case "masViejo":
+        newSortOptions = [{ field: "createdAt", order: "asc" }];
+        break;
+      case "masNuevo":
+        newSortOptions = [{ field: "createdAt", order: "desc" }];
+        break;
+      case "precioCreciente":
+        newSortOptions = [
+          { field: "price", order: "asc" },
+          { field: "createdAt", order: "asc" },
+        ];
+        break;
+      case "precioDecreciente":
+        newSortOptions = [
+          { field: "price", order: "desc" },
+          { field: "createdAt", order: "asc" },
+        ];
+        break;
+      case "masPopular":
+        newSortOptions = [
+          { field: "ratingAverage", order: "desc" },
+          { field: "createdAt", order: "asc" },
+        ];
+        break;
+      case "menosPopular":
+        newSortOptions = [
+          { field: "ratingAverage", order: "asc" },
+          { field: "createdAt", order: "asc" },
+        ];
+        break;
+      default:
+        break;
+    }
+    setCurrentPage(1);
+    setIsNextPage(true);
+    setSortParmas(newSortOptions);
+  };
+
   const handleResult = () => {
     setCurrentPage(1);
     setIsNextPage(true);
     setFilters({
       rating: rating.toString(),
-      categoriy: categoria?.toString(),
+      category: categoria?.toString(),
       minPrice: parseInt(minPrice),
       maxPrice: parseInt(maxPrice),
     });
@@ -58,7 +101,7 @@ function ModalFilters() {
   useEffect(() => {
     setMinPrice(filters.minPrice);
     setMaxPrice(filters.maxPrice);
-    setCategoria(filters.categoriy);
+    setCategoria(filters.category);
     //setSelectedColor(new Set([filters.color || "Selecciona un color"]))
   }, [filters]);
 
@@ -285,6 +328,27 @@ function ModalFilters() {
                                 }}
                               />
                             </div>
+                          </div>
+                          <div className="flex flex-col w-full">
+                            <h6 className="mb-2 text-sm font-medium text-black dark:text-white">
+                              Sort By
+                            </h6>
+                            <RadioGroup
+                              size="md"
+                              onValueChange={handleSortChange}
+                              orientation="horizontal"
+                            >
+                              <Radio value="masPopular">Más Popular</Radio>
+                              <Radio value="menosPopular">Menos Popular</Radio>
+                              <Radio value="precioCreciente">
+                                Precio Creciente
+                              </Radio>
+                              <Radio value="precioDecreciente">
+                                Precio Decreciente
+                              </Radio>
+                              <Radio value="masNuevo">Más Nuevo</Radio>
+                              <Radio value="masViejo">Más Viejo</Radio>
+                            </RadioGroup>
                           </div>
                         </div>
                       </div>
