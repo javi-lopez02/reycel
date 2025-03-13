@@ -9,12 +9,12 @@ export type SortOption = {
 export const searchPproductRequest = (
   query: string,
   page: number,
-  { minPrice="", maxPrice="", categoriy="", rating="", color="" }: FiltersType,
+  { minPrice=0, maxPrice=0, category="", rating="", color="" }: FiltersType,
   sort: SortOption[] | []
 ) => {
   const sortString = JSON.stringify(sort);
   return axios.get(
-    `/products/search?category=${categoriy}&color=${color}&minPrice=${minPrice}&maxPrice=${maxPrice}&rating=${rating}&s=${query}&page=${page}&sort=${encodeURIComponent(sortString)}`
+    `/products/search?category=${category}&color=${color}&minPrice=${minPrice}&maxPrice=${maxPrice}&rating=${rating}&s=${query}&page=${page}&sort=${encodeURIComponent(sortString)}`
   );
 };
 

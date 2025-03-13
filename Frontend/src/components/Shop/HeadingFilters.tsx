@@ -26,8 +26,6 @@ function HeadingFilters() {
         </h2>
         <div className="flex items-center space-x-4 lg:hidden">
           <ModalFilters />
-
-          {/* Modal sorting */}
         </div>
       </div>
       {sortParmas.length !== 0 && (

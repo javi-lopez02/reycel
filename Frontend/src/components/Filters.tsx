@@ -13,19 +13,21 @@ import { useEffect, useState } from "react";
 import { categoryRequest } from "../services/product";
 import { toast } from "sonner";
 import { useDebouncedCallback } from "use-debounce";
+import { TbReload } from "react-icons/tb";
 
 function Filters() {
   const [categories, setCategories] = useState<Array<Category>>([]);
   const [rating, setRating] = useState(0);
   const [selectCategories, setSelectCategories] = useState<string[]>([]);
   const [rangePrice, setRangePrice] = useState<number[]>([]);
+  const [selectedValue, setSelectedValue] = useState<string>();
 
-  const { setSortParmas, setCurrentPage, setIsNextPage, setFilters } =
+  const { sortParmas, setSortParmas, setCurrentPage, setIsNextPage, setFilters } =
     useProduct();
 
-   const debounced = useDebouncedCallback((value: number[]) => {
+  const debounced = useDebouncedCallback((value: number[]) => {
     setRangePrice(value);
-    }, 800);
+  }, 800);
 
   useEffect(() => {
     categoryRequest()
@@ -47,10 +49,27 @@ function Filters() {
       minPrice: rangePrice[0],
       maxPrice: rangePrice[1],
     });
-  }, [rangePrice, rating, selectCategories, setCurrentPage, setFilters, setIsNextPage]);//revisar dependencias
+  }, [
+    rangePrice,
+    rating,
+    selectCategories,
+    setCurrentPage,
+    setFilters,
+    setIsNextPage,
+  ]); //revisar dependencias
+
+  const handleReset = () => {
+    setSelectedValue("");
+    setRating(0);
+    setCurrentPage(1);
+    setIsNextPage(true);
+    setSortParmas([]);
+    setFilters({});
+  };
 
   const handleSortChange = async (key: string) => {
     let newSortOptions: Array<SortOption> = [];
+    setSelectedValue(key);
     switch (key) {
       case "masViejo":
         newSortOptions = [{ field: "createdAt", order: "asc" }];
@@ -94,11 +113,17 @@ function Filters() {
     <div className="h-full py-3 bg-slate-100 w-64 px-3 fixed lg:inline-block hidden">
       <ScrollShadow hideScrollBar size={1} className="h-screen pb-16">
         <div className="flex flex-col gap-4">
-          <RadioGroup
-            label="Filtros"
-            size="sm"
-            onValueChange={handleSortChange}
-          >
+          <div className="flex justify-between items-center">
+            <h6 className="text-base font-semibold text-neutral-500 dark:text-white">
+              Filtros
+            </h6>
+            {sortParmas.length !==  0 && (
+              <button onClick={handleReset} className="size-6 rounded-md bg-slate-200 hover:bg-slate-300 transition flex items-center justify-center text-neutral-800">
+                <TbReload />
+              </button>
+            )}
+          </div>
+          <RadioGroup size="sm" onValueChange={handleSortChange} value={selectedValue} >
             <Radio value="masPopular">Más Popular</Radio>
             <Radio value="menosPopular">Menos Popular</Radio>
             <Radio value="precioCreciente">Precio Creciente</Radio>
