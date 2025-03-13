@@ -18,6 +18,13 @@ import { type User, UserAuth } from "../types.d";
 import axios, { AxiosError } from "axios";
 import { io } from "socket.io-client";
 import { API_URL } from "../conf";
+import { toast } from "sonner";
+import {
+  notificationDeleteAllRequest,
+  notificationDeleteRequest,
+  notificationReadAllRequest,
+  notificationReadRequest,
+} from "../services/notification";
 
 interface Notifications {
   id: number;
@@ -35,6 +42,9 @@ interface AuthContextType {
   loading: boolean;
   addNotifications: (notification: Notifications) => void;
   checkNotification: (id: number) => void;
+  checkNotificationAll: () => void
+  deleteNotification: (id: number) => void;
+  deleteNotificationAll: () => void;
   confirmEmail: (values: string) => Promise<void>;
   signIn: (values: UserAuth) => Promise<void>;
   signUp: (values: UserAuth) => Promise<void>;
@@ -109,6 +119,10 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   const checkNotification = (id: number) => {
+    notificationReadRequest(id).catch((error) => {
+      toast.error("Error al leer la notificación");
+      console.log(error);
+    });
     const newNotifications = notifications.map((notification) => {
       if (notification.id === id) {
         notification.isRead = true;
@@ -117,6 +131,37 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     });
     setNotifications(newNotifications);
   };
+
+  const checkNotificationAll = () => {
+    notificationReadAllRequest().catch((error) => {
+      toast.error("Error al leer las notificaciones");
+      console.log(error);
+    });
+    const newNotifications = notifications.map((notification) => {
+      notification.isRead = true;
+      return notification;
+    });
+    setNotifications(newNotifications);
+  };
+
+  const deleteNotification = (id: number) => {
+    notificationDeleteRequest(id).catch((error) => {
+      toast.error("Error al eliminar la notificación");
+      console.log(error);
+    });
+    const newNotifications = notifications.filter(
+      (notification) => notification.id !== id
+    );
+    setNotifications(newNotifications);
+  };
+
+  const deleteNotificationAll = () => {
+    notificationDeleteAllRequest().catch((error) => {
+      toast.error("Error al eliminar las notificaciones");
+      console.log(error);
+    });
+    setNotifications([]);
+  }
 
   const confirmEmail = async (values: string) => {
     setLoading(true);
@@ -216,6 +261,9 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     errors,
     loading,
     notifications,
+    checkNotificationAll,
+    deleteNotification,
+    deleteNotificationAll,
     checkNotification,
     addNotifications,
     confirmEmail,
