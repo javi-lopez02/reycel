@@ -95,6 +95,7 @@ export default function NewOrderPage() {
                   image={item.product.imagen}
                   name={item.product.name}
                   price={item.price}
+                  inventaryCount={item.product.inventaryCount}
                   quantity={item.quantity}
                   setOrder={setItems}
                   setTotalAmount={setTotalAmount}
@@ -112,7 +113,12 @@ export default function NewOrderPage() {
           >
             Agregar Orden
           </button>
-          <ModalAddOrder isOpen={isOpen} onClose={onClose} totalAmount={totalAmount} username={user?.username}/>
+          <ModalAddOrder
+            isOpen={isOpen}
+            onClose={onClose}
+            totalAmount={totalAmount}
+            username={user?.username}
+          />
         </div>
         <div className="min-w-4/5">
           {loading && (

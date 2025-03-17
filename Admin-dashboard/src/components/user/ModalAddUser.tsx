@@ -73,6 +73,7 @@ const ModalAddUser: FC<Props> = ({
 
   const handleRoleChange = (value: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedRole(value.target.value);
+    console.log(value)
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -192,7 +193,7 @@ const ModalAddUser: FC<Props> = ({
                   <div className="flex gap-4 w-full">
                     <div className="flex flex-col items-center w-full gap-4">
                       <img
-                        className="size-36 bg-neutral-300"
+                        className="size-56 bg-neutral-300"
                         src={imageUrl}
                         alt="Imagen de Usuario"
                       />
@@ -209,19 +210,6 @@ const ModalAddUser: FC<Props> = ({
                         variant="bordered"
                         labelPlacement="outside"
                       />
-                      <Select
-                        variant="bordered"
-                        label="Role"
-                        name="role"
-                        defaultOpen
-                        placeholder="Seleccione el role"
-                        labelPlacement="outside"
-                        onChange={handleRoleChange}
-                      >
-                        {roles.map((rol) => (
-                          <SelectItem key={rol.key}>{rol.label}</SelectItem>
-                        ))}
-                      </Select>
                     </div>
                     <div className="flex flex-col gap-4 w-full">
                       <Input
@@ -258,6 +246,19 @@ const ModalAddUser: FC<Props> = ({
                         variant="bordered"
                         labelPlacement="outside"
                       />
+                      <Select
+                        variant="bordered"
+                        label="Role"
+                        name="role"
+                        defaultOpen
+                        placeholder="Seleccione el role"
+                        labelPlacement="outside"
+                        onChange={handleRoleChange}
+                      >
+                        {roles.map((rol) => (
+                          <SelectItem key={rol.key}>{rol.label}</SelectItem>
+                        ))}
+                      </Select>
                     </div>
                   </div>
                   {selectedRole === "MODERADOR" && (

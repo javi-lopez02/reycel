@@ -56,7 +56,7 @@ app.use("/api/analytics", analytics);
 
 app.use("/public", express.static(path.join(__dirname, "/Upload")));
 
-initBot();
+// initBot();
 
 server.listen(port, () => {
   console.log(`Server on port ${port}`);

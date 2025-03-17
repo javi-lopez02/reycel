@@ -238,6 +238,7 @@ export const getOrderItemsAdmin = async (req: Request, res: Response) => {
                 imagen: true,
                 name: true,
                 ratingAverage: true,
+                inventoryCount: true
               },
             },
           },

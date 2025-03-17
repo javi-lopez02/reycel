@@ -9,6 +9,7 @@ interface Product {
   name: string;
   price: number;
   id: string;
+  inventaryCount: number;
   setError: (value: string[]) => void;
   setOrder: React.Dispatch<React.SetStateAction<OrderItem[] | null>>;
   setCount: React.Dispatch<React.SetStateAction<number>>;
@@ -22,6 +23,7 @@ const NewOrderView: FC<Product> = ({
   name,
   quantity,
   price,
+  inventaryCount,
   setOrder,
   setCount,
   setTotalAmount,
@@ -71,7 +73,7 @@ const NewOrderView: FC<Product> = ({
             color="primary"
             value={value}
             onValueChange={(event) => {
-              if (Number(event) > 0) {
+              if (Number(event) > 0 && Number(value) < inventaryCount) {
                 setvalue(event);
                 handleQuantity(event, id, realPrice);
               }

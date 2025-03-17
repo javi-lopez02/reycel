@@ -99,9 +99,9 @@ function ModalFilters() {
   };
 
   useEffect(() => {
-    setMinPrice(filters.minPrice);
-    setMaxPrice(filters.maxPrice);
-    setCategoria(filters.category);
+    setMinPrice(`${filters.minPrice}`);
+    setMaxPrice(`${filters.maxPrice}`);
+    setCategoria(`${filters.category}`);
     //setSelectedColor(new Set([filters.color || "Selecciona un color"]))
   }, [filters]);
 
@@ -304,7 +304,7 @@ function ModalFilters() {
                               {categories.map((categoria) => (
                                 <AutocompleteItem
                                   key={categoria.id}
-                                  value={categoria.name}
+                                  textValue={categoria.name}
                                 >
                                   {categoria.name}
                                 </AutocompleteItem>
@@ -336,7 +336,7 @@ function ModalFilters() {
                             <RadioGroup
                               size="md"
                               onValueChange={handleSortChange}
-                              orientation="horizontal"
+                              orientation="vertical"
                             >
                               <Radio value="masPopular">Más Popular</Radio>
                               <Radio value="menosPopular">Menos Popular</Radio>

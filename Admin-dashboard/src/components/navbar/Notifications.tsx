@@ -1,6 +1,14 @@
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  useDisclosure,
+} from "@nextui-org/react";
+import AllNotifications from "./AllNotifications";
 
 export default function Notifications() {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   return (
     <Popover placement="bottom-end">
       <PopoverTrigger>
@@ -212,8 +220,8 @@ export default function Notifications() {
             </div>
           </a>
         </div>
-        <a
-          href="#"
+        <button
+          onClick={onOpen}
           className="flex py-2 min-w-full rounded-xl items-center justify-center font-medium text-center text-gray-900 bg-gray-50 hover:bg-gray-500 dark:bg-gray-700 dark:text-white dark:hover:underline"
         >
           <div className="inline-flex items-center ">
@@ -233,7 +241,8 @@ export default function Notifications() {
             </svg>
             View all
           </div>
-        </a>
+        </button>
+        <AllNotifications onOpenChange={onOpenChange} isOpen={isOpen} />
       </PopoverContent>
     </Popover>
   );
