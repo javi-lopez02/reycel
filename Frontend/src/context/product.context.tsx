@@ -30,8 +30,8 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
   const [error, setError] = useState<Array<string> | null>(null);
   const [errorSerch, setErrorSearch] = useState<Array<string> | null>(null);
   const [isNextPage, setIsNextPage] = useState(true);
-  const [querySeach, setQuerySeach] = useState("")
 
+  const [querySeach, setQuerySeach] = useState("")
   const [filters, setFilters] = useState<FiltersType>({})
   const [sortParmas, setSortParmas] = useState<SortOption[]>([])
 
