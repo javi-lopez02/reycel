@@ -28,9 +28,9 @@ export const ProductProvider: FC<PropsWithChildren> = ({ children }) => {
   const [products, setProducts] = useState<Array<Products>>([]);
   const [currentPage, setCurrentPage] = useState(1)
   const [error, setError] = useState<Array<string> | null>(null);
-  const [errorSerch, setErrorSearch] = useState<Array<string> | null>(null);
   const [isNextPage, setIsNextPage] = useState(true);
-
+  
+  const [errorSerch, setErrorSearch] = useState<Array<string> | null>(null);
   const [querySeach, setQuerySeach] = useState("")
   const [filters, setFilters] = useState<FiltersType>({})
   const [sortParmas, setSortParmas] = useState<SortOption[]>([])

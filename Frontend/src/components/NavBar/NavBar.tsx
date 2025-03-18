@@ -3,7 +3,6 @@ import { Link, useNavigate, Outlet, useLocation } from "react-router-dom";
 import { TiShoppingCart } from "react-icons/ti";
 import { MdMenuOpen } from "react-icons/md";
 import { useAuth } from "../../context/auth.context";
-import { useProduct } from "../../context/product.context";
 import { useDebouncedCallback } from "use-debounce";
 import { useDisclosure } from "@heroui/react";
 import {
@@ -15,10 +14,10 @@ import {
 import AuthUser from "../../pages/auth/AuthUser";
 import Avatar from "./Avatar";
 import Notifications from "./Notifications";
+import { useFilterStore } from "../../store/useFilterStore";
 
 const Navbar = () => {
-  const { setCurrentPage, setQuerySeach, setIsNextPage, setErrorSearch } =
-    useProduct();
+  const { setQuerySeach, setErrorSearch } = useFilterStore();
   const url = useLocation();
 
   const { logout, isAuth } = useAuth();
@@ -50,9 +49,8 @@ const Navbar = () => {
         setErrorSearch(["La busqueda debe tener más de 3 caracteres"]);
         return;
       }
-      setErrorSearch(null);
-      setCurrentPage(1);
-      setIsNextPage(true);
+      setErrorSearch([]);
+
       debounced(newSearch);
     }
   };
@@ -117,7 +115,7 @@ const Navbar = () => {
           <div className="flex w-auto gap-1">
             {isAuth && (
               <div className="hidden lg:flex font-semibold text-lg">
-                <Notifications/>
+                <Notifications />
                 <Link
                   to="/shopCar"
                   className="sm:p-2 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer"

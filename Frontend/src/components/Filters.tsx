@@ -8,12 +8,12 @@ import {
 } from "@heroui/react";
 import { Rating, RoundedStar } from "@smastrom/react-rating";
 import { Category, SortOption } from "../types";
-import { useProduct } from "../context/product.context";
 import { useEffect, useState } from "react";
 import { categoryRequest } from "../services/product";
 import { toast } from "sonner";
 import { useDebouncedCallback } from "use-debounce";
 import { TbReload } from "react-icons/tb";
+import { useFilterStore } from "../store/useFilterStore";
 
 function Filters() {
   const [categories, setCategories] = useState<Array<Category>>([]);
@@ -22,8 +22,8 @@ function Filters() {
   const [rangePrice, setRangePrice] = useState<number[]>([]);
   const [selectedValue, setSelectedValue] = useState<string>();
 
-  const { sortParmas, setSortParmas, setCurrentPage, setIsNextPage, setFilters } =
-    useProduct();
+  const { sortParmas, setSortParmas, setFilters } =
+    useFilterStore();
 
   const debounced = useDebouncedCallback((value: number[]) => {
     setRangePrice(value);
@@ -41,8 +41,6 @@ function Filters() {
   }, []);
 
   useEffect(() => {
-    setCurrentPage(1);
-    setIsNextPage(true);
     setFilters({
       rating: rating.toString(),
       category: selectCategories,
@@ -53,16 +51,12 @@ function Filters() {
     rangePrice,
     rating,
     selectCategories,
-    setCurrentPage,
     setFilters,
-    setIsNextPage,
   ]); //revisar dependencias
 
   const handleReset = () => {
     setSelectedValue("");
     setRating(0);
-    setCurrentPage(1);
-    setIsNextPage(true);
     setSortParmas([]);
     setFilters({});
   };
@@ -104,8 +98,6 @@ function Filters() {
       default:
         break;
     }
-    setCurrentPage(1);
-    setIsNextPage(true);
     setSortParmas(newSortOptions);
   };
 

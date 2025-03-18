@@ -1,19 +1,15 @@
 import { Button } from "@heroui/react";
-import { useProduct } from "../../context/product.context";
 import ModalFilters from "./ModalFilters";
+import { useFilterStore } from "../../store/useFilterStore";
 
 function HeadingFilters() {
   const {
     sortParmas,
     setFilters,
-    setCurrentPage,
-    setIsNextPage,
     setSortParmas,
-  } = useProduct();
+  } = useFilterStore();
 
   const handleReset = () => {
-    setCurrentPage(1);
-    setIsNextPage(true);
     setSortParmas([]);
     setFilters({});
   };
