@@ -16,22 +16,26 @@ import { Key, useEffect, useState } from "react";
 import { Rating, RoundedStar } from "@smastrom/react-rating";
 
 import "@smastrom/react-rating/style.css";
-import { useProduct } from "../../context/product.context";
 import { categoryRequest } from "../../services/product";
 import { Category, SortOption } from "../../types";
 import { toast } from "sonner";
+import { useFilterStore } from "../../store/useFilterStore";
 
 function ModalFilters() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [rating, setRating] = useState(3);
-  const [categoria, setCategoria] = useState<Key | null>();
-  const [minPrice, setMinPrice] = useState<string>("");
+  const [categoria, setCategoria] = useState<any>();
+  /*const [categoria, setCategoria] = useState<Key | null>();
+   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
+  const [categories, setCategories] = useState<Array<Category> >([]); */
+  const [minPrice, setMinPrice] = useState<any>("");
+  const [maxPrice, setMaxPrice] = useState<any>("");
   const [categories, setCategories] = useState<Array<Category> >([]);
   const [error, setError] = useState<Array<string> | null>(null);
 
-  const { filters, setFilters, setCurrentPage, setIsNextPage, setSortParmas } =
-    useProduct();
+  const { filters, setFilters, setSortParmas } =
+    useFilterStore();
 
   const handleOpen = () => {
     onOpen();
@@ -73,14 +77,11 @@ function ModalFilters() {
       default:
         break;
     }
-    setCurrentPage(1);
-    setIsNextPage(true);
+
     setSortParmas(newSortOptions);
   };
 
   const handleResult = () => {
-    setCurrentPage(1);
-    setIsNextPage(true);
     setFilters({
       rating: rating.toString(),
       category: categoria?.toString(),
@@ -91,8 +92,6 @@ function ModalFilters() {
   };
 
   const handleReset = () => {
-    setCurrentPage(1);
-    setIsNextPage(true);
     setSortParmas([]);
     setFilters({});
     onClose();

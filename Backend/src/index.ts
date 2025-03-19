@@ -18,6 +18,7 @@ import users from "./Routes/user.routes";
 import analytics from "./Routes/analytics.routes";
 import paymentMethod from "./Routes/paymentMethod.routes";
 import currencyExchange from "./Routes/currencyExchange.routes";
+import notification from "./Routes/notification.routes";
 
 import { initBot } from "./Controllers/bot.controller";
 
@@ -31,7 +32,8 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "http://localhost:8000",
-      "http://192.168.227.249:8000",
+      "https://c28sccv9-4173.use.devtunnels.ms",
+      "https://c28sccv9-4173.use.devtunnels.ms"
     ],
     credentials: true,
   })
@@ -53,6 +55,7 @@ app.use("/api", users);
 app.use("/api", paymentMethod);
 app.use("/api", currencyExchange);
 app.use("/api/analytics", analytics);
+app.use("/api", notification);
 
 app.use("/public", express.static(path.join(__dirname, "/Upload")));
 

@@ -12,6 +12,8 @@ const io = new Server(server, {
       "http://localhost:5174",
       "http://localhost:8000",
       "http://192.168.227.249:8000",
+      "https://c28sccv9-4173.use.devtunnels.ms",
+      "https://c28sccv9-4173.use.devtunnels.ms"
     ],
     credentials: true,
   },

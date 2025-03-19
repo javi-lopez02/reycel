@@ -5,20 +5,23 @@ import Navbar from "./components/NavBar/NavBar";
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
 import { AuthProvider } from "./context/auth.context";
 import CarShop from "./pages/CarShop";
-import { ProductProvider } from "./context/product.context";
 import { HeroUIProvider } from "@heroui/react";
 import Details from "./pages/Details";
 import Home from "./pages/Home";
 import { Toaster } from "sonner";
 import Page404 from "./pages/404Page";
 import VerifyUser from "./pages/auth/VerifyUser";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+
+const queryClient = new QueryClient()
 
 function App() {
   const ProductProviderOutlet = () => {
     return (
-      <ProductProvider>
+      <QueryClientProvider client={queryClient}>
         <Outlet />
-      </ProductProvider>
+      </QueryClientProvider>
     );
   };
 

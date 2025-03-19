@@ -125,6 +125,7 @@ const ModalMessage: FC<Props> = ({
         toast.success(`Transacción ${data.transactionID} confirmada.`);
         addNotifications(data.notification);
       } else if (data.status === "denied") {
+        addNotifications(data.notification);
         toast.error(`Transacción ${data.transactionID} denegada.`);
       }
     });
