@@ -29,7 +29,7 @@ export default function Notifications() {
         <div>
           {notifications.length === 0 && (
             <div className="w-full flex items-center justify-center p-4">
-              <span className="font-semibold text-lg text-neutral-600">No hay notificaiones pendinetes</span>
+              <span className="font-semibold text-lg text-neutral-600">No hay notificaciones pendinetes</span>
             </div>
           )}
           {notifications.map((notification) => (

@@ -15,6 +15,7 @@ import AuthUser from "../../pages/auth/AuthUser";
 import Avatar from "./Avatar";
 import Notifications from "./Notifications";
 import { useFilterStore } from "../../store/useFilterStore";
+import ModalMessageEmail from "../../pages/auth/ModalMessageEmail";
 
 const Navbar = () => {
   const { setQuerySeach, setErrorSearch } = useFilterStore();
@@ -127,6 +128,7 @@ const Navbar = () => {
             )}
             <div className="hidden lg:flex lg:items-center font-semibold text-lg mr-2">
               {!isAuth && (
+                <>
                 <button
                   onClick={onOpen}
                   className="mr-5 ml-5 px-3 rounded-md bg-blue-600 text-white font-bold"
@@ -134,6 +136,8 @@ const Navbar = () => {
                   {" "}
                   Registrate
                 </button>
+                <ModalMessageEmail/>
+                </>
               )}
             </div>
           </div>
