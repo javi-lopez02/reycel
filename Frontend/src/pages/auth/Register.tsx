@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
+import { useUserStore } from "../../store/useUserStore";
 
 export default function Register() {
   const [error, setError] = useState<Array<string>>([]);
-  const { errors, signUp, isAuth } = useAuth();
+  const { signUp } = useAuth();
+  const { errors, isAuth } = useUserStore();
 
   const navigate = useNavigate();
 

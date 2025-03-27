@@ -1,2 +1,2 @@
-export const API_URL = "https://c28sccv9-4000.use.devtunnels.ms";
+export const API_URL = "http://localhost:4000";
 //http://localhost:4000

@@ -32,6 +32,8 @@ export const useProduct = (
       queryFn: ({ pageParam }) =>
         searchPproduct(querySearch, pageParam as number, filters, sortParams),
       initialPageParam: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 3,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     });
 

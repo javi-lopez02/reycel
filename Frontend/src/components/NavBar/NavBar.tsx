@@ -15,12 +15,14 @@ import AuthUser from "../../pages/auth/AuthUser";
 import Avatar from "./Avatar";
 import Notifications from "./Notifications";
 import { useFilterStore } from "../../store/useFilterStore";
+import { useUserStore } from "../../store/useUserStore";
 
 const Navbar = () => {
   const { setQuerySeach, setErrorSearch } = useFilterStore();
   const url = useLocation();
 
-  const { logout, isAuth } = useAuth();
+  const { logout } = useAuth();
+  const { isAuth } = useUserStore();
 
   const navigate = useNavigate();
 

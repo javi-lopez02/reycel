@@ -9,7 +9,7 @@ export type SortOption = {
 export const searchPproductRequest = (
   query: string,
   page: number,
-  { minPrice=0, maxPrice=0, category="", rating="", color="" }: FiltersType,
+  { minPrice=0, maxPrice=0, category="", rating=0, color="" }: FiltersType,
   sort: SortOption[] | []
 ) => {
   const sortString = JSON.stringify(sort);

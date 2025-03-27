@@ -12,6 +12,7 @@ import {
 import { BiLock, BiUser } from "react-icons/bi";
 import { MdEmail } from "react-icons/md";
 import { toast } from "sonner";
+import { useUserStore } from "../../store/useUserStore";
 
 function ModalRegister({
   onClose,
@@ -21,7 +22,9 @@ function ModalRegister({
   setIsRegister: (value: boolean) => void;
 }) {
   const [error, setError] = useState<Array<string>>([]);
-  const { errors, signUp } = useAuth();
+  const {  signUp } = useAuth();
+    const {errors} = useUserStore();
+  
 
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const emailRef = useRef<HTMLInputElement | null>(null);

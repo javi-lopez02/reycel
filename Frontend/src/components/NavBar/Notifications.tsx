@@ -1,10 +1,10 @@
 import { Popover, PopoverTrigger, PopoverContent, Badge } from "@heroui/react";
-import { useAuth } from "../../context/auth.context";
 import { IoIosNotifications } from "react-icons/io";
 import NotificationCard from "./NotificationCard";
+import { useNotificationStore } from "../../store/useNotificationStore";
 
 export default function Notifications() {
-  const { notifications } = useAuth();
+  const { notifications } = useNotificationStore();
 
   const notificationsNotRead = notifications.filter((notification) => !notification.isRead);
 

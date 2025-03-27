@@ -31,6 +31,8 @@ const confirmTransaction = async (userID: string, paymentID: number, socketID: s
       },
     });
 
+    //restar producto del inventario
+
     io.to(socketID).emit("transactionStatus", {
       transactionID,
       notification,

@@ -7,12 +7,12 @@ import { Spinner } from "@heroui/spinner";
 import { toast } from "sonner";
 import { useDisclosure } from "@heroui/react";
 import ModalMessage from "../components/Car/ModalMessage";
-import { useAuth } from "../context/auth.context";
+import { useUserStore } from "../store/useUserStore";
 
 const App: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const {isAuth} = useAuth();
+  const {isAuth} = useUserStore();
 
   const [order, setOrder] = useState<OrderItem[] | null>(null);
   const [orderID, setOrderID] = useState<number | null>(null)

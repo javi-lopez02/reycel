@@ -12,18 +12,19 @@ import {
   RadioGroup,
   Radio,
 } from "@heroui/react";
-import { Key, useEffect, useState } from "react";
+import { FC, Key, useEffect, useState } from "react";
 import { Rating, RoundedStar } from "@smastrom/react-rating";
-
 import "@smastrom/react-rating/style.css";
-import { categoryRequest } from "../../services/product";
 import { Category, SortOption } from "../../types";
-import { toast } from "sonner";
 import { useFilterStore } from "../../store/useFilterStore";
 
-function ModalFilters() {
+interface FiltersProps {
+  categories: Category[];
+}
+
+const ModalFilters:FC<FiltersProps> = ({categories}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [rating, setRating] = useState(3);
+  const [rating, setRating] = useState(0);
   const [categoria, setCategoria] = useState<any>();
   /*const [categoria, setCategoria] = useState<Key | null>();
    const [minPrice, setMinPrice] = useState<string>("");
@@ -31,11 +32,8 @@ function ModalFilters() {
   const [categories, setCategories] = useState<Array<Category> >([]); */
   const [minPrice, setMinPrice] = useState<any>("");
   const [maxPrice, setMaxPrice] = useState<any>("");
-  const [categories, setCategories] = useState<Array<Category> >([]);
-  const [error, setError] = useState<Array<string> | null>(null);
 
-  const { filters, setFilters, setSortParmas } =
-    useFilterStore();
+  const { filters, setFilters, setSortParmas } = useFilterStore();
 
   const handleOpen = () => {
     onOpen();
@@ -83,7 +81,7 @@ function ModalFilters() {
 
   const handleResult = () => {
     setFilters({
-      rating: rating.toString(),
+      rating: rating,
       category: categoria?.toString(),
       minPrice: parseInt(minPrice),
       maxPrice: parseInt(maxPrice),
@@ -98,22 +96,11 @@ function ModalFilters() {
   };
 
   useEffect(() => {
+    setRating(0)
     setMinPrice(filters.minPrice);
     setMaxPrice(filters.maxPrice);
     setCategoria(filters.category);
-    //setSelectedColor(new Set([filters.color || "Selecciona un color"]))
   }, [filters]);
-
-  useEffect(() => {
-    categoryRequest()
-      .then((res) => {
-        setCategories(res.data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-        setError(["Error al cargar las Categorias"]);
-      });
-  }, []);
 
   return (
     <>
@@ -373,9 +360,8 @@ function ModalFilters() {
           )}
         </ModalContent>
       </Modal>
-      {error && error.map((err) => toast.error(err))}
     </>
   );
-}
+};
 
 export default ModalFilters;
