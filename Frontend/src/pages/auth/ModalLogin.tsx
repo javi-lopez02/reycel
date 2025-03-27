@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { BiLock, BiMailSend } from "react-icons/bi";
 import { useAuth } from "../../context/auth.context";
 import { toast } from "sonner";
+import { useUserStore } from "../../store/useUserStore";
 
 function ModalLogin({
   onClose,
@@ -20,7 +21,8 @@ function ModalLogin({
   setIsRegister: (value: boolean) => void;
 }) {
   const [error, setError] = useState<Array<string>>([]);
-  const { errors, signIn } = useAuth();
+  const { signIn } = useAuth();
+  const {errors} = useUserStore();
 
   const userNameRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);

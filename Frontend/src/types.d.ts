@@ -116,7 +116,7 @@ export interface FiltersType {
   minPrice?: number;
   maxPrice?: number;
   category?: string[] | string;
-  rating?: string;
+  rating?: number;
   color?: string;
 }
 

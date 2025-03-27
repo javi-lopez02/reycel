@@ -7,16 +7,17 @@ import {
   Slider,
 } from "@heroui/react";
 import { Rating, RoundedStar } from "@smastrom/react-rating";
-import { Category, SortOption } from "../types";
-import { useEffect, useState } from "react";
-import { categoryRequest } from "../services/product";
-import { toast } from "sonner";
+import {  Category, SortOption } from "../types";
+import { FC, useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { TbReload } from "react-icons/tb";
 import { useFilterStore } from "../store/useFilterStore";
 
-function Filters() {
-  const [categories, setCategories] = useState<Array<Category>>([]);
+interface FiltersProps {
+  categories: Category[]
+}
+
+const Filters:FC<FiltersProps> = ({categories}) => {
   const [rating, setRating] = useState(0);
   const [selectCategories, setSelectCategories] = useState<string[]>([]);
   const [rangePrice, setRangePrice] = useState<number[]>([]);
@@ -29,27 +30,18 @@ function Filters() {
     setRangePrice(value);
   }, 800);
 
-  useEffect(() => {
-    categoryRequest()
-      .then((res) => {
-        setCategories(res.data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-        toast.error("Error al cargar las Categorias");
-      });
-  }, []);
+
 
   useEffect(() => {
     setFilters({
-      rating: rating.toString(),
+      rating: rating,
       category: selectCategories,
       minPrice: rangePrice[0],
       maxPrice: rangePrice[1],
     });
   }, [
-    rangePrice,
     rating,
+    rangePrice,
     selectCategories,
     setFilters,
   ]); //revisar dependencias

@@ -5,13 +5,13 @@ import {
   FaEnvelopeOpenText,
 } from "react-icons/fa6";
 import Card from "../components/ContactUs/Card";
-import { useAuth } from "../context/auth.context";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Spinner } from "@heroui/spinner";
+import { useUserStore } from "../store/useUserStore";
 
 export default function ContactUs() {
-  const { user } = useAuth();
+  const { user } = useUserStore();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {

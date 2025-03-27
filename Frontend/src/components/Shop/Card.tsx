@@ -2,14 +2,13 @@ import { FC } from "react";
 import { type Products } from "../../types";
 import { Link } from "react-router-dom";
 import { addItemOrderRequest } from "../../services/order";
-import { useAuth } from "../../context/auth.context";
-//import ModalLogin from "../../pages/auth/ModalLogin";
 import { useDisclosure } from "@heroui/react";
 import { toast } from "sonner";
 import AuthUser from "../../pages/auth/AuthUser";
+import { useUserStore } from "../../store/useUserStore";
 
 const Card: FC<Products> = (product) => {
-  const { isAuth } = useAuth();
+  const { isAuth } = useUserStore();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const handleClikAddProduct = () => {

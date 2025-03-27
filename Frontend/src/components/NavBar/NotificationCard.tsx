@@ -2,8 +2,8 @@ import { FC } from "react";
 import FormatDate from "./FormatDate";
 import { Badge } from "@heroui/react";
 import { IoMdCheckmark } from "react-icons/io";
-import { useAuth } from "../../context/auth.context";
 import { MdClose, MdOutlineNotificationsActive } from "react-icons/md";
+import { useNotificationStore } from "../../store/useNotificationStore";
 
 interface NotificationsPros {
   id: number;
@@ -20,7 +20,7 @@ const NotificationCard: FC<NotificationsPros> = ({
   isRead,
   createdAt,
 }) => {
-  const { checkNotification } = useAuth();
+  const { checkNotification } = useNotificationStore();
 
   const handleCheckNotification = () => {
     if (!isRead) {

@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { useAuth } from "../../context/auth.context";
 import { Modal, ModalContent } from "@heroui/react";
 import ModalRegister from "./ModalRegister";
 import ModalLogin from "./ModalLogin";
+import { useUserStore } from "../../store/useUserStore";
 
 interface Props {
   isOpen: boolean;
@@ -12,7 +12,7 @@ interface Props {
 }
 
 function AuthUser({ isOpen, onOpenChange, onClose }: Props) {
-  const { isAuth } = useAuth();
+  const { isAuth } = useUserStore();
   const [isRegister, setIsRegister] = useState(false);
 
   useEffect(() => {

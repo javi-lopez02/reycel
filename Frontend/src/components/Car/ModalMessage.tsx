@@ -24,7 +24,8 @@ import {
 import { Order, TransactionType } from "../../types";
 import { io } from "socket.io-client";
 import { API_URL } from "../../conf";
-import { useAuth } from "../../context/auth.context";
+import { useUserStore } from "../../store/useUserStore";
+import { useNotificationStore } from "../../store/useNotificationStore";
 
 interface Props {
   count: number;
@@ -74,7 +75,9 @@ const ModalMessage: FC<Props> = ({
     null
   );
 
-  const { user, addNotifications, isAuth } = useAuth();
+  const { user, isAuth } = useUserStore();
+
+  const {addNotifications} = useNotificationStore()
 
   useEffect(() => {
     if (!isAuth) return;
