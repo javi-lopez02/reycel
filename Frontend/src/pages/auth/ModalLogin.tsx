@@ -114,7 +114,7 @@ function ModalLogin({
           >
             Recordar
           </Checkbox>
-          <Link color="primary" href="#" size="sm">
+          <Link color="primary" href="/resetPassword" size="sm">
             ¿Olvidaste tu contraseña?
           </Link>
         </div>

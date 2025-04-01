@@ -137,7 +137,6 @@ const Navbar = () => {
                   {" "}
                   Registrate
                 </button>
-                <ModalMessageEmail/>
                 </>
               )}
             </div>

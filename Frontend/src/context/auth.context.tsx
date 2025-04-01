@@ -136,18 +136,6 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  /* const requestPasswordReset = async (email: string) => {
-    await authService.requestPasswordReset(email);
-  };
-
-  const verifyResetToken = async (token: string) => {
-    await authService.verifyResetToken(token);
-  };
-
-  const resetPassword = async (token: string, newPassword: string) => {
-    await authService.resetPassword(token, newPassword);
-  }; */
-
   useEffect(() => {
     if (errors.length > 0) {
       const time = setTimeout(() => {
@@ -190,9 +178,6 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     signIn,
     signUp,
     logout,
-    /*     requestPasswordReset,
-    verifyResetToken,
-    resetPassword, */
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
