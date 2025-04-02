@@ -12,6 +12,8 @@ import { Toaster } from "sonner";
 import Page404 from "./pages/404Page";
 import VerifyUser from "./pages/auth/VerifyUser";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ResetPassword from "./pages/auth/ResetPassword";
+import VerifyPassword from "./pages/auth/VerifyPassword";
 
 
 const queryClient = new QueryClient()
@@ -32,6 +34,7 @@ function App() {
           <Toaster richColors expand={true} />
           <Routes>
             <Route path="/verifyUser" element={<VerifyUser />} />
+            <Route path="/reset-password" element={<VerifyPassword />} />
             <Route path="/*" element={<Page404 />} />
 
             <Route element={<ProductProviderOutlet />}>
@@ -40,6 +43,7 @@ function App() {
                 <Route path="/contactUs" element={<ContactUs />} />
                 <Route path="/" element={<Home />} />
                 <Route path="/details" element={<Details />} />
+                <Route path="/resetPassword" element={<ResetPassword/>} />
 
                 <Route element={<ProtectedRoutes />}>
                   <Route path="/shopCar" element={<CarShop />} />
