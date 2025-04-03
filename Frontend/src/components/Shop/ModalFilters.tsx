@@ -9,8 +9,8 @@ import {
   AutocompleteItem,
   Input,
   Button,
-  RadioGroup,
-  Radio,
+  // RadioGroup,
+  // Radio,
 } from "@heroui/react";
 import { FC, Key, useEffect, useState } from "react";
 import { Rating, RoundedStar } from "@smastrom/react-rating";
@@ -22,7 +22,16 @@ interface FiltersProps {
   categories: Category[];
 }
 
-const ModalFilters:FC<FiltersProps> = ({categories}) => {
+export const orders = [
+  { key: "masViejo", label: "Más Antiguo" },
+  { key: "masNuevo", label: "Más Reciente" },
+  { key: "precioCreciente", label: "Menor Precio" },
+  { key: "precioDecreciente", label: "Mayor Precio" },
+  { key: "masPopular", label: "Mayor Rating" },
+  { key: "menosPopular", label: "Menor Rating" },
+];
+
+const ModalFilters: FC<FiltersProps> = ({ categories }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [rating, setRating] = useState(0);
   const [categoria, setCategoria] = useState<any>();
@@ -111,7 +120,6 @@ const ModalFilters:FC<FiltersProps> = ({categories}) => {
       >
         <svg
           className="-ms-0.5 me-2 h-4 w-4"
-          aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
@@ -127,7 +135,6 @@ const ModalFilters:FC<FiltersProps> = ({categories}) => {
         Filtros
         <svg
           className="-me-0.5 ms-2 h-4 w-4"
-          aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
@@ -162,7 +169,6 @@ const ModalFilters:FC<FiltersProps> = ({categories}) => {
                         >
                           <svg
                             className="h-5 w-5"
-                            aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
                             height="24"
@@ -188,12 +194,12 @@ const ModalFilters:FC<FiltersProps> = ({categories}) => {
                             <div className="grid grid-cols-2 gap-3 w-full">
                               <label className="block text-sm font-medium text-gray-900 dark:text-white">
                                 {" "}
-                                Precio Minimo{" "}
+                                Precio Minimo:{" "}
                               </label>
 
                               <label className="block text-sm font-medium text-gray-900 dark:text-white">
                                 {" "}
-                                Precio Maximo{" "}
+                                Precio Maximo:{" "}
                               </label>
 
                               <div className="col-span-2 flex items-center justify-between space-x-2">
@@ -276,7 +282,7 @@ const ModalFilters:FC<FiltersProps> = ({categories}) => {
 
                           <div>
                             <h6 className="mb-2 text-sm font-medium text-black dark:text-white">
-                              Categoria
+                              Categoria:
                             </h6>
 
                             <Autocomplete
@@ -301,7 +307,7 @@ const ModalFilters:FC<FiltersProps> = ({categories}) => {
                           <div className="grid grid-cols-2 gap-5">
                             <div className="w-full">
                               <h6 className="mb-2 text-sm font-medium text-black dark:text-white">
-                                Rating
+                                Valoración:
                               </h6>
                               <Rating
                                 style={{ maxWidth: 200 }}
@@ -317,9 +323,9 @@ const ModalFilters:FC<FiltersProps> = ({categories}) => {
                           </div>
                           <div className="flex flex-col w-full">
                             <h6 className="mb-2 text-sm font-medium text-black dark:text-white">
-                              Sort By
+                              Ordenar Por:
                             </h6>
-                            <RadioGroup
+                            {/* <RadioGroup
                               size="md"
                               onValueChange={handleSortChange}
                               orientation="vertical"
@@ -334,7 +340,24 @@ const ModalFilters:FC<FiltersProps> = ({categories}) => {
                               </Radio>
                               <Radio value="masNuevo">Más Nuevo</Radio>
                               <Radio value="masViejo">Más Viejo</Radio>
-                            </RadioGroup>
+                            </RadioGroup> */}
+                            <Autocomplete
+                              label="Seleccionar orden"
+                              className=" w-full"
+                              color="primary"
+                              defaultSelectedKey={orders?.toString()}
+                              onValueChange={handleSortChange}
+                              size="sm"
+                            >
+                              {orders.map((order) => (
+                                <AutocompleteItem
+                                  key={order.key}
+                                  textValue={order.label}
+                                >
+                                  {order.label}
+                                </AutocompleteItem>
+                              ))}
+                            </Autocomplete>
                           </div>
                         </div>
                       </div>

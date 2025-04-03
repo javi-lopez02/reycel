@@ -1,4 +1,4 @@
-import { ModalBody, Modal, ModalContent } from "@heroui/react";
+import { ModalBody, Modal, ModalContent, ModalHeader } from "@heroui/react";
 import { FC } from "react";
 
 interface ModalMessageEmailProps {
@@ -12,6 +12,12 @@ const ModalMessageEmail: FC<ModalMessageEmailProps> = ({ isOpen, onClose }) => {
     <>
       <Modal isOpen={isOpen} onClose={onClose} placement="center" size="xl">
         <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">
+            <div className="flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+              <img className="w-8 h-8 mr-2" src="./logo.webp" alt="logo" />
+              Reycel
+            </div>
+          </ModalHeader>
           <ModalBody>
             <div className="flex flex-col gap-6 self-center bg-blue-300 p-4 m-4 md:p-8 md:m-8 rounded-se-full rounded-es-full">
               <h1 className="text-center font-bold text-2xl">
