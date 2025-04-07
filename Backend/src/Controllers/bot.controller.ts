@@ -12,8 +12,15 @@ dotenv.config();
 const TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(`${TOKEN}`);
 
-const confirmTransaction = async (userID: string, paymentID: number, socketID: string, transactionID: string) => {
+const confirmTransaction = async (
+  userID: string,
+  paymentID: number,
+  socketID: string,
+  transactionID: string
+) => {
   try {
+    console.log("Confirmando pago...");
+
     await prisma.payment.update({
       where: {
         id: paymentID,
@@ -40,8 +47,6 @@ const confirmTransaction = async (userID: string, paymentID: number, socketID: s
     });
 
     //enviar el email
-
-
   } catch (error) {
     console.error("Error al confirmar el pago: ", error);
     io.to(socketID).emit("transactionStatus", {
@@ -51,7 +56,12 @@ const confirmTransaction = async (userID: string, paymentID: number, socketID: s
   }
 };
 
-const deniedTransaction = async (userID: string, paymentID: number, socketID: string, transactionID: string) => {
+const deniedTransaction = async (
+  userID: string,
+  paymentID: number,
+  socketID: string,
+  transactionID: string
+) => {
   try {
     await prisma.payment.update({
       where: {
@@ -75,7 +85,6 @@ const deniedTransaction = async (userID: string, paymentID: number, socketID: st
       notification,
       status: "denied",
     });
-
   } catch (error) {
     console.error("Error al denegar el pago: ", error);
     io.to(socketID).emit("transactionStatus", {
@@ -83,7 +92,7 @@ const deniedTransaction = async (userID: string, paymentID: number, socketID: st
       status: "error",
     });
   }
-}
+};
 
 export const initBot = () => {
   bot.start((ctx) => {
@@ -94,7 +103,6 @@ export const initBot = () => {
   bot.on("callback_query", async (ctx) => {
     try {
       const callbackQuery = ctx.callbackQuery;
-
       if ("data" in callbackQuery) {
         const callbackData = callbackQuery.data;
 
@@ -109,7 +117,12 @@ export const initBot = () => {
           const socketID = userSockets.get(transactionID);
 
           if (socketID) {
-            confirmTransaction(userID, parseInt(paymentID), socketID, transactionID);
+            confirmTransaction(
+              userID,
+              parseInt(paymentID),
+              socketID,
+              transactionID
+            );
             console.log(
               `Transacción ${transactionID} confirmada y enviada al usuario con socket ${socketID}`
             );
@@ -129,7 +142,12 @@ export const initBot = () => {
           const socketID = userSockets.get(transactionID);
 
           if (socketID) {
-            deniedTransaction(userID, parseInt(paymentID), socketID, transactionID);
+            deniedTransaction(
+              userID,
+              parseInt(paymentID),
+              socketID,
+              transactionID
+            );
             console.log(
               `Transacción ${transactionID} denegada y enviada al usuario con socket ${socketID}`
             );
@@ -237,7 +255,12 @@ export const message = async (req: Request, res: Response) => {
         ),
       ])
     );
-    res.status(200).send({order, message: "Su pago a sido realizado con exito espere a que se confirme."});
+    res
+      .status(200)
+      .send({
+        order,
+        message: "Su pago a sido realizado con exito espere a que se confirme.",
+      });
   } catch (error) {
     console.error("Error al enviar mensaje a Telegram:", error);
     res
