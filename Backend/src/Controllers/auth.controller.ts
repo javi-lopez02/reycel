@@ -109,7 +109,7 @@ export const login = async (req: Request, res: Response) => {
       username: user.username,
       status: user.status,
       userId: user.id,
-      notifications: user.notification.reverse(),
+      notification: user.notification.reverse(),
       userRole: user.role,
       image: user.image,
     });
