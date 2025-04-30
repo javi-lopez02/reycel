@@ -2,7 +2,7 @@ const Card = () => {
   return (
     <div className="flex flex-col w-full mt-4 justify-center items-center">
       <h1 className="font-semibold text-lg">Desarrolladores</h1>
-      <div className="flex w-full justify-evenly">
+      <div className="flex md:flex-row flex-col w-full justify-evenly">
         <div className="flex flex-wrap items-center justify-center flex-col cursor-pointer">
           <img src="" className="w-14 h-14 rounded-full" />
           <h4 className="text-base text-gray-800 font-bold mt-3">

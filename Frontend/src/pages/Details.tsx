@@ -86,7 +86,7 @@ export default function Details() {
               <img
                 src={product.imagen}
                 alt={product.name}
-                className="md:w-11/12 w-full rounded-lg"
+                className="md:w-11/12 md:p-0 w-full p-2 rounded-lg"
               />
             </div>
             <div className="md:w-full md:pr-8 mt-4 md:mt-0 md:col-start-2">

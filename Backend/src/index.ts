@@ -20,7 +20,7 @@ import paymentMethod from "./Routes/paymentMethod.routes";
 import currencyExchange from "./Routes/currencyExchange.routes";
 import notification from "./Routes/notification.routes";
 
-import { initBot } from "./Controllers/bot.controller";
+// import { initBot } from "./Controllers/bot.controller";
 
 dotenv.config();
 const port = 4000;
@@ -32,7 +32,8 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "http://localhost:8000",
-      "https://c28sccv9-4173.use.devtunnels.ms",
+      "https://c28sccv9-4173.use.devtunnels.ms/",
+      "https://8vjxkn91-5173.usw2.devtunnels.ms"
     ],
     credentials: true,
   })
@@ -58,7 +59,7 @@ app.use("/api", notification);
 
 app.use("/public", express.static(path.join(__dirname, "/Upload")));
 
-initBot();
+// initBot();
 
 server.listen(port, () => {
   console.log(`Server on port ${port}`);
