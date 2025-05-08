@@ -20,7 +20,7 @@ import paymentMethod from "./Routes/paymentMethod.routes";
 import currencyExchange from "./Routes/currencyExchange.routes";
 import notification from "./Routes/notification.routes";
 
-import { initBot } from "./Controllers/bot.controller";
+// import { initBot } from "./Controllers/bot.controller";
 
 dotenv.config();
 const port = 4000;

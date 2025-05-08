@@ -27,8 +27,11 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const { isOpen: isOpenNotification, onOpen: onOpenNotification, onClose: onCloseNotification } = useDisclosure();
-
+  const {
+    isOpen: isOpenNotification,
+    onOpen: onOpenNotification,
+    onClose: onCloseNotification,
+  } = useDisclosure();
 
   const handleClick = (key: string | number | undefined) => {
     if (key === "Logout") {
@@ -39,7 +42,6 @@ const Navbar = () => {
       navigate(`/${key}`);
     }
   };
-  
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -120,7 +122,11 @@ const Navbar = () => {
           <div className="flex w-auto gap-1">
             {isAuth && (
               <div className="hidden lg:flex font-semibold text-lg">
-                <Notifications isOpen={isOpenNotification} onOpen={onOpenNotification} onClose={onCloseNotification} />
+                <Notifications
+                  isOpen={isOpenNotification}
+                  onOpen={onOpenNotification}
+                  onClose={onCloseNotification}
+                />
                 <Link
                   to="/shopCar"
                   className="sm:p-2 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer"
@@ -148,10 +154,17 @@ const Navbar = () => {
 
         {/* Boton Menu */}
         <div className="lg:hidden flex items-center">
-          <ul className="mr-2">
-            <li className="p-2 text-gray-900 rounded-lg outline-none hover:text-blue-500">
+          <ul className="flex items-center">
+            <li className="mr-2 text-gray-900 rounded-lg outline-none hover:text-blue-500">
+              <Notifications
+                isOpen={isOpenNotification}
+                onOpen={onOpenNotification}
+                onClose={onCloseNotification}
+              />
+            </li>
+            <li className="text-gray-900 rounded-lg outline-none hover:text-blue-500">
               <Link to="/shopCar">
-                <TiShoppingCart className="min-h-6 min-w-6" />
+                <TiShoppingCart className="min-h-7 min-w-6" />
               </Link>
             </li>
           </ul>
