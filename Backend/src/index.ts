@@ -32,7 +32,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "http://localhost:8000",
-      "https://c28sccv9-4173.use.devtunnels.ms",
+      "https://q55z9fw0-5173.usw2.devtunnels.ms",
     ],
     credentials: true,
   })
@@ -58,7 +58,7 @@ app.use("/api", notification);
 
 app.use("/public", express.static(path.join(__dirname, "/Upload")));
 
-initBot();
+//initBot();
 
 server.listen(port, () => {
   console.log(`Server on port ${port}`);

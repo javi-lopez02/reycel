@@ -37,7 +37,7 @@ export default function Notifications({ isOpen, onOpen, onClose }: Notifications
               isInvisible={notificationsNotRead.length === 0}
               size="sm"
             >
-              <IoIosNotifications size={25} />
+              <IoIosNotifications size={25} className={notificationsNotRead.length !== 0 ? "animate-pulse" : ""}/>
             </Badge>
           </button>
         </PopoverTrigger>

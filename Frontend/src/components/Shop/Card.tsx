@@ -2,13 +2,13 @@ import { FC } from "react";
 import { type Products } from "../../types";
 import { Link } from "react-router-dom";
 import { addItemOrderRequest } from "../../services/order";
-import { useDisclosure } from "@heroui/react";
+import { Button, useDisclosure } from "@heroui/react";
 import { toast } from "sonner";
 import AuthUser from "../../pages/auth/AuthUser";
 import { useUserStore } from "../../store/useUserStore";
 
 const Card: FC<Products> = (product) => {
-  const { isAuth } = useUserStore();
+  const { isAuth, user } = useUserStore();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const handleClikAddProduct = () => {
@@ -17,10 +17,17 @@ const Card: FC<Products> = (product) => {
       return;
     }
 
+    console.log(user);
+
     addItemOrderRequest(product.id, 1)
       .then((res) => {
         if (res.status === 200) {
           toast.success(res.data.message);
+        }
+        if (res.status === 202) {
+          toast.error(
+            `Aviso: ${res.data.message || "Hubo un problema con la solicitud."}`
+          );
         }
         if (res.status === 203) {
           toast.warning(
@@ -135,6 +142,11 @@ const Card: FC<Products> = (product) => {
               {`Queda(n) ${product.inventoryCount}, más en camino.`}
             </span>
           )}
+          {product.inventoryCount === 0 && (
+            <span className="me-2 py-3 text-sm font-medium text-red-400">
+              Más unidades en camino.
+            </span>
+          )}
         </div>
         <Link
           to={`/details?p=${product.id}`}
@@ -176,10 +188,11 @@ const Card: FC<Products> = (product) => {
             ${product.price}
           </p>
 
-          <button
-            type="button"
-            onClick={handleClikAddProduct}
-            className="inline-flex items-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4  focus:ring-blue-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+          <Button
+            isDisabled= {product.inventoryCount === 0}
+            onPress={handleClikAddProduct}
+            color="primary"
+            className="inline-flex items-center rounded-lg "
           >
             <>
               <svg
@@ -200,7 +213,7 @@ const Card: FC<Products> = (product) => {
               </svg>
               Añadir
             </>
-          </button>
+          </Button>
         </div>
       </div>
       <AuthUser

@@ -65,6 +65,11 @@ export default function Details() {
         if (res.status === 200) {
           toast.success(res.data.message);
         }
+        if (res.status === 202) {
+          toast.error(
+            `Aviso: ${res.data.message || "Hubo un problema con la solicitud."}`
+          );
+        }
         if (res.status === 203) {
           toast.warning(
             `Aviso: ${res.data.message || "Hubo un problema con la solicitud."}`

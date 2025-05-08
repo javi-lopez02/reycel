@@ -11,7 +11,7 @@
     "migrate": "npx prisma migrate dev",
     "init": "npx prisma generate && npx prisma migrate dev",
     "studio": "npx prisma studio",
-    "data": "ts-node-dev Data/addproduct.ts"
+    "data": "ts-node-dev src/Data/addproduct.ts"
   },
   "keywords": [],
   "author": "",

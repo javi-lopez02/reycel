@@ -9,20 +9,27 @@ export const addOrderItem = async (req: Request, res: Response) => {
     const productID = (req.query.p || "") as string;
     const quantity = parseInt(req.body.quantity) || 1;
 
-    const priceProduct = await prisma.product.findUnique({
+    const productFiend = await prisma.product.findUnique({
       where: {
         id: productID,
       },
       select: {
         price: true,
+        inventoryCount: true,
       },
     });
 
-    if (!priceProduct) {
+    if (!productFiend) {
       return res.status(404).json({ message: "Producto no encontrado" });
     }
 
-    const priceTotal = priceProduct?.price * quantity;
+    if (productFiend.inventoryCount === 0) {
+      return res
+        .status(202)
+        .json({ message: "Lo sentimos este producto no esta en stock" });
+    }
+
+    const priceTotal = productFiend?.price * quantity;
 
     let orderFind = await prisma.order.findFirst({
       where: {
@@ -238,17 +245,17 @@ export const getOrderItemsAdmin = async (req: Request, res: Response) => {
                 imagen: true,
                 name: true,
                 ratingAverage: true,
-                inventoryCount: true
+                inventoryCount: true,
               },
             },
           },
           orderBy: {
-            createdAt: "asc"
-          }
+            createdAt: "asc",
+          },
         },
       },
     });
-    
+
     const items = order?.orderItems;
 
     if (!items) {

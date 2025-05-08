@@ -8,12 +8,11 @@ import {
 import { useNotificationStore } from "../store/useNotificationStore";
 
 export const checkNotification = (id: number) => {
-  const { checkNotification } = useNotificationStore();
+  console.log(id)
   notificationReadRequest(id).catch((error) => {
     toast.error("Error al leer la notificación");
     console.log(error);
   });
-  checkNotification(id);
 };
 
 export const checkNotificationAll = () => {

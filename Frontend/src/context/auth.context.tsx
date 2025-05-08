@@ -25,9 +25,6 @@ interface AuthContextType {
   signIn: (values: UserAuth) => Promise<void>;
   signUp: (values: UserAuth) => Promise<void>;
   logout: () => Promise<void>;
-  /*   requestPasswordReset: (email: string) => Promise<void>;
-  verifyResetToken: (token: string) => Promise<void>;
-  resetPassword: (token: string, newPassword: string) => Promise<void>; */
 }
 export const AuthContext = createContext<AuthContextType>(
   {} as AuthContextType
@@ -57,6 +54,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     try {
       const res = await LoginRequest(values);
       setUser(res.data);
+      setNotifications(res.data.notifications);
       setIsAuth(true);
 
       const socket = io(API_URL);
@@ -100,6 +98,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       try {
         const res = await confirmEmailRequest(values);
         setUser(res.data);
+        setNotifications(res.data.notifications);
         setIsAuth(true);
 
         const socket = io(API_URL);

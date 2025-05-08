@@ -1,4 +1,4 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcryptjs from "bcryptjs";
 import { createToken } from "../Libs/jwt";
@@ -27,7 +27,6 @@ export const register = async (req: Request, res: Response) => {
     });
 
     if (userfind) {
-      console.log("email en uso");
       return res.status(400).json(["Email o Username en uso"]);
     }
 
@@ -109,7 +108,7 @@ export const login = async (req: Request, res: Response) => {
       username: user.username,
       status: user.status,
       userId: user.id,
-      notification: user.notification.reverse(),
+      notifications: user.notification.reverse(),
       userRole: user.role,
       image: user.image,
     });
@@ -180,12 +179,20 @@ export const confirmEmail = async (req: Request, res: Response) => {
       return res.status(404).json(["Usuario no encontrado"]);
     }
 
-    await prisma.user.update({
+    const userUpdated = await prisma.user.update({
       where: {
         id: decode.id,
       },
       data: {
         status: true,
+      },
+      select: {
+        id: true,
+        username: true,
+        status: true,
+        role: true,
+        image: true,
+        notification: true,
       },
     });
 
@@ -195,11 +202,12 @@ export const confirmEmail = async (req: Request, res: Response) => {
       sameSite: "none",
     });
     res.json({
-      username: user.username,
-      status: user.status,
-      userId: user.id,
-      userRole: user.role,
-      image: user.image,
+      username: userUpdated.username,
+      notifications: userUpdated.notification.reverse(),
+      status: userUpdated.status,
+      userId: userUpdated.id,
+      userRole: userUpdated.role,
+      image: userUpdated.image,
     });
   } catch (error) {
     console.log(error);
@@ -240,7 +248,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     console.log(error);
     res.status(500).json(["Error del servidor"]);
   }
-}
+};
 
 export const confirmResetPassword = async (req: Request, res: Response) => {
   try {
@@ -250,8 +258,6 @@ export const confirmResetPassword = async (req: Request, res: Response) => {
     if (!token) {
       return res.status(401).json(["Token no validado"]);
     }
-
-    console.log(token)
 
     const decode = jwt.verify(token, TOKEN_SECRET) as TokenPayload;
 
@@ -267,12 +273,20 @@ export const confirmResetPassword = async (req: Request, res: Response) => {
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
-    await prisma.user.update({
+    const userUpdated = await prisma.user.update({
       where: {
         id: decode.id,
       },
       data: {
         password: hashedPassword,
+      },
+      select: {
+        id: true,
+        username: true,
+        status: true,
+        role: true,
+        image: true,
+        notification: true,
       },
     });
 
@@ -282,11 +296,12 @@ export const confirmResetPassword = async (req: Request, res: Response) => {
       sameSite: "none",
     });
     res.json({
-      username: user.username,
-      status: user.status,
-      userId: user.id,
-      userRole: user.role,
-      image: user.image,
+      username: userUpdated.username,
+      status: userUpdated.status,
+      userId: userUpdated.id,
+      userRole: userUpdated.role,
+      image: userUpdated.image,
+      notifications: userUpdated.notification.reverse(),
     });
   } catch (error) {
     console.log(error);
@@ -331,5 +346,4 @@ export const updatePassword = async (req: Request, res: Response) => {
       return res.status(500).json(["Internal server error"]);
     }
   }
-}
-
+};

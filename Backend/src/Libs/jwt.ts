@@ -1,8 +1,5 @@
-//json web token
 import jwt from 'jsonwebtoken'
 import {TOKEN_SECRET} from '../conf'
-
-
 
 export function createToken(payload: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {

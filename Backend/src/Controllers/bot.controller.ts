@@ -4,6 +4,8 @@ import { Markup, Telegraf } from "telegraf";
 import { PrismaClient } from "@prisma/client";
 import { BOT_ID } from "../conf";
 import { io, userSockets } from "../Libs/socketServer";
+import { sendOrderConfirmationEmail } from "../Libs/mail.conf";
+import { getCurrentDate } from "../Libs/dateLib";
 
 const prisma = new PrismaClient();
 
@@ -21,12 +23,33 @@ const confirmTransaction = async (
   try {
     console.log("Confirmando pago...");
 
-    await prisma.payment.update({
+    const payment = await prisma.payment.update({
       where: {
         id: paymentID,
       },
       data: {
         paymentStatus: "COMPLETED",
+      },
+      select: {
+        order: {
+          select: {
+            totalAmount: true,
+            id: true,
+            orderItems: {
+              select: {
+                productId: true,
+                quantity: true,
+                product: {
+                  select: {
+                    name: true,
+                    price: true,
+                    imagen: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 
@@ -36,9 +59,49 @@ const confirmTransaction = async (
         message: "Tu pago ha sido confirmado.",
         type: "PAYMENT_SUCCESS",
       },
+      select: {
+        id: true,
+        message: true,
+        type: true,
+        createdAt: true,
+        user: {
+          select: {
+            email: true,
+            username: true,
+            id: true,
+          },
+        },
+      },
     });
 
-    //restar producto del inventario
+    //actualizar el inventario
+    const orderItems = payment.order.orderItems;
+    for (const item of orderItems) {
+      const product = await prisma.product.findUnique({
+        where: {
+          id: item.productId,
+        },
+        select: {
+          inventoryCount: true,
+        },
+      });
+      if (product) {
+        const newStock = product.inventoryCount - item.quantity;
+        await prisma.product.update({
+          where: {
+            id: item.productId,
+          },
+          data: {
+            inventoryCount: newStock,
+          },
+        });
+        console.log(
+          `Producto ${item.productId} actualizado. Stock restante: ${newStock}`
+        );
+      } else {
+        console.log(`Producto ${item.productId} no encontrado.`);
+      }
+    }
 
     io.to(socketID).emit("transactionStatus", {
       transactionID,
@@ -47,6 +110,15 @@ const confirmTransaction = async (
     });
 
     //enviar el email
+    sendOrderConfirmationEmail({
+      email: notification.user.email,
+      name: notification.user.username,
+      orderNumber: payment.order.id,
+      orderDate: getCurrentDate(),
+      estimatedDelivery: "Tiempo estimado 3 dias",
+      total: payment.order.totalAmount,
+      products: orderItems.slice(0, 5),
+    });
   } catch (error) {
     console.error("Error al confirmar el pago: ", error);
     io.to(socketID).emit("transactionStatus", {
@@ -85,6 +157,8 @@ const deniedTransaction = async (
       notification,
       status: "denied",
     });
+
+    //enviar el email
   } catch (error) {
     console.error("Error al denegar el pago: ", error);
     io.to(socketID).emit("transactionStatus", {
@@ -255,12 +329,10 @@ export const message = async (req: Request, res: Response) => {
         ),
       ])
     );
-    res
-      .status(200)
-      .send({
-        order,
-        message: "Su pago a sido realizado con exito espere a que se confirme.",
-      });
+    res.status(200).send({
+      order,
+      message: "Su pago a sido realizado con exito espere a que se confirme.",
+    });
   } catch (error) {
     console.error("Error al enviar mensaje a Telegram:", error);
     res
