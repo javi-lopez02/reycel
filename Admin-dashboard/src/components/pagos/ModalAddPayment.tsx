@@ -14,14 +14,22 @@ import {
 } from "@nextui-org/react";
 import { FC, useState } from "react";
 import { toast } from "sonner";
-import { PaymentOptions } from "../../type";
-import { createPaymentMethodRequest, updatePaymentMethodRequest } from "../../services/paymentMethod";
+import { AddPaymentMethodProps, PaymentOptions } from "../../type";
 
 interface Props {
   id?: string;
   image?: string;
   numberCard?: string;
   selected?: PaymentOptions;
+  updatePaymentMethod: (
+    id: string,
+    { image, numberCard, selected }: AddPaymentMethodProps
+  ) => Promise<void>;
+  addPaymentMethod: ({
+    image,
+    numberCard,
+    selected,
+  }: AddPaymentMethodProps) => Promise<void>;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -35,10 +43,13 @@ export const paymentOptions = [
 
 const ModalAddPayment: FC<Props> = ({
   id,
+  image,
   numberCard,
   selected,
   isOpen,
   onClose,
+  updatePaymentMethod,
+  addPaymentMethod,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -70,10 +81,10 @@ const ModalAddPayment: FC<Props> = ({
     }
 
     if (!id) {
-      createPaymentMethodRequest({
-        cardImage: imageData,
-        cardNumber: numberCardData,
-        paymentOptions: selectedData,
+      addPaymentMethod({
+        image: imageData,
+        numberCard: numberCardData,
+        selected: selectedData,
       })
         .then(() => {
           toast.success("Guardado con exito ");
@@ -88,10 +99,10 @@ const ModalAddPayment: FC<Props> = ({
     }
 
     if (id) {
-      updatePaymentMethodRequest(id, {
-        cardImage: imageData,
-        cardNumber: numberCardData,
-        paymentOptions: selectedData,
+      updatePaymentMethod(id, {
+        image: imageData,
+        numberCard: numberCardData,
+        selected: selectedData,
       })
         .then(() => {
           toast.success("Guardado con exito ");
