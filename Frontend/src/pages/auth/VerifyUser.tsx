@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 import { Spinner } from "@heroui/spinner";
 import { toast } from "sonner";
+import { useUserStore } from "../../store/useUserStore";
 
 function VerifyUser() {
   const navigate = useNavigate();
@@ -13,7 +14,9 @@ function VerifyUser() {
     return searchParams.get("q") ?? "error";
   });
 
-  const { confirmEmail, loading, isAuth, errors } = useAuth();
+  const { confirmEmail } = useAuth();
+    const { errors, isAuth, loading } = useUserStore();
+  
 
   useEffect(() => {
     if (errors.length > 0) {
@@ -29,11 +32,9 @@ function VerifyUser() {
 
   const handleConfirmEmail = () => {
     confirmEmail(queryToken).then(() => {
-      navigate("/verifyUser");
+      navigate("/");
     });
   };
-
-  console.log(queryToken);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">

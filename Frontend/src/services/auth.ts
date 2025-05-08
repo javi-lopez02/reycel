@@ -26,11 +26,6 @@ export const requestPasswordReset = async (email: string) => {
   return response.data;
 };
 
-export const verifyResetToken = async (token: string) => {
-  const response = await axios.get(`/auth/reset-password/${token}`);
-  return response.data;
-};
-
 export const resetPassword = async (token: string, newPassword: string) => {
   const response = await axios.post(`/auth/reset-password/${token}`, {
     password: newPassword,

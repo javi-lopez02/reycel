@@ -70,7 +70,7 @@ export const searchProduct = async (req: Request, res: Response) => {
 
     const category = (req.query.category as string) || undefined;
 
-    const categories = category?.split(",")
+    const categories = category?.split(",");
 
     const color = (req.query.color as string) || undefined;
 
@@ -127,7 +127,7 @@ export const searchProduct = async (req: Request, res: Response) => {
           {
             category: {
               id: {
-                in: categories
+                in: categories,
               },
             },
           },
@@ -187,7 +187,7 @@ export const searchProduct = async (req: Request, res: Response) => {
           {
             category: {
               id: {
-                in: categories
+                in: categories,
               },
             },
           },
@@ -275,40 +275,98 @@ export const createProduct = async (req: Request, res: Response) => {
       imagen,
       inventoryCount,
       rating,
+      ram,
+      storage,
+      battery,
+      mpxCameraFront,
+      mpxCameraBack,
+      sedeId,
     } = req.body;
 
     const userId = req.userId;
 
-    const product = await prisma.product.create({
-      data: {
-        name,
-        description,
-        categoryId,
-        price,
-        imagen,
-        inventoryCount,
-      },
-      include: {
-        category: {
-          select: {
-            id: true,
-            name: true,
-          },
+    if (ram && storage && battery && mpxCameraBack && mpxCameraFront) {
+      const product = await prisma.product.create({
+        data: {
+          name,
+          description,
+          categoryId,
+          price,
+          imagen,
+          inventoryCount,
+          ram,
+          storage,
+          battery,
+          mpxCameraBack,
+          mpxCameraFront,
+          sedeId,
         },
-      },
-    });
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          Sede:{
+            select: {
+              id: true,
+              direction: true
+            }
+          }
+        },
+      });
 
-    await prisma.rating.create({
-      data: {
-        productID: product.id,
-        userID: userId,
-        value: rating,
-      },
-    });
+      await prisma.rating.create({
+        data: {
+          productID: product.id,
+          userID: userId,
+          value: rating,
+        },
+      });
 
-    res.status(200).json({
-      data: product
-    });
+      res.status(200).json({
+        data: product,
+      });
+    } else {
+      const product = await prisma.product.create({
+        data: {
+          name,
+          description,
+          categoryId,
+          price,
+          imagen,
+          inventoryCount,
+          sedeId,
+        },
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          Sede:{
+            select: {
+              id: true,
+              direction: true
+            }
+          }
+        },
+      });
+
+      await prisma.rating.create({
+        data: {
+          productID: product.id,
+          userID: userId,
+          value: rating,
+        },
+      });
+
+      res.status(200).json({
+        data: product,
+      });
+    }
   } catch (error) {
     console.log("Error:", error);
     res.status(500).send("Internal Server Error");
@@ -366,7 +424,16 @@ export const updateProduct = async (req: Request, res: Response) => {
 
     const userId = req.userId;
 
-    console.log({name, description, categoryId, price, imagen, inventoryCount, rating, id})
+    console.log({
+      name,
+      description,
+      categoryId,
+      price,
+      imagen,
+      inventoryCount,
+      rating,
+      id,
+    });
 
     const product = await prisma.product.update({
       where: { id },
@@ -420,7 +487,7 @@ export const updateProduct = async (req: Request, res: Response) => {
       data: product,
     });
   } catch (error) {
-    console.log('Error:', error);
-    res.status(500).send('Internal Server Error');
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
   }
 };

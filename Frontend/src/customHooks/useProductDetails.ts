@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { createCommentRequest, productIDRequest } from '../services/product'
 import { type Products, type Comment, type Rating } from "../types";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { useAuth } from "../context/auth.context";
 import { ratingRequest } from '../services/rating'
 import { addItemOrderRequest } from "../services/order";
+import { useUserStore } from "../store/useUserStore";
 
 interface Product extends Products {
   Rating: Rating[];
@@ -18,7 +18,7 @@ export const useProductDetails = (query: string) => {
   const [product, setProduct] = useState<Product | null>(null)
   const [comments, setComments] = useState<Comment[] | null>(null)
 
-  const { user } = useAuth()
+  const { user } = useUserStore()
 
   useEffect(() => {
     setError(null)

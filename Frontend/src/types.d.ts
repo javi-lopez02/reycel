@@ -115,8 +115,8 @@ export interface Category {
 export interface FiltersType {
   minPrice?: number;
   maxPrice?: number;
-  categoriy?: string[];
-  rating?: string;
+  category?: string[] | string;
+  rating?: number;
   color?: string;
 }
 

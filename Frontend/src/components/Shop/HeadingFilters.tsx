@@ -1,20 +1,17 @@
 import { Button } from "@heroui/react";
-import { useProduct } from "../../context/product.context";
 import ModalFilters from "./ModalFilters";
-import ModalSorting from "./ModalSorting";
+import { useFilterStore } from "../../store/useFilterStore";
+import { Category } from "../../types";
+import { FC } from "react";
 
-function HeadingFilters() {
-  const {
-    sortParmas,
-    setFilters,
-    setCurrentPage,
-    setIsNextPage,
-    setSortParmas,
-  } = useProduct();
+interface FiltersProps {
+  categories: Category[];
+}
+
+const HeadingFilters:FC<FiltersProps> = ({categories}) => {
+  const { sortParmas, setFilters, setSortParmas } = useFilterStore();
 
   const handleReset = () => {
-    setCurrentPage(1);
-    setIsNextPage(true);
     setSortParmas([]);
     setFilters({});
   };
@@ -26,10 +23,7 @@ function HeadingFilters() {
           Productos
         </h2>
         <div className="flex items-center space-x-4 lg:hidden">
-          <ModalFilters />
-
-          <ModalSorting />
-          {/* Modal sorting */}
+          <ModalFilters categories={categories}/>
         </div>
       </div>
       {sortParmas.length !== 0 && (
@@ -39,6 +33,6 @@ function HeadingFilters() {
       )}
     </>
   );
-}
+};
 
 export default HeadingFilters;

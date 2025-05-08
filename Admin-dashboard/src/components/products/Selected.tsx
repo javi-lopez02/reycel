@@ -1,10 +1,21 @@
 import { Select, SelectItem } from "@nextui-org/react";
 import useCategory from "../../customHooks/useCategory";
 import { toast } from "sonner";
+import { FC } from "react";
 
-export default function Selected() {
+interface Props {
+  setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const Selected: FC<Props> = ({ setSelectedCategory }) => {
   const { category, error } = useCategory();
-
+  const handleCategoryChange = (
+    value: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    category?.map(
+      (item) => item.id === value.target.value && setSelectedCategory(item.name)
+    );
+  };
   return (
     <>
       <Select
@@ -14,6 +25,7 @@ export default function Selected() {
         labelPlacement="outside"
         label="Categoría:"
         placeholder="Selecciona una categoría"
+        onChange={handleCategoryChange}
       >
         {category &&
           category.map((item) => (
@@ -23,4 +35,6 @@ export default function Selected() {
       {error && error.map((err) => toast.error(err))}
     </>
   );
-}
+};
+
+export default Selected;

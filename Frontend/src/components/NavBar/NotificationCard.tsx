@@ -2,11 +2,8 @@ import { FC } from "react";
 import FormatDate from "./FormatDate";
 import { Badge } from "@heroui/react";
 import { IoMdCheckmark } from "react-icons/io";
-import { useAuth } from "../../context/auth.context";
-import {
-  MdClose,
-  MdOutlineNotificationsActive,
-} from "react-icons/md";
+import { MdClose, MdOutlineNotificationsActive } from "react-icons/md";
+import { useNotificationStore } from "../../store/useNotificationStore";
 
 interface NotificationsPros {
   id: number;
@@ -23,13 +20,20 @@ const NotificationCard: FC<NotificationsPros> = ({
   isRead,
   createdAt,
 }) => {
-  const { checkNotification } = useAuth();
+  const { checkNotification } = useNotificationStore();
+
+  const handleCheckNotification = () => {
+    if (!isRead) {
+      checkNotification(id);
+    }
+  };
+
   return (
     <div
       className={`flex py-3 px-4 rounded-xl transition-colors cursor-pointer ${
         !isRead ? "bg-blue-50" : ""
       } hover:bg-gray-100 dark:hover:bg-gray-600`}
-      onClick={() => checkNotification(id)}
+      onClick={handleCheckNotification}
     >
       <div className="flex-shrink-0">
         <Badge
@@ -43,7 +47,7 @@ const NotificationCard: FC<NotificationsPros> = ({
           }
           content={
             type === "PAYMENT_SUCCESS" ? (
-              <IoMdCheckmark className="text-white"/>
+              <IoMdCheckmark className="text-white" />
             ) : type === "PAYMENT_FAILED" ? (
               <MdClose />
             ) : (

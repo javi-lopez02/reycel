@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Spinner } from "@heroui/spinner";
-import { useAuth } from "../context/auth.context";
 import { toast } from "sonner";
-import { useProductDetails } from "../customHooks/useProductDetails";
 import Comment from "../components/Details/Comment";
 import FormComment from "../components/Details/FormComment";
 import Star from "../components/Details/Star";
 import { Input, useDisclosure } from "@heroui/react";
 import AuthUser from "./auth/AuthUser";
+import { useProductDetails } from "../customHooks/useProductDetails";
+import { useUserStore } from "../store/useUserStore";
 // import ModalLogin from "./auth/ModalLogin";
 
 export default function Details() {
@@ -31,7 +31,7 @@ export default function Details() {
     addItemCarShop,
   } = useProductDetails(query);
 
-  const { isAuth } = useAuth();
+  const { isAuth } = useUserStore();
 
   const handleRating = (value: number) => {
     if (!isAuth) {
@@ -64,6 +64,11 @@ export default function Details() {
       .then((res) => {
         if (res.status === 200) {
           toast.success(res.data.message);
+        }
+        if (res.status === 202) {
+          toast.error(
+            `Aviso: ${res.data.message || "Hubo un problema con la solicitud."}`
+          );
         }
         if (res.status === 203) {
           toast.warning(

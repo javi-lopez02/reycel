@@ -1,9 +1,9 @@
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../context/auth.context";
 import Autorizer from "./Autorizer";
+import { useUserStore } from "../store/useUserStore";
 //import { Spinner } from '@heroui/react'
 export const ProtectedRoutes = () => {
-  const { loading, isAuth } = useAuth();
+  const { loading, isAuth } = useUserStore();
 
 /*   if (loading) {
     return (

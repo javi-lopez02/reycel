@@ -6,6 +6,8 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
+  Select,
+  SelectItem,
   Spinner,
   Textarea,
 } from "@nextui-org/react";
@@ -18,6 +20,7 @@ import {
 } from "../../services/product";
 import { toast } from "sonner";
 import { Category, Products } from "../../type";
+import { getSedesRequest } from "../../services/sedes";
 
 interface Props {
   setProducts: React.Dispatch<React.SetStateAction<Products[] | null>>;
@@ -48,6 +51,15 @@ const ModalAddProduct: FC<Props> = ({
 }) => {
   const [ratingValue, setRatingValue] = useState(rating || 0);
   const [imageUrl, setImageUrl] = useState<string>("./producto.webp");
+  const [sedes, setSedes] = useState<{ id: string; direction: string }[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [sedeId, setSedeId] = useState<string>("");
+
+  useEffect(() => {
+    getSedesRequest().then((res) => {
+      setSedes(res.data.data);
+    });
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -64,6 +76,10 @@ const ModalAddProduct: FC<Props> = ({
 
   const handleImageUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setImageUrl(event.target.value);
+  };
+
+  const handleSedeId = (value: React.ChangeEvent<HTMLSelectElement>) => {
+    setSedeId(value.target.value);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -110,66 +126,180 @@ const ModalAddProduct: FC<Props> = ({
       setLoading(false);
       return;
     }
-
-    if (name && id && category) {
-      let categoryId = selectedCategoryId;
-      if (selectedCategoryId === "") {
-        categoryId = category.id;
-      }
-      updateProductRequest(id, {
-        categoryId: categoryId,
-        name: inputName,
-        price,
-        description,
-        inventoryCount,
-        rating: inputRating,
-        imagen,
-      })
-        .then((res) => {
-          toast.success("Producto actualizado con exito.");
-          setProducts((prev) => {
-            const products = prev?.filter((product) => {
-              return product.id !== id;
-            });
-            res.data.data.rating = ratingValue;
-            return prev ? [res.data.data, ...(products || [])] : null;
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-          toast.error("Error al crear el producto.");
-        })
-        .finally(() => {
-          setLoading(false);
-          onClose()
-        });
+    if (!sedeId) {
+      toast.error("La sede del producto es requerida.");
+      setLoading(false);
+      return;
     }
 
-    if (!name) {
-      createProductRequest({
-        categoryId: selectedCategoryId,
-        name: inputName,
-        price,
-        description,
-        inventoryCount,
-        rating: inputRating,
-        imagen,
-      })
-        .then((res) => {
-          toast.success("Producto creado con exito.");
-          setProducts((prev) => {
-            res.data.data.rating = ratingValue;
-            return prev ? [res.data.data, ...prev] : null;
+    if (selectedCategory === "Smartphones") {
+      const storage = parseInt(data["storage"] as string);
+      const ram = parseInt(data["ram"] as string);
+      const mpxback = parseInt(data["back"] as string);
+      const mpxfront = parseInt(data["front"] as string);
+      const battery = parseInt(data["bateria"] as string);
+
+      if (!storage) {
+        toast.error("El storage del producto es requerido.");
+        setLoading(false);
+        return;
+      }
+      if (!ram) {
+        toast.error("La ram del producto es requerida.");
+        setLoading(false);
+        return;
+      }
+      if (!mpxback) {
+        toast.error("Los mpx traseros del producto son requeridos.");
+        setLoading(false);
+        return;
+      }
+      if (!mpxfront) {
+        toast.error("Los mpx frontales del producto son requeridos.");
+        setLoading(false);
+        return;
+      }
+      if (!battery) {
+        toast.error("La bateria del producto es requerida.");
+        setLoading(false);
+        return;
+      }
+
+      if (name && id && category) {
+        let categoryId = selectedCategoryId;
+        if (selectedCategoryId === "") {
+          categoryId = category.id;
+        }
+        updateProductRequest(id, {
+          categoryId: categoryId,
+          name: inputName,
+          price,
+          description,
+          inventoryCount,
+          rating: inputRating,
+          imagen,
+          ram,
+          storage,
+          mpxCameraBack: mpxback,
+          mpxCameraFront: mpxfront,
+          battery,
+          sedeId,
+        })
+          .then((res) => {
+            toast.success("Producto actualizado con exito.");
+            setProducts((prev) => {
+              const products = prev?.filter((product) => {
+                return product.id !== id;
+              });
+              res.data.data.rating = ratingValue;
+              return prev ? [res.data.data, ...(products || [])] : null;
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            toast.error("Error al crear el producto.");
+          })
+          .finally(() => {
+            setLoading(false);
+            onClose();
           });
+      }
+
+      if (!name) {
+        createProductRequest({
+          categoryId: selectedCategoryId,
+          name: inputName,
+          price,
+          description,
+          inventoryCount,
+          rating: inputRating,
+          imagen,
+          ram,
+          storage,
+          mpxCameraBack: mpxback,
+          mpxCameraFront: mpxfront,
+          battery,
+          sedeId,
         })
-        .catch((err) => {
-          console.log(err);
-          toast.error("Error al crear el producto.");
+          .then((res) => {
+            toast.success("Producto creado con exito.");
+            setProducts((prev) => {
+              res.data.data.rating = ratingValue;
+              return prev ? [res.data.data, ...prev] : null;
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            toast.error("Error al crear el producto.");
+          })
+          .finally(() => {
+            setLoading(false);
+            onClose();
+          });
+      }
+    } else {
+      if (name && id && category) {
+        let categoryId = selectedCategoryId;
+        if (selectedCategoryId === "") {
+          categoryId = category.id;
+        }
+        updateProductRequest(id, {
+          categoryId: categoryId,
+          name: inputName,
+          price,
+          description,
+          inventoryCount,
+          rating: inputRating,
+          imagen,
+          sedeId,
         })
-        .finally(() => {
-          setLoading(false);
-          onClose()
-        });
+          .then((res) => {
+            toast.success("Producto actualizado con exito.");
+            setProducts((prev) => {
+              const products = prev?.filter((product) => {
+                return product.id !== id;
+              });
+              res.data.data.rating = ratingValue;
+              return prev ? [res.data.data, ...(products || [])] : null;
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            toast.error("Error al crear el producto.");
+          })
+          .finally(() => {
+            setLoading(false);
+            onClose();
+          });
+      }
+
+      if (!name) {
+        createProductRequest({
+          categoryId: selectedCategoryId,
+          name: inputName,
+          price,
+          description,
+          inventoryCount,
+          rating: inputRating,
+          imagen,
+          sedeId,
+        })
+          .then((res) => {
+            toast.success("Producto creado con exito.");
+            setProducts((prev) => {
+              res.data.data.rating = ratingValue;
+              return prev ? [res.data.data, ...prev] : null;
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            toast.error("Error al crear el producto.");
+          })
+          .finally(() => {
+            setLoading(false);
+            onClose();
+          });
+      }
     }
   };
 
@@ -182,110 +312,176 @@ const ModalAddProduct: FC<Props> = ({
               <h1 className="text-2xl">Agregar Porducto</h1>
             </ModalHeader>
             <ModalBody>
-              <Form
-                onSubmit={handleSubmit}
-                className="grid grid-cols-[auto_auto] gap-5 max-lg:grid-cols-1"
-              >
-                <div className="flex flex-col items-start justify-start w-96 h-auto">
-                  <img
-                    className="h-[400px] w-full bg-neutral-300"
-                    src={imageUrl}
-                    alt="imagen de telefono"
-                  />
-                  <div className="pt-5">
-                    {" "}
-                    <h1>Introduce la url de la Imagen</h1>{" "}
-                    <Input
-                      size="sm"
-                      color="primary"
-                      name="imageUrl"
-                      defaultValue={imageUrl}
-                      className="pt-3 w-96"
-                      placeholder="url/imagen.com"
-                      startContent={
-                        <div className="pointer-events-none flex items-center">
-                          <span className="text-default-400 text-small">
-                            https://
-                          </span>
-                        </div>
-                      }
-                      type="url"
-                      onChange={handleImageUrlChange}
+              <Form onSubmit={handleSubmit}>
+                <div className="flex gap-8 w-full">
+                  <div className="flex flex-col items-center w-full gap-4">
+                    <img
+                      className="size-60 bg-neutral-300"
+                      src={imageUrl}
+                      alt="imagen de telefono"
+                    />
+                    <div className="pt-5 w-full">
+                      <h1>Introduce la url de la Imagen</h1>
+                      <Input
+                        size="md"
+                        color="primary"
+                        name="imageUrl"
+                        defaultValue={imageUrl}
+                        className="pt-2"
+                        placeholder="url/imagen.com"
+                        startContent={
+                          <div className="pointer-events-none flex items-center">
+                            <span className="text-default-400 text-small">
+                              https://
+                            </span>
+                          </div>
+                        }
+                        type="url"
+                        onChange={handleImageUrlChange}
+                      />
+                    </div>
+                    <Textarea
+                      label="Descripción:"
+                      name="description"
+                      isRequired
+                      defaultValue={description}
+                      labelPlacement="outside"
+                      placeholder="Introduce la descripción del Producto."
                     />
                   </div>
-                </div>
-                <div className="flex flex-col items-center justify-center w-[570px] space-y-12">
-                  <Input
-                    className="font-medium font-body text-lg"
-                    name="name"
-                    label="Nombre:"
-                    defaultValue={name}
-                    labelPlacement="outside"
-                    isRequired
-                    placeholder="Introduce el nombre del Producto."
-                    type="text"
-                  />
-                  <Textarea
-                    label="Descripción:"
-                    name="description"
-                    isRequired
-                    defaultValue={description}
-                    labelPlacement="outside"
-                    placeholder="Introduce la descripción del Producto."
-                  />
-                  <div className="flex justify-between items-center w-full">
+                  <div className="flex flex-col gap-4 w-full">
+                    <div className="flex gap-8 justify-between">
+                      <Input
+                        name="name"
+                        label="Nombre:"
+                        defaultValue={name}
+                        labelPlacement="outside"
+                        isRequired
+                        placeholder="Introduce el nombre del Producto."
+                        type="text"
+                      />
+                      {selectedCategory === "Smartphones" && (
+                        <Input
+                          name="bateria"
+                          label="Bateria:"
+                          labelPlacement="outside"
+                          isRequired
+                          placeholder="Introduce la bateria del Producto."
+                          type="text"
+                        />
+                      )}
+                    </div>
+                    <div className="flex gap-8 justify-between">
+                      <Selected setSelectedCategory={setSelectedCategory} />
+                      <Select
+                        isRequired
+                        className="w-full"
+                        label="Sede"
+                        name="sede"
+                        placeholder="Seleccione la Sede"
+                        labelPlacement="outside"
+                        onChange={handleSedeId}
+                      >
+                        {sedes.map((sede) => (
+                          <SelectItem key={sede.id}>
+                            {sede.direction}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                    </div>
+                    {selectedCategory === "Smartphones" && (
+                      <div className="flex flex-col gap-4">
+                        <div className="flex gap-8">
+                          <Input
+                            name="ram"
+                            label="RAM:"
+                            defaultValue={name}
+                            labelPlacement="outside"
+                            isRequired
+                            placeholder="Introduce la RAM del Producto."
+                            type="text"
+                          />
+                          <Input
+                            name="storage"
+                            label="Storage:"
+                            defaultValue={name}
+                            labelPlacement="outside"
+                            isRequired
+                            placeholder="Introduce el almacenamiento del Producto."
+                            type="text"
+                          />
+                        </div>
+                        <div className="flex gap-8">
+                          <Input
+                            name="front"
+                            label="MPX Frontal:"
+                            defaultValue={name}
+                            labelPlacement="outside"
+                            isRequired
+                            placeholder="Introduce los mpx frontal del Producto."
+                            type="text"
+                          />
+                          <Input
+                            name="back"
+                            label="MPX Trasera:"
+                            defaultValue={name}
+                            labelPlacement="outside"
+                            isRequired
+                            placeholder="Introduce los mpx traseros del Producto."
+                            type="text"
+                          />
+                        </div>
+                      </div>
+                    )}
                     <Rating
                       ratingValue={ratingValue}
                       setRatingValue={setRatingValue}
                     />
-                    <Selected />
+                    <div className="flex justify-between w-full gap-8">
+                      <Input
+                        label="Precio"
+                        name="price"
+                        isRequired
+                        defaultValue={price?.toString()}
+                        labelPlacement="outside"
+                        placeholder="0.00"
+                        startContent={
+                          <div className="pointer-events-none flex items-center">
+                            <span className="text-default-400 text-small">
+                              $
+                            </span>
+                          </div>
+                        }
+                        type="number"
+                      />
+                      <Input
+                        label="Cantidad"
+                        required
+                        isRequired
+                        name="inventoryCount"
+                        defaultValue={inventoryCount?.toString()}
+                        labelPlacement="outside"
+                        placeholder="Introduce la cantidad"
+                        type="number"
+                      />
+                    </div>
                   </div>
-                  <div className="flex justify-between w-full gap-8">
-                    <Input
-                      label="Precio"
-                      name="price"
-                      isRequired
-                      defaultValue={price?.toString()}
-                      labelPlacement="outside"
-                      placeholder="0.00"
-                      startContent={
-                        <div className="pointer-events-none flex items-center">
-                          <span className="text-default-400 text-small">$</span>
-                        </div>
-                      }
-                      type="number"
-                    />
-                    <Input
-                      label="Cantidad"
-                      required
-                      isRequired
-                      name="inventoryCount"
-                      defaultValue={inventoryCount?.toString()}
-                      labelPlacement="outside"
-                      placeholder="Introduce la cantidad"
-                      type="number"
-                    />
-                  </div>
-                  <div className="flex justify-end p-5 w-full gap-8">
-                    <Button
-                      color="danger"
-                      variant="light"
-                      onPress={() => {
-                        onClose();
-                        setRatingValue(0);
-                      }}
-                    >
-                      Cerrar
-                    </Button>
-                    <Button
-                      color="primary"
-                      type="submit"
-                      disabled={loading}
-                    >
-                      {loading && <Spinner color="default" />}
-                      {!loading && "Guardar"}
-                    </Button>
-                  </div>
+                </div>
+                <div className="flex justify-end p-5 w-full gap-8">
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={() => {
+                      onClose();
+                      setRatingValue(0);
+                    }}
+                  >
+                    Cerrar
+                  </Button>
+                  <Button color="primary" type="submit" disabled={loading}>
+                    {loading && <Spinner color="default" />}
+                    {!loading && "Guardar"}
+                  </Button>
                 </div>
               </Form>
             </ModalBody>

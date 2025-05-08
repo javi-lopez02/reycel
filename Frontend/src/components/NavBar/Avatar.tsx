@@ -8,11 +8,12 @@ import {
 import { useAuth } from "../../context/auth.context";
 import { MdLogout } from "react-icons/md";
 import ModalEditUser from "../ModalEditUser";
+import { useUserStore } from "../../store/useUserStore";
 
 const Avatar = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { user } = useUserStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
 
   return (
     <Popover placement="bottom-end">

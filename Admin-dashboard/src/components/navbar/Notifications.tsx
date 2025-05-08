@@ -1,8 +1,20 @@
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
+import { FC, useState } from "react";
 
-export default function Notifications() {
+interface NotificationsProps {
+  onOpen: () => void;
+}
+
+const Notifications: FC<NotificationsProps> = ({ onOpen }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleClick = () => {
+    setIsOpen(!isOpen);
+    onOpen()
+  };
+
   return (
-    <Popover placement="bottom-end">
+    <Popover placement="bottom-end" isOpen={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <PopoverTrigger>
         <button
           type="button"
@@ -212,8 +224,8 @@ export default function Notifications() {
             </div>
           </a>
         </div>
-        <a
-          href="#"
+        <button
+          onClick={handleClick}
           className="flex py-2 min-w-full rounded-xl items-center justify-center font-medium text-center text-gray-900 bg-gray-50 hover:bg-gray-500 dark:bg-gray-700 dark:text-white dark:hover:underline"
         >
           <div className="inline-flex items-center ">
@@ -233,8 +245,9 @@ export default function Notifications() {
             </svg>
             View all
           </div>
-        </a>
+        </button>
       </PopoverContent>
     </Popover>
   );
-}
+};
+export default Notifications;

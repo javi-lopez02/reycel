@@ -125,6 +125,7 @@ export interface ProductOrder {
   imagen: string;
   name: string;
   ratingAverage: number;
+  inventaryCount: number;
 }
 
 export interface Analytics {

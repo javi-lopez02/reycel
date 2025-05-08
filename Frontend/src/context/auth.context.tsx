@@ -1,6 +1,5 @@
 import {
   createContext,
-  useState,
   useContext,
   useEffect,
   PropsWithChildren,
@@ -14,34 +13,18 @@ import {
   verifyTokenRequest,
 } from "../services/auth";
 import Cookies from "js-cookie";
-import { type User, UserAuth } from "../types.d";
+import { type UserAuth } from "../types.d";
 import axios, { AxiosError } from "axios";
 import { io } from "socket.io-client";
 import { API_URL } from "../conf";
-
-interface Notifications {
-  id: number;
-  message: string;
-  type: string;
-  isRead: boolean;
-  createdAt: string;
-}
+import { useNotificationStore } from "../store/useNotificationStore";
+import { useUserStore } from "../store/useUserStore";
 
 interface AuthContextType {
-  user: User | null;
-  isAuth: boolean;
-  notifications: Array<Notifications>;
-  errors: Array<string>;
-  loading: boolean;
-  addNotifications: (notification: Notifications) => void;
-  checkNotification: (id: number) => void;
   confirmEmail: (values: string) => Promise<void>;
   signIn: (values: UserAuth) => Promise<void>;
   signUp: (values: UserAuth) => Promise<void>;
   logout: () => Promise<void>;
-  /*   requestPasswordReset: (email: string) => Promise<void>;
-  verifyResetToken: (token: string) => Promise<void>;
-  resetPassword: (token: string, newPassword: string) => Promise<void>; */
 }
 export const AuthContext = createContext<AuthContextType>(
   {} as AuthContextType
@@ -57,16 +40,21 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuth, setIsAuth] = useState(false);
-  const [notifications, setNotifications] = useState<Notifications[]>([]);
-  const [errors, setErrors] = useState<Array<string>>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    errors,
+    setErrors,
+    setIsAuth,
+    setLoading,
+    setUser,
+  } = useUserStore();
+
+  const { setNotifications } = useNotificationStore();
 
   const signIn = async (values: UserAuth) => {
     try {
       const res = await LoginRequest(values);
       setUser(res.data);
+      setNotifications(res.data.notifications);
       setIsAuth(true);
 
       const socket = io(API_URL);
@@ -104,26 +92,13 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  const addNotifications = (notification: Notifications) => {
-    setNotifications([notification, ...notifications]);
-  };
-
-  const checkNotification = (id: number) => {
-    const newNotifications = notifications.map((notification) => {
-      if (notification.id === id) {
-        notification.isRead = true;
-      }
-      return notification;
-    });
-    setNotifications(newNotifications);
-  };
-
   const confirmEmail = async (values: string) => {
     setLoading(true);
     try {
       try {
         const res = await confirmEmailRequest(values);
         setUser(res.data);
+        setNotifications(res.data.notifications);
         setIsAuth(true);
 
         const socket = io(API_URL);
@@ -160,18 +135,6 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  /* const requestPasswordReset = async (email: string) => {
-    await authService.requestPasswordReset(email);
-  };
-
-  const verifyResetToken = async (token: string) => {
-    await authService.verifyResetToken(token);
-  };
-
-  const resetPassword = async (token: string, newPassword: string) => {
-    await authService.resetPassword(token, newPassword);
-  }; */
-
   useEffect(() => {
     if (errors.length > 0) {
       const time = setTimeout(() => {
@@ -184,7 +147,6 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     const checkLogin = async () => {
       const { token } = Cookies.get();
-
       if (!token) {
         setIsAuth(false);
         setLoading(false);
@@ -211,20 +173,10 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }, []);
 
   const value = {
-    user,
-    isAuth,
-    errors,
-    loading,
-    notifications,
-    checkNotification,
-    addNotifications,
     confirmEmail,
     signIn,
     signUp,
     logout,
-    /*     requestPasswordReset,
-    verifyResetToken,
-    resetPassword, */
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

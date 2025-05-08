@@ -21,10 +21,11 @@ interface Props {
   username: string | undefined
 }
 
-const status = [
-  { key: "Completed", label: "Completado" },
-  { key: "Canceled", label: "Cancelado" },
-  { key: "Pendient", label: "Pendiente" },
+const method = [
+  { key: "CASH", label: "CASH" },
+  { key: "MLC", label: "MLC" },
+  { key: "CUP", label: "CUP" },
+  { key: "ZELLE", label: "ZELLE" },
 ];
 
 const ModalAddOrder: FC<Props> = ({ isOpen, onClose, totalAmount, username }) => {
@@ -67,12 +68,12 @@ const ModalAddOrder: FC<Props> = ({ isOpen, onClose, totalAmount, username }) =>
                   </div>
                   <Select
                     variant="bordered"
-                    label="Estado"
-                    placeholder="Seleccione el Estado del Pago"
+                    label="Metodo"
+                    placeholder="Seleccione el Metodo del Pago"
                     labelPlacement="outside"
                   >
-                    {status.map((status) => (
-                      <SelectItem key={status.key}>{status.label}</SelectItem>
+                    {method.map((method) => (
+                      <SelectItem key={method.key}>{method.label}</SelectItem>
                     ))}
                   </Select>
                   <DatePicker

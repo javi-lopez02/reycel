@@ -3,7 +3,6 @@ import { Link, useNavigate, Outlet, useLocation } from "react-router-dom";
 import { TiShoppingCart } from "react-icons/ti";
 import { MdMenuOpen } from "react-icons/md";
 import { useAuth } from "../../context/auth.context";
-import { useProduct } from "../../context/product.context";
 import { useDebouncedCallback } from "use-debounce";
 import { useDisclosure } from "@heroui/react";
 import {
@@ -15,17 +14,21 @@ import {
 import AuthUser from "../../pages/auth/AuthUser";
 import Avatar from "./Avatar";
 import Notifications from "./Notifications";
+import { useFilterStore } from "../../store/useFilterStore";
+import { useUserStore } from "../../store/useUserStore";
 
 const Navbar = () => {
-  const { setCurrentPage, setQuerySeach, setIsNextPage, setErrorSearch } =
-    useProduct();
+  const { setQuerySeach, setErrorSearch } = useFilterStore();
   const url = useLocation();
 
-  const { logout, isAuth } = useAuth();
+  const { logout } = useAuth();
+  const { isAuth } = useUserStore();
 
   const navigate = useNavigate();
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const { isOpen: isOpenNotification, onOpen: onOpenNotification, onClose: onCloseNotification } = useDisclosure();
+
 
   const handleClick = (key: string | number | undefined) => {
     if (key === "Logout") {
@@ -36,6 +39,7 @@ const Navbar = () => {
       navigate(`/${key}`);
     }
   };
+  
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -50,9 +54,8 @@ const Navbar = () => {
         setErrorSearch(["La busqueda debe tener más de 3 caracteres"]);
         return;
       }
-      setErrorSearch(null);
-      setCurrentPage(1);
-      setIsNextPage(true);
+      setErrorSearch([]);
+
       debounced(newSearch);
     }
   };
@@ -117,7 +120,7 @@ const Navbar = () => {
           <div className="flex w-auto gap-1">
             {isAuth && (
               <div className="hidden lg:flex font-semibold text-lg">
-                <Notifications/>
+                <Notifications isOpen={isOpenNotification} onOpen={onOpenNotification} onClose={onCloseNotification} />
                 <Link
                   to="/shopCar"
                   className="sm:p-2 border-b-2 border-blue-500 border-opacity-0 hover:border-opacity-100 hover:text-blue-500 duration-200 cursor-pointer"
@@ -129,13 +132,15 @@ const Navbar = () => {
             )}
             <div className="hidden lg:flex lg:items-center font-semibold text-lg mr-2">
               {!isAuth && (
-                <button
-                  onClick={onOpen}
-                  className="mr-5 ml-5 px-3 rounded-md bg-blue-600 text-white font-bold"
-                >
-                  {" "}
-                  Registrate
-                </button>
+                <>
+                  <button
+                    onClick={onOpen}
+                    className="mr-5 ml-5 px-3 rounded-md bg-blue-600 text-white font-bold"
+                  >
+                    {" "}
+                    Registrate
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -152,60 +157,31 @@ const Navbar = () => {
           </ul>
           <ul className="mr-2">
             <li className="p-2 text-gray-900 rounded-lg outline-none hover:text-blue-500">
-              {isAuth && (
-                <Dropdown>
-                  <DropdownTrigger>
-                    <button className="flex items-center justify-center w-8 h-8 hover:text-primary">
-                      <MdMenuOpen className="min-w-7 h-7" />
-                    </button>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    // color="primary"
-                    variant="shadow"
-                    aria-label="Action event example"
-                    onAction={(key) => handleClick(key)}
+              <Dropdown>
+                <DropdownTrigger>
+                  <button className="flex items-center justify-center w-8 h-8 hover:text-primary">
+                    <MdMenuOpen className="min-w-7 h-7" />
+                  </button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  // color="primary"
+                  variant="shadow"
+                  aria-label="Action event example"
+                  onAction={(key) => handleClick(key)}
+                >
+                  <DropdownItem key="">Tienda</DropdownItem>
+                  <DropdownItem key="aboutUs">Sedes</DropdownItem>
+                  <DropdownItem key="contactUs">Contacto</DropdownItem>
+                  <DropdownItem
+                    key={isAuth ? "Logout" : "Registro"}
+                    className="text-danger"
+                    color={isAuth ? "danger" : "primary"}
+                    variant={isAuth ? "solid" : "bordered"}
                   >
-                    <DropdownItem key="">Tienda</DropdownItem>
-                    <DropdownItem key="aboutUs">Sedes</DropdownItem>
-                    <DropdownItem key="contactUs">Contacto</DropdownItem>
-                    <DropdownItem
-                      key="Logout"
-                      className="text-danger"
-                      color="danger"
-                    >
-                      Cerrar Sesion
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              )}
-
-              {!isAuth && (
-                <Dropdown>
-                  <DropdownTrigger>
-                    <button className="flex items-center justify-center w-8 h-8 hover:text-primary">
-                      <MdMenuOpen className="min-w-7 h-7" />
-                    </button>
-                  </DropdownTrigger>
-                  <DropdownMenu
-                    // color="primary"
-                    variant="shadow"
-                    aria-label="Action event example"
-                    onAction={(key) => handleClick(key)}
-                  >
-                    <DropdownItem key="">Tienda</DropdownItem>
-                    <DropdownItem key="aboutUs">Sedes</DropdownItem>
-                    <DropdownItem key="contactUs">Contacto</DropdownItem>
-                    <DropdownItem
-                      key="Registro"
-                      variant="solid"
-                      className="text-primary"
-                      color="primary"
-                    >
-                      Registrate
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              )}
+                    {isAuth ? "Cerrar Sesion" : "Registrate"}
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </li>
           </ul>
         </div>
