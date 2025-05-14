@@ -19,6 +19,7 @@ import { io } from "socket.io-client";
 import { API_URL } from "../conf";
 import { useNotificationStore } from "../store/useNotificationStore";
 import { useUserStore } from "../store/useUserStore";
+import { toast } from "sonner";
 
 interface AuthContextType {
   confirmEmail: (values: string) => Promise<void>;
@@ -66,10 +67,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         if (axiosError.response) {
           setErrors(axiosError.response.data as Array<string>);
         } else if (axiosError.request) {
-          console.error("No se recibió respuesta:", axiosError.request);
         }
-      } else {
-        console.error("Error desconocido:", error);
       }
     }
   };
@@ -84,10 +82,10 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         if (axiosError.response) {
           setErrors(axiosError.response.data as Array<string>);
         } else if (axiosError.request) {
-          console.error("No se recibió respuesta:", axiosError.request);
+          toast.error("No se recibió respuesta:", axiosError.request);
         }
       } else {
-        console.error("Error desconocido:", error);
+        toast.error("Error desconocido:");
       }
     }
   };
@@ -104,17 +102,16 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         const socket = io(API_URL);
         socket.emit("usuario-conectado", res.data);
       } catch (error) {
-        console.log(error);
         if (axios.isAxiosError(error)) {
           const axiosError = error as AxiosError;
 
           if (axiosError.response) {
             setErrors(axiosError.response.data as Array<string>);
           } else if (axiosError.request) {
-            console.error("No se recibió respuesta:", axiosError.request);
+            toast.error("No se recibió respuesta:", axiosError.request);
           }
         } else {
-          console.error("Error desconocido:", error);
+          toast.error("Error desconocido:");
         }
       }
     } finally {
@@ -125,12 +122,10 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const logout = async () => {
     try {
       await LogoutRequest();
-      console.log("logout");
       setUser(null);
       setIsAuth(false);
     } catch (error) {
-      console.log("error");
-      console.log(error);
+      toast.error("error");
       //setErrors(error.response.data);
     }
   };
@@ -164,7 +159,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         const socket = io(API_URL);
         socket.emit("usuario-conectado", res.data);
       } catch (error) {
-        console.log(error);
+        toast.error("error");
         setIsAuth(false);
         setLoading(false);
       }

@@ -74,8 +74,7 @@ const ModalEditUser: FC<Props> = ({ id, username, image, isOpen, onClose }) => {
         .then(() => {
           toast.success("Usuario editado con exito");
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
           toast.error("Error al editar el usuario");
         })
         .finally(() => {

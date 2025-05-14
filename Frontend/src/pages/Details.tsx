@@ -76,8 +76,7 @@ export default function Details() {
           );
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         toast.error("Error al añadir un producto al carrito.");
       });
   };

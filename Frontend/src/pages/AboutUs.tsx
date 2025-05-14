@@ -18,8 +18,7 @@ export default function AboutUs() {
       .then((res) => {
         setSedes(res.data.data);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         setError(["Ocurrió un error con la petición"]);
       })
       .finally(() => {

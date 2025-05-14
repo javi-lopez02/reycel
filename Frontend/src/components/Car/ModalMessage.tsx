@@ -49,6 +49,7 @@ export interface Count {
   payment: number;
 }
 
+//
 export const domicilios = [
   { key: "Matanzas", label: "Matanzas" },
   { key: "Boca", label: "Boca" },
@@ -85,8 +86,7 @@ const ModalMessage: FC<Props> = ({
       .then((res) => {
         setPaymentMethod(res.data.data);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         toast.error("Error al cargar los metodos de pago");
       });
   }, [isAuth]);
@@ -123,7 +123,6 @@ const ModalMessage: FC<Props> = ({
     socket.emit("registerTransaction", inputTransaction);
 
     socket.on("transactionStatus", (data) => {
-      console.log("Estado de la transacción recibido:", data);
       if (data.status === "confirmed") {
         toast.success(`Transacción ${data.transactionID} confirmada.`);
         addNotifications(data.notification);
@@ -151,8 +150,7 @@ const ModalMessage: FC<Props> = ({
         updateOrder(res.data.order);
         onClose();
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
         toast.error("Error con la confirmacion de la transferencia.");
       })
       .finally(() => {
