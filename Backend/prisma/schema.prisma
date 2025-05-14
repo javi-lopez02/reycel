@@ -10,30 +10,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+// Base model con campos comunes para usuarios
+model BaseUser {
   id           String         @id @default(uuid())
   email        String         @unique
   username     String         @unique
   password     String
   image        String?
-  status       Boolean
+  status       Boolean        @default(false)
   isDeleted    Boolean        @default(false)
-  role         Role           @default(USER)
-  orders       Order[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  Rating       Rating[]
-  comment      Comment[]
-  payment      Payment[]
-  Sede         Sede?          @relation(fields: [sedeId], references: [id])
+  administrator Administrator?
+  client       Client?
+}
+
+// Modelo para administradores del sitio
+model Administrator {
+  id           String         @id @default(uuid())
+  baseUser     BaseUser       @relation(fields: [baseUserId], references: [id])
+  baseUserId   String         @unique
+  role         Role           @default(MODERATOR)
+  sede         Sede?          @relation(fields: [sedeId], references: [id])
   sedeId       String?
+  notification Notification[]
+  orders       Order[]        // Agregar órdenes para administradores
+}
+
+// Modelo para clientes
+model Client {
+  id           String         @id @default(uuid())
+  baseUser     BaseUser       @relation(fields: [baseUserId], references: [id])
+  baseUserId   String         @unique
+  orders       Order[]
+  ratings      Rating[]
+  comments     Comment[]
+  payments     Payment[]
   notification Notification[]
 }
 
 enum Role {
-  USER
-  MODERADOR
-  ADMIN
+  MODERATOR
+  OWNER
 }
 
 model Category {
@@ -78,7 +96,7 @@ model Comment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Product   Product  @relation(fields: [productId], references: [id])
-  User      User     @relation(fields: [userId], references: [id])
+  client    Client   @relation(fields: [userId], references: [id])
 }
 
 model Rating {
@@ -86,8 +104,8 @@ model Rating {
   value     Int      @default(1) // Rango: 1-5
   productID String
   product   Product  @relation(fields: [productID], references: [id])
-  userID    String
-  user      User     @relation(fields: [userID], references: [id])
+  client    Client   @relation(fields: [userId], references: [id])
+  userId    String
   createdAt DateTime @default(now())
 }
 
@@ -107,9 +125,13 @@ enum TransactionType {
 
 model Order {
   id          Int         @id @default(autoincrement())
-  userId      String
   pending     Boolean     @default(true)
-  user        User        @relation(fields: [userId], references: [id])
+  // Relación con Client
+  clientId    String?
+  client      Client?     @relation(fields: [clientId], references: [id])
+  // Relación con Administrator
+  adminId     String?
+  admin       Administrator? @relation(fields: [adminId], references: [id])
   orderItems  OrderItem[]
   totalAmount Float       @default(0)
   payment     Payment?
@@ -137,7 +159,7 @@ model Payment {
   createdAt       DateTime      @default(now())
   PaymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
   paymentMethodId String
-  User            User          @relation(fields: [userId], references: [id])
+  client          Client        @relation(fields: [userId], references: [id])
   userId          String
 }
 
@@ -169,7 +191,7 @@ model Sede {
   image     String
   phone     Int       @unique
   direction String
-  workers   User[]
+  workers   Administrator[]
   producto  Product[]
 }
 
@@ -182,14 +204,18 @@ model CurrencyExchange {
 }
 
 model Notification {
-  id        String           @id @default(uuid())
-  userId    String
-  user      User             @relation(fields: [userId], references: [id])
-  message   String
-  isRead    Boolean          @default(false)
-  type      NotificationType
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
+  id              String           @id @default(uuid())
+  message         String
+  isRead          Boolean          @default(false)
+  type            NotificationType
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  // Relación con Client
+  clientId        String?
+  client          Client?          @relation(fields: [clientId], references: [id])
+  // Relación con Administrator
+  administratorId String?
+  administrator   Administrator?   @relation(fields: [administratorId], references: [id])
 }
 
 enum NotificationType {
