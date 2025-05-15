@@ -9,6 +9,7 @@ import {
   getUserID,
   getUserOrder,
   getUsers,
+  getWorkers,
 } from "../Controllers/user.controller";
 const router = Router();
 
@@ -16,7 +17,7 @@ router.get("/user/order", authMiddleware, getUserOrder);
 
 router.put("/user", authMiddleware, editUser);
 
-
+router.get("/workers", authAdmin, getWorkers);
 
 router.get("/users", authAdmin, getUsers);
 

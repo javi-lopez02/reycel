@@ -64,8 +64,24 @@ const App: React.FC = () => {
 
   const handleQuantity = (value: string, id: string, price: number) => {
     try {
-      updateOrderItemRequest(id, Number(value), price).then((res) => {
-        setTotalAmount(res.data.data.totalAmount);
+      updateOrderItemRequest(id, Number(value), price)
+      .then((res) => {
+        if (res.status === 200) {
+          setTotalAmount(res.data.data.totalAmount);
+        }
+        if (res.status === 202) {
+          toast.error(
+            `Aviso: ${res.data.message || "Hubo un problema con la solicitud."}`
+          );
+        }
+        if (res.status === 203) {
+          toast.warning(
+            `Aviso: ${res.data.message || "Hubo un problema con la solicitud."}`
+          );
+        }
+      })
+      .catch(() => {
+        setError(["Error al incrementar el producto"]);
       });
     } catch (error) {
       setError(["Error al incrementar el producto"]);

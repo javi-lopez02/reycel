@@ -33,7 +33,7 @@ export const addOrderItem = async (req: Request, res: Response) => {
 
     let orderFind = await prisma.order.findFirst({
       where: {
-        userId: userId,
+        clientId: userId,
         pending: true,
       },
       include: {
@@ -52,7 +52,7 @@ export const addOrderItem = async (req: Request, res: Response) => {
     if (!orderFind) {
       orderFind = await prisma.order.create({
         data: {
-          userId: userId,
+          clientId: userId,
           pending: true,
           totalAmount: 0,
         },
@@ -91,7 +91,7 @@ export const getOrderItems = async (req: Request, res: Response) => {
 
     const items = await prisma.order.findMany({
       where: {
-        userId: userId,
+        clientId: userId,
         pending: true,
       },
       select: {
@@ -193,12 +193,15 @@ export const getOrder = async (req: Request, res: Response) => {
         id: true,
         totalAmount: true,
         pending: true,
-        user: {
+        client: {
           select: {
-            id: true,
-            image: true,
-            role: true,
-            username: true,
+            baseUser: {
+              select: {
+                id: true,
+                image: true,
+                username: true,
+              },
+            },
           },
         },
       },
@@ -294,7 +297,7 @@ export const addOrderItemAdmin = async (req: Request, res: Response) => {
 
     let orderFind = await prisma.order.findFirst({
       where: {
-        userId: userId,
+        clientId: userId,
         pending: true,
       },
       include: {
@@ -313,7 +316,7 @@ export const addOrderItemAdmin = async (req: Request, res: Response) => {
     if (!orderFind) {
       orderFind = await prisma.order.create({
         data: {
-          userId: userId,
+          clientId: userId,
           pending: true,
           totalAmount: 0,
         },

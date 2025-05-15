@@ -43,7 +43,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         <div className="max-h-[calc(100vh-10rem)] overflow-y-auto">
           {children}
         </div>
-      </div>
+      </div> 
     </div>
   );
 };

@@ -178,8 +178,8 @@ export default function TableSedes() {
                     return (
                       <User
                         key={worker.id}
-                        avatarProps={{ radius: "lg", src: worker.image }}
-                        name={worker.username}
+                        avatarProps={{ radius: "lg", src: worker.baseUser.image }}
+                        name={worker.baseUser.username}
                       />
                     );
                   })}

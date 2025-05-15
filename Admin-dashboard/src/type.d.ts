@@ -3,11 +3,25 @@ export interface UserLogin {
   password: string;
 }
 
+export interface Workers {
+  id:       string;
+  baseUser: BaseUser;
+}
+
+export interface BaseUser {
+  username:  string;
+  image:     string;
+  status:    boolean;
+  createdAt: string;
+}
+
 export interface User {
-  username: string;
-  userId: string;
-  userRole: "USER" | "MODERADOR" | "ADMIN";
-  image?: string;
+  id:         string;
+  username:   string;
+  image:      string;
+  status:     boolean;
+  orderCount: number;
+  createdAt:  string;
 }
 
 export interface AuthContextType {
@@ -35,7 +49,7 @@ interface Sede {
   image: string;
   phone: string;
   direction: string;
-  workers: [Users];
+  workers: Workers[];
 }
 interface Count {
   orders: number;
@@ -66,7 +80,13 @@ export interface Order {
   id: string;
   totalAmount: number;
   pending: boolean;
-  user: Users;
+  client: {
+    baseUser: {
+      id: string;
+      username: string;
+      image: string;
+    };
+  };
   _count: {
     orderItems: number;
   };
@@ -98,7 +118,12 @@ export interface Payment {
   createdAt: string;
   paymentMethodId: string;
   userId: string;
-  User: UserPayment;
+  client: {
+    baseUser: {
+      username: string;
+      image: string;
+    };
+  };
   PaymentMethod: PaymentMethod;
   order: {
     _count: {

@@ -30,14 +30,14 @@ export const authMiddleware = async (
           return res.status(401).json(["Token is not valid"]);
         }
 
-        const userFound = await prisma.user.findUnique({
+        const userFound = await prisma.administrator.findUnique({
           where:{
             id: (decoded as TokenPayload).id
           }
         })
 
-        if (userFound?.role === "USER") {
-          return res.status(401).json(["Acceso Denegado"]);
+        if (!userFound) {
+          return res.status(401).json(["No token, authorization denied"]);
         }
 
         req.userId = (decoded as TokenPayload).id;

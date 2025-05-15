@@ -55,7 +55,7 @@ const confirmTransaction = async (
 
     const notification = await prisma.notification.create({
       data: {
-        userId: userID,
+        clientId: userID,
         message: "Tu pago ha sido confirmado.",
         type: "PAYMENT_SUCCESS",
       },
@@ -64,11 +64,15 @@ const confirmTransaction = async (
         message: true,
         type: true,
         createdAt: true,
-        user: {
+        client: {
           select: {
-            email: true,
-            username: true,
-            id: true,
+            baseUser: {
+              select: {
+                email: true,
+                username: true,
+                id: true,
+              },
+            },
           },
         },
       },
@@ -111,8 +115,8 @@ const confirmTransaction = async (
 
     //enviar el email
     sendOrderConfirmationEmail({
-      email: notification.user.email,
-      name: notification.user.username,
+      email: notification.client?.baseUser.email,
+      name: notification.client?.baseUser.username,
       orderNumber: payment.order.id,
       orderDate: getCurrentDate(),
       estimatedDelivery: "Tiempo estimado 3 dias",
@@ -146,7 +150,7 @@ const deniedTransaction = async (
 
     const notification = await prisma.notification.create({
       data: {
-        userId: userID,
+        clientId: userID,
         message: "Tu pago ha sido denegado.",
         type: "PAYMENT_FAILED",
       },
@@ -275,7 +279,7 @@ export const message = async (req: Request, res: Response) => {
 
     const order = await prisma.order.create({
       data: {
-        userId: userID,
+        clientId: userID,
         pending: true,
       },
       select: {
@@ -309,6 +313,7 @@ export const message = async (req: Request, res: Response) => {
       data: {
         orderId: orderID,
         amount: price,
+        fastDelivery,
         transactionID,
         paymentMethodId,
         userId: userID,

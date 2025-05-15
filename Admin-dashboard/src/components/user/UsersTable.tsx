@@ -29,7 +29,7 @@ import {
   Spinner,
   useDisclosure,
 } from "@nextui-org/react";
-import { type Users } from "../../type";
+import { type User as Users } from "../../type";
 import {
   ChevronDownIcon,
   DeleteIcon,
@@ -52,17 +52,10 @@ export function Capitalize(s: string) {
 
 const columns = [
   { name: "NOMBRE", uid: "username", sortable: true },
-  { name: "ROLE", uid: "role", sortable: true },
   { name: "Creado en: ", uid: "createdAt", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "Número de Ordenes", uid: "order" },
   { name: "ACTIONS", uid: "actions" },
-];
-
-const roleOptions = [
-  { name: "Admin", uid: "admin" },
-  { name: "Moderador", uid: "moderador" },
-  { name: "Usuario", uid: "user" },
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -72,7 +65,6 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 const INITIAL_VISIBLE_COLUMNS = [
   "username",
-  "role",
   "status",
   "actions",
   "createdAt",
@@ -88,7 +80,6 @@ export default function UsersTable() {
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [roleFilter, setRoleFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>();
 
@@ -150,20 +141,11 @@ export default function UsersTable() {
     if (hasSearchFilter) {
       filteredProducts = filteredProducts.filter(
         (user) =>
-          user.username.toLowerCase().includes(filterValue.toLowerCase()) ||
-          user.role.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
-    if (
-      roleFilter !== "all" &&
-      Array.from(roleFilter).length !== roleOptions.length
-    ) {
-      filteredProducts = filteredProducts.filter((user) =>
-        Array.from(roleFilter).includes(user.role.toLowerCase())
+          user.username.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     return filteredProducts;
-  }, [users, hasSearchFilter, roleFilter, filterValue]);
+  }, [users, hasSearchFilter, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -241,24 +223,11 @@ export default function UsersTable() {
         return (
           <div className="flex justify-center">
             <p className={`text-bold text-small capitalize`}>
-              {user._count.orders}
+              {user.orderCount}
             </p>
           </div>
         );
       }
-      case "role":
-        return (
-          <div className="flex flex-col">
-            {user.Sede?.direction !== undefined && (
-              <Tooltip content={user.Sede?.direction} color="primary">
-                <p className="text-bold text-small capitalize">{user.role}</p>
-              </Tooltip>
-            )}
-            {user.Sede?.direction === undefined && (
-              <p className="text-bold text-small capitalize">{user.role}</p>
-            )}
-          </div>
-        );
       case "status":
         return (
           <div className="w-full flex justify-center">
@@ -357,30 +326,6 @@ export default function UsersTable() {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Rol
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={roleFilter}
-                selectionMode="multiple"
-                onSelectionChange={setRoleFilter}
-              >
-                {roleOptions.map((role) => (
-                  <DropdownItem key={role.uid} className="capitalize">
-                    {Capitalize(role.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
                   Columnas
                 </Button>
               </DropdownTrigger>
@@ -430,7 +375,6 @@ export default function UsersTable() {
   }, [
     filterValue,
     onSearchChange,
-    roleFilter,
     visibleColumns,
     onOpen,
     users?.length,

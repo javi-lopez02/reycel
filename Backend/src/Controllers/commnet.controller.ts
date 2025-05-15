@@ -25,16 +25,30 @@ export const createComment = async (req: Request, res: Response) => {
         content: true,
         updatedAt: true,
         createdAt: true,
-        User: {
+        client: {
           select: {
-            username: true,
+            baseUser: {
+              select: {
+                username: true,
+              },
+            },
           },
         },
       },
     });
 
     res.status(200).json({
-      data: newComment,
+      data: {
+        id: newComment.id,
+        content: newComment.content,
+        updatedAt: newComment.updatedAt,
+        createdAt: newComment.createdAt,
+        client: {
+          baseUser: {
+            username: newComment.client.baseUser.username,
+          },
+        },
+      },
       message: "Commentario creado",
     });
   } catch (error) {

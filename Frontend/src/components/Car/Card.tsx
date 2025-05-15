@@ -116,7 +116,7 @@ const Card: React.FC<Props> = ({
                   color="primary"
                   value={value}
                   onValueChange={(event) => {
-                    if (Number(event) > 0) {
+                    if (Number(event) > 0 && product.inventoryCount >= Number(event)) {
                       setvalue(event);
                       handleQuantity(event, id, product.price);
                     }

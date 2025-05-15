@@ -27,7 +27,7 @@ export const generalData = async (req: Request, res: Response) => {
 
     const [product, users, order] = (await Promise.all([
       functionPromise("Product"),
-      functionPromise("User"),
+      functionPromise("BaseUser"),
       functionPromise("Order"),
     ])) as { month: string; total: string }[][];
 

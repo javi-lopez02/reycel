@@ -8,12 +8,16 @@ export const getUserOrder = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
 
-    const productOrder = await prisma.user.findUnique({
+    const client = await prisma.client.findUnique({
       where: {
         id: userId,
-        isDeleted: false,
       },
       select: {
+        baseUser: {
+          select: {
+            isDeleted: true
+          }
+        },
         orders: {
           where: {
             pending: true,
@@ -28,47 +32,88 @@ export const getUserOrder = async (req: Request, res: Response) => {
       },
     });
 
+    if (!client || client.baseUser.isDeleted) {
+      return res.status(404).json({ error: "Cliente no encontrado o eliminado." });
+    }
+
     res.status(200).json({
-      data: productOrder,
+      data: {
+        orders: client.orders
+      }
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error al agregar el rating." });
+    res.status(500).json({ error: "Error al obtener las órdenes del cliente." });
   }
 };
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
-    const users = await prisma.user.findMany({
+    const clients = await prisma.client.findMany({
       where: {
-        isDeleted: false,
+        baseUser: {
+          isDeleted: false,
+        },
       },
       select: {
         id: true,
-        username: true,
-        image: true,
-        status: true,
-        role: true,
+        baseUser: {
+          select: {
+            username: true,
+            image: true,
+            status: true,
+            createdAt: true,
+          }
+        },
         _count: {
           select: {
             orders: true,
           },
         },
-        createdAt: true,
-        Sede: {
+      },
+    });
+
+    res.json(clients.map(client => ({
+      id: client.id,
+      username: client.baseUser.username,
+      image: client.baseUser.image,
+      status: client.baseUser.status,
+      orderCount: client._count.orders,
+      createdAt: client.baseUser.createdAt
+    })));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los clientes." });
+  }
+};
+
+export const getWorkers = async (req: Request, res: Response) => {
+  try {
+    const workers = await prisma.administrator.findMany({
+      where: {
+        baseUser: {
+          isDeleted: false,
+        },
+      },
+      select: {
+        id: true,
+        baseUser: {
           select: {
-            direction: true,
-          },
+            username: true,
+            image: true,
+            status: true,
+            createdAt: true,
+          }
         },
       },
     });
 
     res.status(200).json({
-      data: users,
+      data: workers
     });
   } catch (error) {
-    console.log("Error:", error);
-    res.status(500).send("Internal Server Error");
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los trabajadores." });
   }
 };
 
@@ -80,38 +125,42 @@ export const getUserID = async (req: Request, res: Response) => {
       return res.status(403).json({ message: "Falta el id del usuario" });
     }
 
-    const userFind = await prisma.user.findUnique({
+    const client = await prisma.client.findUnique({
       where: {
         id: userID,
-        isDeleted: false,
       },
       select: {
         id: true,
-        username: true,
-        image: true,
-        status: true,
-        role: true,
-        orders: {
+        baseUser: {
           select: {
-            _count: true,
-          },
+            username: true,
+            image: true,
+            status: true,
+            createdAt: true,
+            isDeleted: true
+          }
         },
-        createdAt: true,
-        sedeId: true,
-        Sede: {
+        _count: {
           select: {
-            direction: true,
+            orders: true,
           },
         },
       },
     });
 
-    if (!userFind) {
+    if (!client || client.baseUser.isDeleted) {
       return res.status(404).json({ message: "Usuario no encontrado." });
     }
 
     res.status(200).json({
-      data: userFind,
+      data: {
+        id: client.id,
+        username: client.baseUser.username,
+        image: client.baseUser.image,
+        status: client.baseUser.status,
+        orderCount: client._count.orders,
+        createdAt: client.baseUser.createdAt
+      }
     });
   } catch (error) {
     console.log("Error:", error);
@@ -121,30 +170,53 @@ export const getUserID = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { username, password, image, role, sedeId,email } = req.body;
+    const { username, password, image, email } = req.body;
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
-    const user = await prisma.user.create({
+    const baseUser = await prisma.baseUser.create({
       data: {
         email,
-        status: false,
         username,
-        role,
-        image,
-        sedeId,
         password: hashedPassword,
+        image,
+        status: false,
+        client: {
+          create: {
+            orders: {
+              create: {
+                totalAmount: 0,
+              },
+            },
+          },
+        },
       },
       include: {
-        _count: {
-          select: {
-            orders: true,
+        client: {
+          include: {
+            _count: {
+              select: {
+                orders: true,
+              },
+            },
           },
         },
       },
     });
+
+    if (!baseUser.client) {
+      throw new Error("Error al crear el cliente");
+    }
+
     res.status(201).json({
-      data: user,
+      data: {
+        id: baseUser.client.id,
+        username: baseUser.username,
+        image: baseUser.image,
+        status: baseUser.status,
+        orderCount: baseUser.client._count.orders,
+        createdAt: baseUser.createdAt
+      }
     });
   } catch (error) {
     console.error(error);
@@ -154,39 +226,57 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const editUserAdmin = async (req: Request, res: Response) => {
   try {
-    const { username, password, image, role } = req.body;
-
+    const { username, password, image } = req.body;
     const { id } = req.params;
 
-    const hashedPassword = await bcryptjs.hash(password, 10);
+    const client = await prisma.client.findUnique({
+      where: { id },
+      include: {
+        baseUser: true
+      }
+    });
 
-    const user = await prisma.user.update({
+    if (!client || client.baseUser.isDeleted) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const hashedPassword = password ? await bcryptjs.hash(password, 10) : undefined;
+
+    const updatedBaseUser = await prisma.baseUser.update({
       where: {
-        id,
-        isDeleted: false,
+        id: client.baseUser.id,
       },
       data: {
-        status: false,
-        username,
-        role,
-        image,
+        username: username || undefined,
+        image: image || undefined,
         password: hashedPassword,
       },
       include: {
-        _count: {
-          select: {
-            orders: true,
+        client: {
+          include: {
+            _count: {
+              select: {
+                orders: true,
+              },
+            },
           },
         },
       },
     });
 
-    if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+    if (!updatedBaseUser.client) {
+      throw new Error("Error al actualizar el cliente");
     }
 
-    res.status(201).json({
-      data: user,
+    res.status(200).json({
+      data: {
+        id: updatedBaseUser.client.id,
+        username: updatedBaseUser.username,
+        image: updatedBaseUser.image,
+        status: updatedBaseUser.status,
+        orderCount: updatedBaseUser.client._count.orders,
+        createdAt: updatedBaseUser.createdAt
+      }
     });
   } catch (error) {
     console.error(error);
@@ -199,26 +289,38 @@ export const editUser = async (req: Request, res: Response) => {
     const { username, password, image } = req.body;
     const userId = req.userId;
 
-    const hashedPassword = await bcryptjs.hash(password, 10);
+    const client = await prisma.client.findUnique({
+      where: { id: userId },
+      include: {
+        baseUser: true
+      }
+    });
 
-    const user = await prisma.user.update({
+    if (!client || client.baseUser.isDeleted) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const hashedPassword = password ? await bcryptjs.hash(password, 10) : undefined;
+
+    const updatedBaseUser = await prisma.baseUser.update({
       where: {
-        id: userId,
-        isDeleted: false,
+        id: client.baseUser.id,
       },
       data: {
-        username,
-        image,
+        username: username || undefined,
+        image: image || undefined,
         password: hashedPassword,
       },
     });
 
-    if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
-    }
-
     res.status(200).json({
-      data: user,
+      data: {
+        id: client.id,
+        username: updatedBaseUser.username,
+        image: updatedBaseUser.image,
+        status: updatedBaseUser.status,
+        createdAt: updatedBaseUser.createdAt
+      }
     });
   } catch (error) {
     console.error(error);
@@ -229,16 +331,29 @@ export const editUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    await prisma.user.update({
+    
+    const client = await prisma.client.findUnique({
+      where: { id },
+      include: {
+        baseUser: true
+      }
+    });
+
+    if (!client || client.baseUser.isDeleted) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    await prisma.baseUser.update({
       where: {
-        id,
+        id: client.baseUser.id,
       },
       data: {
         isDeleted: true,
       },
     });
+
     res.status(200).json({
-      message: "Usuario eliminado con exito",
+      message: "Usuario eliminado con éxito",
     });
   } catch (error) {
     console.error(error);

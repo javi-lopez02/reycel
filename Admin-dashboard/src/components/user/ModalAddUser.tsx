@@ -14,7 +14,7 @@ import { FC, useEffect, useState } from "react";
 import { BiLock, BiUser } from "react-icons/bi";
 import { toast } from "sonner";
 import { createUsersRequest, editUsersRequest } from "../../services/user";
-import { Sede, Users } from "../../type";
+import { Sede, User } from "../../type";
 import { getSedesRequest } from "../../services/sedes";
 
 interface Props {
@@ -24,7 +24,7 @@ interface Props {
   image?: string;
   Sede?: Sede;
   role?: "USER" | "MODERADOR" | "ADMIN";
-  setUsers: React.Dispatch<React.SetStateAction<Users[] | null>>;
+  setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -39,7 +39,6 @@ const ModalAddUser: FC<Props> = ({
   id,
   username,
   image,
-
   isOpen,
   onClose,
   setUsers,

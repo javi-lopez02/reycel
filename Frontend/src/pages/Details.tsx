@@ -41,6 +41,7 @@ export default function Details() {
     updateRating(value);
   };
 
+
   const handleFormComment = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isAuth) {
@@ -218,7 +219,7 @@ export default function Details() {
                         <Comment
                           key={comment.id}
                           content={comment.content}
-                          User={comment.User}
+                          client={comment.client}
                           createdAt={comment.createdAt}
                         ></Comment>
                       );

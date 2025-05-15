@@ -12,17 +12,17 @@ datasource db {
 
 // Base model con campos comunes para usuarios
 model BaseUser {
-  id           String         @id @default(uuid())
-  email        String         @unique
-  username     String         @unique
-  password     String
-  image        String?
-  status       Boolean        @default(false)
-  isDeleted    Boolean        @default(false)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id            String         @id @default(uuid())
+  email         String         @unique
+  username      String         @unique
+  password      String
+  image         String?
+  status        Boolean        @default(false)
+  isDeleted     Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   administrator Administrator?
-  client       Client?
+  client        Client?
 }
 
 // Modelo para administradores del sitio
@@ -34,7 +34,8 @@ model Administrator {
   sede         Sede?          @relation(fields: [sedeId], references: [id])
   sedeId       String?
   notification Notification[]
-  orders       Order[]        // Agregar órdenes para administradores
+  orders       Order[] // Agregar órdenes para administradores
+  ratings      Rating[] // Agregar ratings para administradores
 }
 
 // Modelo para clientes
@@ -100,13 +101,17 @@ model Comment {
 }
 
 model Rating {
-  id        Int      @id @default(autoincrement())
-  value     Int      @default(1) // Rango: 1-5
-  productID String
-  product   Product  @relation(fields: [productID], references: [id])
-  client    Client   @relation(fields: [userId], references: [id])
-  userId    String
-  createdAt DateTime @default(now())
+  id              String         @id @default(uuid())
+  value           Int            @default(1) // Rango: 1-5
+  productID       String
+  product         Product        @relation(fields: [productID], references: [id])
+  // Relación con Client
+  client          Client?        @relation(fields: [clientId], references: [id])
+  clientId        String?
+  // Relación con Administrator
+  administrator   Administrator? @relation(fields: [administratorId], references: [id])
+  administratorId String?
+  createdAt       DateTime       @default(now())
 }
 
 model InventoryTransaction {
@@ -124,18 +129,16 @@ enum TransactionType {
 }
 
 model Order {
-  id          Int         @id @default(autoincrement())
-  pending     Boolean     @default(true)
-  // Relación con Client
-  clientId    String?
-  client      Client?     @relation(fields: [clientId], references: [id])
-  // Relación con Administrator
-  adminId     String?
-  admin       Administrator? @relation(fields: [adminId], references: [id])
-  orderItems  OrderItem[]
-  totalAmount Float       @default(0)
-  payment     Payment?
-  createdAt   DateTime    @default(now())
+  id           Int            @id @default(autoincrement())
+  pending      Boolean        @default(true)
+  clientId     String?
+  client       Client?        @relation(fields: [clientId], references: [id])
+  adminId      String?
+  admin        Administrator? @relation(fields: [adminId], references: [id])
+  orderItems   OrderItem[]
+  totalAmount  Float          @default(0)
+  payment      Payment?
+  createdAt    DateTime       @default(now())
 }
 
 model OrderItem {
@@ -155,6 +158,7 @@ model Payment {
   order           Order         @relation(fields: [orderId], references: [id])
   amount          Float
   transactionID   String?
+  fastDelivery    Boolean     
   paymentStatus   PaymentStatus @default(PENDING)
   createdAt       DateTime      @default(now())
   PaymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
@@ -187,9 +191,9 @@ enum PaymentStatus {
 }
 
 model Sede {
-  id        String    @id @default(uuid())
+  id        String          @id @default(uuid())
   image     String
-  phone     Int       @unique
+  phone     Int             @unique
   direction String
   workers   Administrator[]
   producto  Product[]

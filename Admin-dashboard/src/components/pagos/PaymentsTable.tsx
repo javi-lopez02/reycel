@@ -46,8 +46,8 @@ export function Capitalize(s: string) {
 
 const columns = [
   { name: "USUARIO", uid: "user", sortable: true },
-  { name: "ROLE", uid: "role", sortable: true },
   { name: "PRECIO TOTAL", uid: "price", sortable: true },
+  { name: "FAST DELIVERY", uid: "fastDelivery", sortable: true },
   { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
   { name: "METODO DE PAGO", uid: "paymentMethod" },
   { name: "STATUS", uid: "status", sortable: true },
@@ -69,7 +69,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 const INITIAL_VISIBLE_COLUMNS = [
   "user",
-  "role",
+  "fastDelivery",
   "price",
   "productquantity",
   "paymentMethod",
@@ -115,10 +115,9 @@ export default function PaymentsTable() {
     if (hasSearchFilter) {
       filteredPayments = filteredPayments.filter(
         (payment) =>
-          payment.User.username
+          payment.client.baseUser.username
             .toLowerCase()
             .includes(filterValue.toLowerCase()) ||
-          payment.User.role.toLowerCase().includes(filterValue.toLowerCase()) ||
           payment.PaymentMethod.paymentOptions
             .toLowerCase()
             .includes(filterValue.toLowerCase()) ||
@@ -195,19 +194,10 @@ export default function PaymentsTable() {
         case "user":
           return (
             <User
-              avatarProps={{ radius: "lg", src: payments.User.image }}
-              name={payments.User.username}
+              avatarProps={{ radius: "lg", src: payments.client.baseUser.image }}
+              name={payments.client.baseUser.username}
             />
           );
-        case "role":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                {payments.User.role}
-              </p>
-            </div>
-          );
-
         case "price":
           return (
             <div className="flex flex-col">

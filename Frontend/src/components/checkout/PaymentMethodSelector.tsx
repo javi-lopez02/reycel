@@ -48,7 +48,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
             <div
               className={`absolute inset-0 transition-all duration-200 ${
                 selectedMethod === method.id
-                  ? "backdrop-blur-xs bg-black/10"
+                  ? "backdrop-blur-xs bg-white/30"
                   : "backdrop-blur-sm bg-white/20"
               }`}
             />

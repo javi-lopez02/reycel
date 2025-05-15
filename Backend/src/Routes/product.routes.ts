@@ -32,12 +32,12 @@ router.get("/products", async (req, res) => {
           ram: product.ram,
           storage: product.almacenamiento,
           description: "",
-          categoryId: "218d4089-378a-4327-8fbd-97c2fcf184f0",
+          categoryId: "ad72e03b-6b66-4366-b1e8-fe8783c4af3b",
         },
       });
       console.log("Producto creado:", createdProduct);
     }
-      res.status()
+      res.status(200).json("Productos importados correctamente");
   } catch (error) {
     console.error("Error al importar productos:", error);
   } finally {

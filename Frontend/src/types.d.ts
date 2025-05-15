@@ -41,8 +41,10 @@ export interface Comment {
   content: string;
   createdAt: Date;
   updatedAt: Date;
-  User: {
-    username: string;
+  client: {
+    baseUser: {
+      username: string;
+    };
   };
 }
 
