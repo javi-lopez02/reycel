@@ -22,7 +22,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   onSelectMethod,
 }) => {
   return (
-    <div className="mb-6">
+    <div className="mb-6 px-2 ">
       <div className="flex items-center mb-2">
         <h3 className="text-md font-medium text-gray-700">Método de Pago</h3>
         <Tooltip content="Seleccione su método de pago preferido. La imagen del método se mostrará al seleccionarlo." />

@@ -4,24 +4,35 @@ export interface UserLogin {
 }
 
 export interface Workers {
-  id:       string;
+  id: string;
   baseUser: BaseUser;
 }
 
 export interface BaseUser {
-  username:  string;
-  image:     string;
-  status:    boolean;
+  username: string;
+  image: string;
+  status: boolean;
   createdAt: string;
 }
 
 export interface User {
-  id:         string;
-  username:   string;
-  image:      string;
-  status:     boolean;
+  id: string;
+  username: string;
+  email: string;
+  image: string;
+  status: boolean;
   orderCount: number;
-  createdAt:  string;
+  createdAt: string;
+}
+
+export interface Worker {
+  id: string;
+  username: string;
+  email: string;
+  image: string;
+  status: boolean;
+  orderCount: number;
+  createdAt: string;
 }
 
 export interface AuthContextType {

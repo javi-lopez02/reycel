@@ -27,16 +27,20 @@ import {
   SortDescriptor,
   Tooltip,
   Spinner,
+  useDisclosure,
 } from "@nextui-org/react";
-import { type User as Users } from "../../type";
+import { Worker } from "../../type";
 import {
   ChevronDownIcon,
   DeleteIcon,
+  EditIcon,
+  PlusIcon,
   SearchIcon,
 } from "../Icons";
-import useUser from "../../customHooks/useUser";
 import { toast } from "sonner";
-import { deleteUsersRequest } from "../../services/user";
+import ModalAddWorker from "./ModalAddWorker";
+import useWorker from "../../customHooks/useWorker";
+import { deleteWorkersRequest } from "../../services/workers";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -48,10 +52,10 @@ export function Capitalize(s: string) {
 
 const columns = [
   { name: "NOMBRE", uid: "username", sortable: true },
-  { name: "Creado en: ", uid: "createdAt", sortable: true },
+  { name: "CREADO EL ", uid: "createdAt", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
-  { name: "Número de Ordenes", uid: "order" },
-  { name: "ACTIONS", uid: "actions" },
+  { name: "# ORDENES", uid: "order" },
+  { name: "ACCIONES", uid: "actions" },
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
@@ -68,7 +72,8 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 export default function UsersTable() {
-  const { users, error, loading, setUsers } = useUser();
+  const { workers, error, loading, setWorkers } = useWorker();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
 
@@ -81,6 +86,18 @@ export default function UsersTable() {
   const [page, setPage] = useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
+
+  const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
+
+  const handleAddWorkers = () => {
+    setSelectedWorker(null);
+    onOpen();
+  };
+
+  const handleEditWorkers = (user: Worker) => {
+    setSelectedWorker(user);
+    onOpen();
+  };
 
   const formatearFecha = (isoString: string) => {
     const meses = [
@@ -116,10 +133,10 @@ export default function UsersTable() {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    if (!users) {
+    if (!workers) {
       return [];
     }
-    let filteredProducts = [...users];
+    let filteredProducts = [...workers];
 
     if (hasSearchFilter) {
       filteredProducts = filteredProducts.filter(
@@ -128,12 +145,12 @@ export default function UsersTable() {
       );
     }
     return filteredProducts;
-  }, [users, hasSearchFilter, filterValue]);
+  }, [workers, hasSearchFilter, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const sortedItems = useMemo(() => {
-    const sorted = [...filteredItems].sort((a: Users, b: Users) => {
+    const sorted = [...filteredItems].sort((a: Worker, b: Worker) => {
       const first = a[sortDescriptor?.column as never] as number;
       const second = b[sortDescriptor?.column as never] as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
@@ -153,31 +170,31 @@ export default function UsersTable() {
   ]);
 
   const handleDelete = (id: string) => {
-    deleteUsersRequest(id)
+    deleteWorkersRequest(id)
       .then(() => {
-        toast.success("Usuario eliminado con exito");
-        setUsers((prev) => {
+        toast.success("Trabajador eliminado con exito");
+        setWorkers((prev) => {
           return prev
-            ? prev.filter((user) => {
-                return user.id !== id;
+            ? prev.filter((worker) => {
+                return worker.id !== id;
               })
             : null;
         });
       })
       .catch((err) => {
         console.log(err);
-        toast.error("Error al eliminar el Usuario");
+        toast.error("Error al eliminar el trabajador");
       });
   };
 
-  const renderCell = useCallback((user: Users, columnKey: Key) => {
-    const cellValue = user[columnKey as keyof Users];
+  const renderCell = useCallback((worker: Worker, columnKey: Key) => {
+    const cellValue = worker[columnKey as keyof Worker];
 
     switch (columnKey) {
       case "username":
         return (
           <User
-            avatarProps={{ radius: "lg", src: user.image }}
+            avatarProps={{ radius: "lg", src: worker.image }}
             name={
               <span
                 style={{
@@ -188,17 +205,17 @@ export default function UsersTable() {
                   whiteSpace: "nowrap",
                 }}
               >
-                {user.username}
+                {worker.username}
               </span>
             }
-            description={user.email}
+            description={worker.email}
           ></User>
         );
       case "createdAt": {
         return (
           <div className="flex justify-center">
             <p className={`text-bold text-small capitalize`}>
-              {formatearFecha(user.createdAt)}
+              {formatearFecha(worker.createdAt)}
             </p>
           </div>
         );
@@ -207,7 +224,7 @@ export default function UsersTable() {
         return (
           <div className="flex justify-center">
             <p className={`text-bold text-small capitalize`}>
-              {user.orderCount}
+              {worker.orderCount}
             </p>
           </div>
         );
@@ -217,7 +234,7 @@ export default function UsersTable() {
           <div className="w-full flex justify-center">
             <Chip
               className="capitalize"
-              color={statusColorMap[String(user.status)]}
+              color={statusColorMap[String(worker.status)]}
               size="sm"
               variant="flat"
             >
@@ -228,10 +245,18 @@ export default function UsersTable() {
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip color="danger" content="Delete user">
+            <Tooltip content="Edit worker">
+              <button
+                onClick={() => handleEditWorkers(worker)}
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+              >
+                <EditIcon />
+              </button>
+            </Tooltip>
+            <Tooltip color="danger" content="Delete worker">
               <button
                 onClick={() => {
-                  handleDelete(user.id);
+                  handleDelete(worker.id);
                 }}
                 className="text-lg text-danger cursor-pointer active:opacity-50"
               >
@@ -320,11 +345,18 @@ export default function UsersTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
+            <Button
+              color="primary"
+              endContent={<PlusIcon />}
+              onPress={handleAddWorkers}
+            >
+              Nuevo Trabajador
+            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users?.length} usuarios
+            Total {workers?.length} usuarios
           </span>
           <label className="flex items-center text-default-400 text-small">
             Filas por páginas:
@@ -345,7 +377,8 @@ export default function UsersTable() {
     filterValue,
     onSearchChange,
     visibleColumns,
-    users?.length,
+    onOpen,
+    workers?.length,
     onRowsPerPageChange,
     onClear,
   ]);
@@ -437,6 +470,12 @@ export default function UsersTable() {
           )}
         </TableBody>
       </Table>
+      <ModalAddWorker
+        isOpen={isOpen}
+        onClose={onClose}
+        setWorkers={setWorkers}
+        {...selectedWorker}
+      />
     </>
   );
 }

@@ -11,11 +11,14 @@ import {
   Spinner,
 } from "@nextui-org/react";
 import { FC, useEffect, useState } from "react";
-import { BiLock, BiUser } from "react-icons/bi";
+import { BiLock, BiMailSend, BiUser } from "react-icons/bi";
 import { toast } from "sonner";
-import { createUsersRequest, editUsersRequest } from "../../services/user";
-import { Sede, User } from "../../type";
+import { Sede, Worker } from "../../type";
 import { getSedesRequest } from "../../services/sedes";
+import {
+  createWorkersRequest,
+  editWorkersRequest,
+} from "../../services/workers";
 
 interface Props {
   id?: string;
@@ -23,38 +26,39 @@ interface Props {
   email?: string;
   image?: string;
   Sede?: Sede;
-  role?: "USER" | "MODERADOR" | "ADMIN";
-  setUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
+  role?: "MODERATOR" | "OWNER";
+  setWorkers: React.Dispatch<React.SetStateAction<Worker[] | null>>;
   isOpen: boolean;
   onClose: () => void;
 }
 
 const roles = [
-  { key: "USER", label: "Usuario" },
-  { key: "ADMIN", label: "Admin" },
-  { key: "MODERADOR", label: "Moderador" },
+  { key: "OWNER", label: "Admin" },
+  { key: "MODERATOR", label: "Moderador" },
 ];
 
-const ModalAddUser: FC<Props> = ({
+const ModalAddWorker: FC<Props> = ({
   id,
   username,
   image,
   isOpen,
   onClose,
-  setUsers,
+  setWorkers,
 }) => {
   const [loading, setLoading] = useState(false);
 
   const [imageUrl, setImageUrl] = useState("./logo.webp");
   const [selectedRole, setSelectedRole] = useState<string | null>();
   const [sedes, setSedes] = useState<{ id: string; direction: string }[]>([]);
+  const [disable, setDisable] = useState<boolean | undefined>(true);
 
   useEffect(() => {
-    if (selectedRole === "MODERADOR") {
+    if (selectedRole === "MODERATOR") {
+      setDisable(false);
       getSedesRequest().then((res) => {
         setSedes(res.data.data);
       });
-    }
+    } else setDisable(true);
   }, [selectedRole]);
 
   useEffect(() => {
@@ -72,7 +76,7 @@ const ModalAddUser: FC<Props> = ({
 
   const handleRoleChange = (value: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedRole(value.target.value);
-    console.log(value)
+    console.log(value);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -81,12 +85,13 @@ const ModalAddUser: FC<Props> = ({
     const data = Object.fromEntries(new FormData(event.currentTarget));
 
     const inputImage = data["image"] as string;
-    const selectedRole = data["role"] as "USER" | "MODERADOR" | "ADMIN";
+    const selectedRole = data["role"] as "MODERATOR" | "OWNER";
     const selectedSede = data["sede"] as string;
 
     const inputUser = data["user"] as string;
     const inputPassword = data["password"] as string;
     const inputPasswordConfirm = data["passwordConfirm"] as string;
+    const inputEmail = data["email"] as string;
 
     // Validaciones
     if (!selectedRole) {
@@ -94,13 +99,18 @@ const ModalAddUser: FC<Props> = ({
       setLoading(false);
       return;
     }
-    if (selectedRole === "MODERADOR" && !selectedSede) {
+    if (selectedRole === "MODERATOR" && !selectedSede) {
       toast.error("Debe elegir uan sede para el moderador.");
       setLoading(false);
       return;
     }
     if (!inputUser) {
       toast.error("El nombre del usuario es requerido.");
+      setLoading(false);
+      return;
+    }
+    if (!inputEmail) {
+      toast.error("El email es requerido.");
       setLoading(false);
       return;
     }
@@ -118,16 +128,19 @@ const ModalAddUser: FC<Props> = ({
       return;
     }
 
+    
+
     if (id) {
-      editUsersRequest(id, {
+      editWorkersRequest(id, {
         image: inputImage,
         password: inputPassword,
         role: selectedRole,
         sedeId: selectedSede,
         username: inputUser,
+        email: inputEmail,
       })
         .then((res) => {
-          setUsers((prev) => {
+          setWorkers((prev) => {
             if (!prev) {
               return null;
             }
@@ -138,11 +151,11 @@ const ModalAddUser: FC<Props> = ({
             });
             return [user, ...userFilter];
           });
-          toast.success("Usuario creacto con exito");
+          toast.success("Trabajador editado con exito");
         })
         .catch((err) => {
           console.log(err);
-          toast.error("Error al crear el usuario");
+          toast.error("Error al editar el trabajador");
         })
         .finally(() => {
           setLoading(false);
@@ -152,22 +165,23 @@ const ModalAddUser: FC<Props> = ({
     }
 
     if (!id) {
-      createUsersRequest({
+      createWorkersRequest({
         image: inputImage,
+        email: inputEmail,
         password: inputPassword,
         role: selectedRole,
         sedeId: selectedSede,
         username: inputUser,
       })
         .then((res) => {
-          setUsers((prev) => {
+          setWorkers((prev) => {
             return prev ? [res.data.data, ...prev] : null;
           });
-          toast.success("Usuario creacto con exito");
+          toast.success("Trabajador creacto con exito");
         })
         .catch((err) => {
           console.log(err);
-          toast.error("Error al crear el usuario");
+          toast.error("Error al crear el trabajador");
         })
         .finally(() => {
           setLoading(false);
@@ -225,6 +239,17 @@ const ModalAddUser: FC<Props> = ({
                       />
                       <Input
                         endContent={
+                          <BiMailSend className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                        }
+                        label="Email"
+                        name="email"
+                        placeholder="Entra su email"
+                        type="email"
+                        variant="bordered"
+                        labelPlacement="outside"
+                      />
+                      <Input
+                        endContent={
                           <BiLock className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                         }
                         label="Password"
@@ -245,22 +270,9 @@ const ModalAddUser: FC<Props> = ({
                         variant="bordered"
                         labelPlacement="outside"
                       />
-                      <Select
-                        variant="bordered"
-                        label="Role"
-                        name="role"
-                        defaultOpen
-                        placeholder="Seleccione el role"
-                        labelPlacement="outside"
-                        onChange={handleRoleChange}
-                      >
-                        {roles.map((rol) => (
-                          <SelectItem key={rol.key}>{rol.label}</SelectItem>
-                        ))}
-                      </Select>
                     </div>
                   </div>
-                  {selectedRole === "MODERADOR" && (
+                  <div className="w-full flex justify-between gap-4">
                     <Select
                       className="w-full"
                       variant="bordered"
@@ -268,12 +280,30 @@ const ModalAddUser: FC<Props> = ({
                       name="sede"
                       placeholder="Seleccione la Sede"
                       labelPlacement="outside"
+                      isDisabled={disable}
+                      defaultSelectedKeys={sedes.flatMap(
+                        (sede) => sede.id
+                      )}
                     >
                       {sedes.map((sede) => (
                         <SelectItem key={sede.id}>{sede.direction}</SelectItem>
                       ))}
                     </Select>
-                  )}
+                    <Select
+                      variant="bordered"
+                      label="Role"
+                      name="role"
+                      defaultOpen
+                      placeholder="Seleccione el role"
+                      labelPlacement="outside"
+                      onChange={handleRoleChange}
+                    >
+                      {roles.map((rol) => (
+                        <SelectItem key={rol.key}>{rol.label}</SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+
                   <div className="flex min-w-full justify-end mt-5 gap-3">
                     <Button color="danger" variant="light" onPress={onClose}>
                       Cancelar
@@ -295,4 +325,4 @@ const ModalAddUser: FC<Props> = ({
   );
 };
 
-export default ModalAddUser;
+export default ModalAddWorker;

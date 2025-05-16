@@ -15,12 +15,13 @@ import bots from "./Routes/bot.routes";
 import payment from "./Routes/payment.routes";
 import sedes from "./Routes/sedes.routes";
 import users from "./Routes/user.routes";
+import workers from "./Routes/workers.routes"
 import analytics from "./Routes/analytics.routes";
 import paymentMethod from "./Routes/paymentMethod.routes";
 import currencyExchange from "./Routes/currencyExchange.routes";
 import notification from "./Routes/notification.routes";
 
-import { initBot } from "./Controllers/bot.controller";
+// import { initBot } from "./Controllers/bot.controller";
 
 dotenv.config();
 const port = 4000;
@@ -50,6 +51,7 @@ app.use("/api", bots);
 app.use("/api", payment);
 app.use("/api", sedes);
 app.use("/api", users);
+app.use("/api", workers);
 app.use("/api", paymentMethod);
 app.use("/api", currencyExchange);
 app.use("/api/analytics", analytics);
@@ -57,7 +59,7 @@ app.use("/api", notification);
 
 app.use("/public", express.static(path.join(__dirname, "/Upload")));
 
-initBot();
+// initBot();
 
 server.listen(port, () => {
   console.log(`Server on port ${port}`);
