@@ -9,8 +9,10 @@ export interface Workers {
 }
 
 export interface BaseUser {
+  id: string;
   username: string;
   image: string;
+  email: string;
   status: boolean;
   createdAt: string;
 }
@@ -21,8 +23,10 @@ export interface User {
   email: string;
   image: string;
   status: boolean;
+  orders: { id: string; pending: boolean }[];
   orderCount: number;
   createdAt: string;
+  sede: string
 }
 
 export interface Worker {
@@ -33,6 +37,8 @@ export interface Worker {
   status: boolean;
   orderCount: number;
   createdAt: string;
+  salary: number;
+  role: "OWNER" | "MODERATOR";
 }
 
 export interface AuthContextType {
@@ -86,18 +92,21 @@ export interface Category {
   };
 }
 
+type Client = {
+  baseUser: BaseUser;
+};
+
+type Admin = {
+  baseUser: BaseUser;
+};
+
 export interface Order {
   createdAt: string;
   id: string;
   totalAmount: number;
   pending: boolean;
-  client: {
-    baseUser: {
-      id: string;
-      username: string;
-      image: string;
-    };
-  };
+  admin: Admin;
+  client: Client;
   _count: {
     orderItems: number;
   };

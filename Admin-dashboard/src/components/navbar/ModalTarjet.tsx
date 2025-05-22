@@ -10,6 +10,7 @@ import {
 } from "../../services/paymentMethod";
 import { toast } from "sonner";
 import ModalAddPayment from "../pagos/ModalAddPayment";
+import usePaymentMethod from "../../customHooks/usePaymentMethod";
 
 
 
@@ -17,6 +18,7 @@ const ModalTarjet = () => {
   const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [paymentCard, setPaymentCard] = useState<PaymentMethod[] | null>(null);
+  const {addPaymentMethod, updatePaymentMethod} = usePaymentMethod();
 
   useEffect(() => {
     setLoading(true);
@@ -82,7 +84,7 @@ const ModalTarjet = () => {
           </div>
         </div>
       </Tooltip>
-      <ModalAddPayment isOpen={isOpen} onClose={onClose} />
+      <ModalAddPayment isOpen={isOpen} onClose={onClose} addPaymentMethod={addPaymentMethod} updatePaymentMethod={updatePaymentMethod}/>
 
 
     </>

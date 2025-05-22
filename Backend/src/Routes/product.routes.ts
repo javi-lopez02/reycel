@@ -32,7 +32,7 @@ router.get("/products", async (req, res) => {
           ram: product.ram,
           storage: product.almacenamiento,
           description: "",
-          categoryId: "ad72e03b-6b66-4366-b1e8-fe8783c4af3b",
+          categoryId: "d836efd3-7d53-4518-896b-d3b8882127a3",
         },
       });
       console.log("Producto creado:", createdProduct);

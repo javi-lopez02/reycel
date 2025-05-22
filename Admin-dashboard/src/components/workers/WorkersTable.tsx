@@ -52,6 +52,7 @@ export function Capitalize(s: string) {
 
 const columns = [
   { name: "NOMBRE", uid: "username", sortable: true },
+  { name: "SALARIO", uid: "salary" },
   { name: "CREADO EL ", uid: "createdAt", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "# ORDENES", uid: "order" },
@@ -69,6 +70,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "actions",
   "createdAt",
   "order",
+  "salary",
 ];
 
 export default function UsersTable() {
@@ -139,9 +141,8 @@ export default function UsersTable() {
     let filteredProducts = [...workers];
 
     if (hasSearchFilter) {
-      filteredProducts = filteredProducts.filter(
-        (user) =>
-          user.username.toLowerCase().includes(filterValue.toLowerCase())
+      filteredProducts = filteredProducts.filter((user) =>
+        user.username.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     return filteredProducts;
@@ -211,6 +212,18 @@ export default function UsersTable() {
             description={worker.email}
           ></User>
         );
+      case "salary": {
+        return worker.role === "MODERATOR" ? (
+          <div className="flex justify-left">
+            <span>$</span>
+            <p className={`text-bold text-small capitalize`}>{worker.salary}</p>
+          </div>
+        ) : (
+          <div className="flex justify-leftb ">
+            <p className={`text-bold text-small capitalize`}>ADMINISTRADOR</p>
+          </div>
+        );
+      }
       case "createdAt": {
         return (
           <div className="flex justify-center">

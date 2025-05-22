@@ -11,7 +11,7 @@ import {
   Spinner,
 } from "@nextui-org/react";
 import { FC, useEffect, useState } from "react";
-import { BiLock, BiMailSend, BiUser } from "react-icons/bi";
+import { BiDollar, BiLock, BiMailSend, BiUser } from "react-icons/bi";
 import { toast } from "sonner";
 import { Sede, Worker } from "../../type";
 import { getSedesRequest } from "../../services/sedes";
@@ -27,6 +27,7 @@ interface Props {
   image?: string;
   Sede?: Sede;
   role?: "MODERATOR" | "OWNER";
+  salary?: number;
   setWorkers: React.Dispatch<React.SetStateAction<Worker[] | null>>;
   isOpen: boolean;
   onClose: () => void;
@@ -41,6 +42,8 @@ const ModalAddWorker: FC<Props> = ({
   id,
   username,
   image,
+  email,
+  salary,
   isOpen,
   onClose,
   setWorkers,
@@ -92,6 +95,7 @@ const ModalAddWorker: FC<Props> = ({
     const inputPassword = data["password"] as string;
     const inputPasswordConfirm = data["passwordConfirm"] as string;
     const inputEmail = data["email"] as string;
+    const inputSalary = Number(data["salary"]);
 
     // Validaciones
     if (!selectedRole) {
@@ -100,7 +104,12 @@ const ModalAddWorker: FC<Props> = ({
       return;
     }
     if (selectedRole === "MODERATOR" && !selectedSede) {
-      toast.error("Debe elegir uan sede para el moderador.");
+      toast.error("Debe elegir una sede para el moderador.");
+      setLoading(false);
+      return;
+    }
+    if (selectedRole === "MODERATOR" && !inputSalary) {
+      toast.error("Debe escribir el salario del moderador.");
       setLoading(false);
       return;
     }
@@ -128,8 +137,6 @@ const ModalAddWorker: FC<Props> = ({
       return;
     }
 
-    
-
     if (id) {
       editWorkersRequest(id, {
         image: inputImage,
@@ -138,6 +145,7 @@ const ModalAddWorker: FC<Props> = ({
         sedeId: selectedSede,
         username: inputUser,
         email: inputEmail,
+        salary: inputSalary,
       })
         .then((res) => {
           setWorkers((prev) => {
@@ -172,6 +180,7 @@ const ModalAddWorker: FC<Props> = ({
         role: selectedRole,
         sedeId: selectedSede,
         username: inputUser,
+        salary: inputSalary,
       })
         .then((res) => {
           setWorkers((prev) => {
@@ -242,6 +251,7 @@ const ModalAddWorker: FC<Props> = ({
                           <BiMailSend className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                         }
                         label="Email"
+                        defaultValue={email}
                         name="email"
                         placeholder="Entra su email"
                         type="email"
@@ -273,22 +283,19 @@ const ModalAddWorker: FC<Props> = ({
                     </div>
                   </div>
                   <div className="w-full flex justify-between gap-4">
-                    <Select
-                      className="w-full"
+                    <Input
+                      endContent={
+                        <BiDollar className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                      }
+                      label="Salario Fijo"
+                      name="salary"
+                      defaultValue={String(salary)}
+                      placeholder="Salario Fijo"
+                      type="text"
                       variant="bordered"
-                      label="Sede"
-                      name="sede"
-                      placeholder="Seleccione la Sede"
-                      labelPlacement="outside"
                       isDisabled={disable}
-                      defaultSelectedKeys={sedes.flatMap(
-                        (sede) => sede.id
-                      )}
-                    >
-                      {sedes.map((sede) => (
-                        <SelectItem key={sede.id}>{sede.direction}</SelectItem>
-                      ))}
-                    </Select>
+                      labelPlacement="outside"
+                    />
                     <Select
                       variant="bordered"
                       label="Role"
@@ -303,6 +310,20 @@ const ModalAddWorker: FC<Props> = ({
                       ))}
                     </Select>
                   </div>
+                  <Select
+                    className="w-full"
+                    variant="bordered"
+                    label="Sede"
+                    name="sede"
+                    placeholder="Seleccione la Sede"
+                    labelPlacement="outside"
+                    isDisabled={disable}
+                    defaultSelectedKeys={sedes.flatMap((sede) => sede.id)}
+                  >
+                    {sedes.map((sede) => (
+                      <SelectItem key={sede.id}>{sede.direction}</SelectItem>
+                    ))}
+                  </Select>
 
                   <div className="flex min-w-full justify-end mt-5 gap-3">
                     <Button color="danger" variant="light" onPress={onClose}>

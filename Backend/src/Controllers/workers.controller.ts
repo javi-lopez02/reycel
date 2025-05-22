@@ -44,13 +44,17 @@ export const getWorkers = async (req: Request, res: Response) => {
       },
       select: {
         id: true,
+        salary: true,
+        mouthSalary: true,
+        role: true,
         baseUser: {
           select: {
             username: true,
             image: true,
             status: true,
             createdAt: true,
-            email: true
+            email: true,
+            
           },
         },
         _count: {
@@ -69,7 +73,10 @@ export const getWorkers = async (req: Request, res: Response) => {
         status: worker.baseUser.status,
         orderCount: worker._count.orders,
         createdAt: worker.baseUser.createdAt,
-        email: worker.baseUser.email
+        email: worker.baseUser.email,
+        salary: worker.salary,
+        mouthSalary: worker.mouthSalary,
+        role: worker.role
       }))
     );
   } catch (error) {
@@ -80,7 +87,7 @@ export const getWorkers = async (req: Request, res: Response) => {
 
 export const createWorker = async (req: Request, res: Response) => {
   try {
-    const { username, password, image, email, sedeId, role } = req.body;
+    const { username, password, image, email, sedeId, role, salary } = req.body;
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
@@ -90,18 +97,19 @@ export const createWorker = async (req: Request, res: Response) => {
         username,
         password: hashedPassword,
         image,
-        status: false,
+        status: true,
         administrator: {
           create: {
             role,
+            salary,
             orders: {
               create: {
                 totalAmount: 0,
               },
             },
             sede: {
-              connect: {id: sedeId}
-            }
+              connect: { id: sedeId },
+            },
           },
         },
       },
@@ -138,9 +146,9 @@ export const createWorker = async (req: Request, res: Response) => {
   }
 };
 
-export const editUserAdmin = async (req: Request, res: Response) => {
+export const editWorker = async (req: Request, res: Response) => {
   try {
-    const { username, password, image } = req.body;
+    const { username, password, image, role, sedeId, salary } = req.body;
     const { id } = req.params;
 
     const worker = await prisma.administrator.findUnique({
@@ -166,6 +174,17 @@ export const editUserAdmin = async (req: Request, res: Response) => {
         username: username || undefined,
         image: image || undefined,
         password: hashedPassword,
+        administrator: {
+          update: {
+            data: {
+              role,
+              salary,
+              sede: {
+                connect: { id: sedeId },
+              },
+            },
+          },
+        },
       },
       include: {
         administrator: {

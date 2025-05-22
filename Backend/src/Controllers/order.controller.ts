@@ -180,7 +180,7 @@ export const deleteOrderItem = async (req: Request, res: Response) => {
   }
 };
 
-export const getOrder = async (req: Request, res: Response) => {
+export const getOrderAdmin = async (req: Request, res: Response) => {
   try {
     const orders = await prisma.order.findMany({
       select: {
@@ -193,19 +193,38 @@ export const getOrder = async (req: Request, res: Response) => {
         id: true,
         totalAmount: true,
         pending: true,
+        admin: {
+          select: {
+            baseUser: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                image: true,
+                createdAt: true,
+                status: true,
+              },
+            },
+          },
+        },
         client: {
           select: {
             baseUser: {
               select: {
                 id: true,
-                image: true,
+                email: true,
                 username: true,
+                image: true,
+                createdAt: true,
+                status: true,
               },
             },
           },
         },
       },
     });
+
+    console.log(orders);
 
     res.status(200).json({
       data: orders,
@@ -297,7 +316,7 @@ export const addOrderItemAdmin = async (req: Request, res: Response) => {
 
     let orderFind = await prisma.order.findFirst({
       where: {
-        clientId: userId,
+        adminId: userId,
         pending: true,
       },
       include: {
@@ -316,7 +335,7 @@ export const addOrderItemAdmin = async (req: Request, res: Response) => {
     if (!orderFind) {
       orderFind = await prisma.order.create({
         data: {
-          clientId: userId,
+          adminId: userId,
           pending: true,
           totalAmount: 0,
         },

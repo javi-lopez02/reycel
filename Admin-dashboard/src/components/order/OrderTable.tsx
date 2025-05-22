@@ -74,7 +74,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "actions",
 ];
 
-export default function OrerTable() {
+export default function OrderTable() {
   const { error, loading, orders } = useOrder();
   const navigate = useNavigate();
 
@@ -116,7 +116,10 @@ export default function OrerTable() {
     if (hasSearchFilter) {
       filteredOrders = filteredOrders.filter(
         (order) =>
-          order.client.baseUser.username
+          order.client?.baseUser?.username
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
+          order.admin?.baseUser?.username
             .toLowerCase()
             .includes(filterValue.toLowerCase()) ||
           order.totalAmount
@@ -191,10 +194,15 @@ export default function OrerTable() {
 
       switch (columnKey) {
         case "username":
-          return (
+          return orders.client ? (
             <User
               avatarProps={{ radius: "lg", src: orders.client.baseUser.image }}
-              name={orders.client.baseUser.username}
+              name={orders.client?.baseUser.username}
+            />
+          ) : (
+            <User
+              avatarProps={{ radius: "lg", src: orders.admin.baseUser.image }}
+              name={orders.admin?.baseUser?.username}
             />
           );
         case "totalAmount":
@@ -462,7 +470,9 @@ export default function OrerTable() {
               align={
                 column.uid === "actions" ||
                 column.uid === "productquantity" ||
-                column.uid === "totalAmount" ? "center" : "start"
+                column.uid === "totalAmount"
+                  ? "center"
+                  : "start"
               }
               allowsSorting={column.sortable}
             >

@@ -1,13 +1,12 @@
-import {Request, Response} from 'express'
-import {PrismaClient} from '@prisma/client'
-import bcryptjs from 'bcryptjs'
-import {createToken} from '../Libs/jwt'
-import jwt from 'jsonwebtoken'
-import { TokenPayload } from '../types'
-import { TOKEN_SECRET } from '../conf'
+import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
+import bcryptjs from "bcryptjs";
+import { createToken } from "../Libs/jwt";
+import jwt from "jsonwebtoken";
+import { TokenPayload } from "../types";
+import { TOKEN_SECRET } from "../conf";
 
-const prisma = new PrismaClient()
-
+const prisma = new PrismaClient();
 
 export const loginAdmin = async (req: Request, res: Response) => {
   try {
@@ -23,13 +22,29 @@ export const loginAdmin = async (req: Request, res: Response) => {
       where: {
         username: userName,
       },
-      include: {
+      select: {
         administrator: {
-          include: {
-            notification: true
-          }
-        }
-      }
+          select: {
+            id: true,
+            role: true,
+            orders: {
+              select: {
+                id: true,
+                pending: true,
+              },
+            },
+            notification: true,
+            sede: {
+              select: {
+                direction: true
+              }
+            }
+          },
+        },
+        password: true,
+        username: true,
+        image: true,
+      },
     });
 
     if (!baseUser || !baseUser.administrator) {
@@ -55,14 +70,15 @@ export const loginAdmin = async (req: Request, res: Response) => {
       userId: baseUser.administrator.id,
       image: baseUser.image,
       role: baseUser.administrator.role,
-      notifications: baseUser.administrator.notification.reverse()
+      orderId: baseUser.administrator.orders,
+      notifications: baseUser.administrator.notification.reverse(),
+      sede: baseUser.administrator.sede?.direction
     });
   } catch (error) {
     console.log(error);
     res.status(500).json(["Error del servidor"]);
   }
 };
-
 
 export const verifyTokenAdmin = async (req: Request, res: Response) => {
   try {
@@ -78,10 +94,18 @@ export const verifyTokenAdmin = async (req: Request, res: Response) => {
       where: {
         id: decode.id,
       },
-      include: {
+      select: {
+        id: true,
+        orders: true,
         baseUser: true,
-        notification: true
-      }
+        notification: true,
+        role: true,
+        sede: {
+          select: {
+            direction: true
+          }
+        }
+      },
     });
 
     if (!administrator || !administrator.baseUser) {
@@ -93,7 +117,9 @@ export const verifyTokenAdmin = async (req: Request, res: Response) => {
       userId: administrator.id,
       image: administrator.baseUser.image,
       role: administrator.role,
-      notifications: administrator.notification.reverse()
+      orders: administrator.orders,
+      notifications: administrator.notification.reverse(),
+      sede: administrator.sede?.direction
     });
   } catch (error) {
     console.log(error);

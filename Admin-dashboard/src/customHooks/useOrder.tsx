@@ -3,7 +3,10 @@ import { Order } from "../type";
 import { getOrderRequest } from "../services/order";
 
 function useOrder() {
+  // const [ordersW, setOrdersW] = useState<OrderWorker[] | null>(null);
+  // const [ordersC, setOrdersC] = useState<OrderClient[] | null>(null);
   const [orders, setOrders] = useState<Order[] | null>(null);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Array<string> | null>(null);
 
@@ -16,14 +19,14 @@ function useOrder() {
       })
       .catch((err) => {
         console.log(err);
-        setError(["Error al cargar los productos"]);
+        setError(["Error al cargar las ordenes"]);
       })
       .finally(() => {
         setLoading(false);
       });
   }, []);
 
-  return { error, orders, loading, setOrders };
+  return { error, loading, orders, setOrders };
 }
 
 export default useOrder;

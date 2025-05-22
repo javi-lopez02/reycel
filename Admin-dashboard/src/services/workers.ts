@@ -11,6 +11,7 @@ interface WorkerRequest {
   image: string;
   sedeId?: string;
   role?: "MODERATOR" | "OWNER";
+  salary?: number;
 }
 
 export const createWorkersRequest = (worker: WorkerRequest) => {

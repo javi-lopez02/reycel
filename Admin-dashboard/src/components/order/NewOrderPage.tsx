@@ -3,7 +3,6 @@ import useProduct from "../../customHooks/useProduct";
 import NewOrderCard from "./NewOrderCard";
 import { toast } from "sonner";
 import ModalAddOrder from "./ModalAddOrder";
-import useOrder from "../../customHooks/useOrder";
 import { useEffect, useState } from "react";
 import { OrderItem } from "../../type";
 import {
@@ -16,7 +15,6 @@ import NewOrderView from "./NewOrderView";
 export default function NewOrderPage() {
   const { products, error, loading } = useProduct();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { orders } = useOrder();
   const [totalAmount, setTotalAmount] = useState(0);
   const [count, setCount] = useState(0);
   const [errors, setErrors] = useState<Array<string> | null>(null);
@@ -27,8 +25,8 @@ export default function NewOrderPage() {
   useEffect(() => {
     setLoad(true);
 
-    orders?.map((order) => {
-      if (order.user.id === user?.userId) {
+    user?.orders?.map((order) => {
+      if (order.pending === true) {
         setLoad(false);
 
         getOrderItemsRequest(order.id)
@@ -46,7 +44,7 @@ export default function NewOrderPage() {
           });
       }
     });
-  }, [orders, user, totalAmount]);
+  }, [user, totalAmount]);
 
   const handleQuantity = (value: string, id: string, price: number) => {
     try {

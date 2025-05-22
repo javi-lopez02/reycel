@@ -30,6 +30,8 @@ model Administrator {
   id           String         @id @default(uuid())
   baseUser     BaseUser       @relation(fields: [baseUserId], references: [id])
   baseUserId   String         @unique
+  salary       Int?
+  mouthSalary  Int?
   role         Role           @default(MODERATOR)
   sede         Sede?          @relation(fields: [sedeId], references: [id])
   sedeId       String?
@@ -129,16 +131,16 @@ enum TransactionType {
 }
 
 model Order {
-  id           Int            @id @default(autoincrement())
-  pending      Boolean        @default(true)
-  clientId     String?
-  client       Client?        @relation(fields: [clientId], references: [id])
-  adminId      String?
-  admin        Administrator? @relation(fields: [adminId], references: [id])
-  orderItems   OrderItem[]
-  totalAmount  Float          @default(0)
-  payment      Payment?
-  createdAt    DateTime       @default(now())
+  id          Int            @id @default(autoincrement())
+  pending     Boolean        @default(true)
+  clientId    String?
+  client      Client?        @relation(fields: [clientId], references: [id])
+  adminId     String?
+  admin       Administrator? @relation(fields: [adminId], references: [id])
+  orderItems  OrderItem[]
+  totalAmount Float          @default(0)
+  payment     Payment?
+  createdAt   DateTime       @default(now())
 }
 
 model OrderItem {
@@ -157,8 +159,8 @@ model Payment {
   orderId         Int           @unique
   order           Order         @relation(fields: [orderId], references: [id])
   amount          Float
-  transactionID   String?
-  fastDelivery    Boolean     
+  transactionID   String
+  fastDelivery    Boolean
   paymentStatus   PaymentStatus @default(PENDING)
   createdAt       DateTime      @default(now())
   PaymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
