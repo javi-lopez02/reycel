@@ -60,8 +60,8 @@ const columns = [
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  online: "success",
-  offline: "danger",
+  true: "success",
+  false: "danger",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -258,10 +258,10 @@ export default function UsersTable() {
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Edit worker">
+            <Tooltip content="Edit worker" color="success">
               <button
                 onClick={() => handleEditWorkers(worker)}
-                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                className="text-lg text-success cursor-pointer active:opacity-50"
               >
                 <EditIcon />
               </button>

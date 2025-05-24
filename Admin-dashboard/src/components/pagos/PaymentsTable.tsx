@@ -192,10 +192,15 @@ export default function PaymentsTable() {
 
       switch (columnKey) {
         case "user":
-          return (
+          return payments.client ? (
             <User
               avatarProps={{ radius: "lg", src: payments.client.baseUser.image }}
-              name={payments.client.baseUser.username}
+              name={payments.client?.baseUser.username}
+            />
+          ) : (
+            <User
+              avatarProps={{ radius: "lg", src: payments.admin.baseUser.image }}
+              name={payments.admin?.baseUser?.username}
             />
           );
         case "price":

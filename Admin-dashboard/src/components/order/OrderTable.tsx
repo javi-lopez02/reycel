@@ -241,13 +241,14 @@ export default function OrderTable() {
         case "actions":
           return (
             <div className="relative flex justify-center items-center gap-2">
-              <Tooltip content="Details">
-                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <Tooltip content="Details" color="success">
+                <span className="text-lg text-success cursor-pointer active:opacity-50">
                   <EyeIcon
                     onClick={() => {
                       onOpen();
                       setOrderId(orders.id);
                     }}
+                    color="success"
                   />
                 </span>
               </Tooltip>

@@ -3,8 +3,6 @@ import { Order } from "../type";
 import { getOrderRequest } from "../services/order";
 
 function useOrder() {
-  // const [ordersW, setOrdersW] = useState<OrderWorker[] | null>(null);
-  // const [ordersC, setOrdersC] = useState<OrderClient[] | null>(null);
   const [orders, setOrders] = useState<Order[] | null>(null);
 
   const [loading, setLoading] = useState(false);

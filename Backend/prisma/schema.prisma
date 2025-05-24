@@ -38,6 +38,7 @@ model Administrator {
   notification Notification[]
   orders       Order[] // Agregar órdenes para administradores
   ratings      Rating[] // Agregar ratings para administradores
+  Payment      Payment[]
 }
 
 // Modelo para clientes
@@ -159,14 +160,16 @@ model Payment {
   orderId         Int           @unique
   order           Order         @relation(fields: [orderId], references: [id])
   amount          Float
-  transactionID   String
+  transactionID   String?
   fastDelivery    Boolean
   paymentStatus   PaymentStatus @default(PENDING)
   createdAt       DateTime      @default(now())
   PaymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
   paymentMethodId String
-  client          Client        @relation(fields: [userId], references: [id])
-  userId          String
+  client          Client?        @relation(fields: [userId], references: [id])
+  userId          String?
+  adminId         String?
+  admin           Administrator? @relation(fields: [adminId], references: [id])
 }
 
 model PaymentMethod {

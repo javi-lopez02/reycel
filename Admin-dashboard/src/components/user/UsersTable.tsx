@@ -55,8 +55,8 @@ const columns = [
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  online: "success",
-  offline: "danger",
+  true: "success",
+  false: "danger",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [

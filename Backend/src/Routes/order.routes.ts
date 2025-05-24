@@ -4,6 +4,7 @@ import { authMiddleware } from "../Middlewares/middlewares";
 import {
   addOrderItem,
   addOrderItemAdmin,
+  confirmOrderAdmin,
   deleteOrderItem,
   deleteOrderItemAdmin,
   getOrderAdmin,
@@ -33,6 +34,8 @@ router.post("/order", authAdmin, addOrderItemAdmin)
 router.put("/order", authAdmin, updateOrderItemAdmin);
 
 router.delete("/order", authAdmin, deleteOrderItemAdmin);
+
+router.post("/order/confirm", authAdmin, confirmOrderAdmin);
 
 
 export default router;

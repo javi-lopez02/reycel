@@ -142,6 +142,14 @@ export interface Payment {
     baseUser: {
       username: string;
       image: string;
+      email: string;
+    };
+  };
+  admin: {
+    baseUser: {
+      username: string;
+      image: string;
+      email: string;
     };
   };
   PaymentMethod: PaymentMethod;

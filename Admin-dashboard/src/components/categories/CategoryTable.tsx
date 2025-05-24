@@ -209,10 +209,10 @@ export default function CategoryTable() {
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Edit Category">
+            <Tooltip content="Edit Category" color="success">
               <button
                 onClick={() => handleEditCategory(Category)}
-                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                className="text-lg text-success cursor-pointer active:opacity-50"
               >
                 <EditIcon />
               </button>
