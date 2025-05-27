@@ -1,8 +1,6 @@
 import {
   ChangeEvent,
   Key,
-  lazy,
-  Suspense,
   SVGProps,
   useCallback,
   useMemo,
@@ -31,12 +29,18 @@ import {
   Spinner,
   useDisclosure,
 } from "@nextui-org/react";
-import { ChevronDownIcon, EyeIcon, PlusIcon, SearchIcon } from "../Icons";
-import useOrder from "../../customHooks/useOrder";
+import { Worker } from "../../type";
+import {
+  ChevronDownIcon,
+  DeleteIcon,
+  EditIcon,
+  PlusIcon,
+  SearchIcon,
+} from "../Icons";
 import { toast } from "sonner";
-import { Order } from "../../type";
-import { useNavigate } from "react-router-dom";
-const ModalProductsView = lazy(() => import("./ModalProductsView"));
+import ModalAddWorker from "./ModalAddWorker";
+import useWorker from "../../customHooks/useWorker";
+import { deleteWorkersRequest } from "../../services/workers";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -47,121 +51,55 @@ export function Capitalize(s: string) {
 }
 
 const columns = [
-  { name: "USUARIO", uid: "username", sortable: true },
-  { name: "PRECIO TOTAL", uid: "totalAmount", sortable: true },
-  { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
-  { name: "ESTADO", uid: "pending", sortable: true },
-  { name: "FECHA", uid: "createdAt" },
-  { name: "ACTIONS", uid: "actions" },
-];
-
-const statusOptions = [
-  { name: "COMPLETADO", uid: "false" },
-  { name: "PENDIENTE", uid: "true" },
+  { name: "NOMBRE", uid: "username", sortable: true },
+  { name: "SALARIO", uid: "salary" },
+  { name: "CREADO EL ", uid: "createdAt", sortable: true },
+  { name: "STATUS", uid: "status", sortable: true },
+  { name: "# ORDENES", uid: "order" },
+  { name: "ACCIONES", uid: "actions" },
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  false: "success",
-  true: "warning",
+  true: "success",
+  false: "danger",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
   "username",
-  "totalAmount",
-  "productquantity",
-  "createdAt",
-  "pending",
+  "status",
   "actions",
+  "createdAt",
+  "order",
+  "salary",
 ];
 
-export default function OrderTable() {
-  const { error, loading, orders } = useOrder();
-  const navigate = useNavigate();
-
+export default function UsersTable() {
+  const { workers, error, loading, setWorkers } = useWorker();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
 
-  const [orderId, setOrderId] = useState<string>("");
-
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>();
 
   const [page, setPage] = useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const headerColumns = useMemo(() => {
-    if (visibleColumns === "all") return columns;
+  const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
 
-    return columns.filter((column) =>
-      Array.from(visibleColumns).includes(column.uid)
-    );
-  }, [visibleColumns]);
+  const handleAddWorkers = () => {
+    setSelectedWorker(null);
+    onOpen();
+  };
 
-  const filteredItems = useMemo(() => {
-    if (!orders) {
-      return [];
-    }
-
-    let filteredOrders = [...orders];
-
-    if (hasSearchFilter) {
-      filteredOrders = filteredOrders.filter(
-        (order) =>
-          order.client?.baseUser?.username
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          order.admin?.baseUser?.username
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          order.totalAmount
-            .toString()
-            .toLowerCase()
-            .includes(filterValue.toLowerCase())
-      );
-    }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredOrders = filteredOrders.filter((order) =>
-        Array.from(statusFilter).includes(String(order.pending))
-      );
-    }
-
-    return filteredOrders;
-  }, [orders, hasSearchFilter, statusFilter, filterValue]);
-
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
-
-  const sortedItems = useMemo(() => {
-    const sorted = [...filteredItems].sort((a: Order, b: Order) => {
-      const first = a[sortDescriptor.column as keyof Order] as number;
-      const second = b[sortDescriptor.column as keyof Order] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return sorted.slice(start, end);
-  }, [
-    filteredItems,
-    page,
-    rowsPerPage,
-    sortDescriptor.column,
-    sortDescriptor.direction,
-  ]);
+  const handleEditWorkers = (user: Worker) => {
+    setSelectedWorker(user);
+    onOpen();
+  };
 
   const formatearFecha = (isoString: string) => {
     const meses = [
@@ -188,79 +126,163 @@ export default function OrderTable() {
     return `${dia} ${mes} ${anio}`;
   };
 
-  const renderCell = useCallback(
-    (orders: Order, columnKey: Key) => {
-      const cellValue = orders[columnKey as keyof Order];
+  const headerColumns = useMemo(() => {
+    if (visibleColumns === "all") return columns;
 
-      switch (columnKey) {
-        case "username":
-          return orders.client ? (
-            <User
-              avatarProps={{ radius: "lg", src: orders.client.baseUser.image }}
-              name={orders.client?.baseUser.username}
-            />
-          ) : (
-            <User
-              avatarProps={{ radius: "lg", src: orders.admin.baseUser.image }}
-              name={orders.admin?.baseUser?.username}
-            />
-          );
-        case "totalAmount":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                {orders.totalAmount}$
-              </p>
-            </div>
-          );
-        case "pending":
-          return (
+    return columns.filter((column) =>
+      Array.from(visibleColumns).includes(column.uid)
+    );
+  }, [visibleColumns]);
+
+  const filteredItems = useMemo(() => {
+    if (!workers) {
+      return [];
+    }
+    let filteredProducts = [...workers];
+
+    if (hasSearchFilter) {
+      filteredProducts = filteredProducts.filter((user) =>
+        user.username.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    }
+    return filteredProducts;
+  }, [workers, hasSearchFilter, filterValue]);
+
+  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+
+  const sortedItems = useMemo(() => {
+    const sorted = [...filteredItems].sort((a: Worker, b: Worker) => {
+      const first = a[sortDescriptor?.column as never] as number;
+      const second = b[sortDescriptor?.column as never] as number;
+      const cmp = first < second ? -1 : first > second ? 1 : 0;
+
+      return sortDescriptor?.direction === "descending" ? -cmp : cmp;
+    });
+
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return sorted.slice(start, end);
+  }, [
+    filteredItems,
+    page,
+    rowsPerPage,
+    sortDescriptor?.column,
+    sortDescriptor?.direction,
+  ]);
+
+  const handleDelete = (id: string) => {
+    deleteWorkersRequest(id)
+      .then(() => {
+        toast.success("Trabajador eliminado con exito");
+        setWorkers((prev) => {
+          return prev
+            ? prev.filter((worker) => {
+                return worker.id !== id;
+              })
+            : null;
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error al eliminar el trabajador");
+      });
+  };
+
+  const renderCell = useCallback((worker: Worker, columnKey: Key) => {
+    const cellValue = worker[columnKey as keyof Worker];
+
+    switch (columnKey) {
+      case "username":
+        return (
+          <User
+            avatarProps={{ radius: "lg", src: worker.image }}
+            name={
+              <span
+                style={{
+                  display: "inline-block",
+                  maxWidth: "250px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {worker.username}
+              </span>
+            }
+            description={worker.email}
+          ></User>
+        );
+      case "salary": {
+        return worker.role === "MODERATOR" ? (
+          <div className="flex justify-left">
+            <span>$</span>
+            <p className={`text-bold text-small capitalize`}>{worker.salary}</p>
+          </div>
+        ) : (
+          <div className="flex justify-leftb ">
+            <p className={`text-bold text-small capitalize`}>ADMINISTRADOR</p>
+          </div>
+        );
+      }
+      case "createdAt": {
+        return (
+          <div className="flex justify-center">
+            <p className={`text-bold text-small capitalize`}>
+              {formatearFecha(worker.createdAt)}
+            </p>
+          </div>
+        );
+      }
+      case "order": {
+        return (
+          <div className="flex justify-center">
+            <p className={`text-bold text-small capitalize`}>
+              {worker.orderCount}
+            </p>
+          </div>
+        );
+      }
+      case "status":
+        return (
+          <div className="w-full flex justify-center">
             <Chip
               className="capitalize"
-              color={statusColorMap[String(orders.pending)]}
+              color={statusColorMap[String(worker.status)]}
               size="sm"
               variant="flat"
             >
-              {orders.pending ? "Pendiente" : "Completada"}
+              {String(cellValue)}
             </Chip>
-          );
-        case "productquantity":
-          return (
-            <span className="font-semibold flex justify-center">
-              {orders._count.orderItems}
-            </span>
-          );
-        case "createdAt":
-          return (
-            <div>
-              <p className="text-bold text-small capitalize">
-                {formatearFecha(orders.createdAt)}
-              </p>
-            </div>
-          );
-        case "actions":
-          return (
-            <div className="relative flex justify-center items-center gap-2">
-              <Tooltip content="Details" color="success">
-                <span className="text-lg text-success cursor-pointer active:opacity-50">
-                  <EyeIcon
-                    onClick={() => {
-                      onOpen();
-                      setOrderId(orders.id);
-                    }}
-                    color="success"
-                  />
-                </span>
-              </Tooltip>
-            </div>
-          );
-
-        default:
-          return String(cellValue);
-      }
-    },
-    [onOpen]
-  );
+          </div>
+        );
+      case "actions":
+        return (
+          <div className="relative flex justify-center items-center gap-2">
+            <Tooltip content="Edit worker" color="success">
+              <button
+                onClick={() => handleEditWorkers(worker)}
+                className="text-lg text-success cursor-pointer active:opacity-50"
+              >
+                <EditIcon />
+              </button>
+            </Tooltip>
+            <Tooltip color="danger" content="Delete worker">
+              <button
+                onClick={() => {
+                  handleDelete(worker.id);
+                }}
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+              >
+                <DeleteIcon />
+              </button>
+            </Tooltip>
+          </div>
+        );
+      default:
+        return String(cellValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onNextPage = useCallback(() => {
     if (page < pages) {
@@ -276,6 +298,7 @@ export default function OrderTable() {
 
   const onRowsPerPageChange = useCallback(
     (e: ChangeEvent<HTMLSelectElement>) => {
+      console.log(e.target.value);
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
@@ -297,15 +320,12 @@ export default function OrderTable() {
   }, []);
 
   const topContent = useMemo(() => {
-    const handleNavigate = () => {
-      navigate("/neworder");
-    };
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
-            color="warning"
+            color="primary"
             className="w-full sm:max-w-[44%]"
             placeholder="Búsqueda..."
             startContent={<SearchIcon />}
@@ -314,30 +334,6 @@ export default function OrderTable() {
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  Estado
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {Capitalize(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -363,18 +359,17 @@ export default function OrderTable() {
               </DropdownMenu>
             </Dropdown>
             <Button
-              color="warning"
+              color="primary"
               endContent={<PlusIcon />}
-              onPress={handleNavigate}
+              onPress={handleAddWorkers}
             >
-              Nueva Orden
+              Nuevo Trabajador
             </Button>
-            {/* <ModalAddOrder isOpen={isOpen} onClose={onClose} /> */}
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {orders?.length} Ordenes
+            Total {workers?.length} usuarios
           </span>
           <label className="flex items-center text-default-400 text-small">
             Filas por páginas:
@@ -390,15 +385,15 @@ export default function OrderTable() {
         </div>
       </div>
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     filterValue,
     onSearchChange,
-    statusFilter,
     visibleColumns,
-    orders?.length,
+    onOpen,
+    workers?.length,
     onRowsPerPageChange,
     onClear,
-    navigate,
   ]);
 
   const bottomContent = useMemo(() => {
@@ -408,7 +403,7 @@ export default function OrderTable() {
           isCompact
           showControls
           showShadow
-          color="warning"
+          color="primary"
           page={page}
           total={pages}
           onChange={setPage}
@@ -440,25 +435,16 @@ export default function OrderTable() {
   return (
     <>
       {error && error.map((err) => toast.error(err))}
-      {isOpen && (
-        <Suspense
-          fallback={
-            <div className="w-full flex justify-center fixed pt-2">
-              <Spinner color="warning" />
-            </div>
-          }
-        >
-          <ModalProductsView isOpen={isOpen} onClose={onClose} id={orderId} />
-        </Suspense>
-      )}
+
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         classNames={{
-          wrapper: "max-h-[600px]",
+          wrapper: "max-h-[670px]",
         }}
+        color="danger"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
         topContentPlacement="outside"
@@ -470,8 +456,9 @@ export default function OrderTable() {
               key={column.uid}
               align={
                 column.uid === "actions" ||
-                column.uid === "productquantity" ||
-                column.uid === "totalAmount"
+                column.uid === "createdAt" ||
+                column.uid === "order" ||
+                column.uid === "status"
                   ? "center"
                   : "start"
               }
@@ -483,8 +470,8 @@ export default function OrderTable() {
         </TableHeader>
         <TableBody
           isLoading={loading}
-          loadingContent={<Spinner color="warning" />}
-          emptyContent={"No se encontraron ordenes"}
+          loadingContent={<Spinner color="white" />}
+          emptyContent={"No users found"}
           items={sortedItems}
         >
           {(item) => (
@@ -496,6 +483,12 @@ export default function OrderTable() {
           )}
         </TableBody>
       </Table>
+      <ModalAddWorker
+        isOpen={isOpen}
+        onClose={onClose}
+        setWorkers={setWorkers}
+        {...selectedWorker}
+      />
     </>
   );
 }

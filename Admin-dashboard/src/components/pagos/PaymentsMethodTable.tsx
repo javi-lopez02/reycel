@@ -222,7 +222,7 @@ export default function PaymentsMethodTable() {
         case "actions":
           return (
             <div className="relative flex justify-center items-center gap-2">
-              <Tooltip content="Edit user">
+              <Tooltip content="Edit Payment Method" color="warning">
                 <button
                   onClick={() => {
                     if (paymentMethod.cardNumber) {
@@ -235,7 +235,7 @@ export default function PaymentsMethodTable() {
                       });
                     }
                   }}
-                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                  className="text-lg text-warning cursor-pointer active:opacity-50"
                 >
                   <EditIcon />
                 </button>

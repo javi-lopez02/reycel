@@ -180,7 +180,7 @@ export const deleteOrderItem = async (req: Request, res: Response) => {
   }
 };
 
-export const getOrder = async (req: Request, res: Response) => {
+export const getOrderAdmin = async (req: Request, res: Response) => {
   try {
     const orders = await prisma.order.findMany({
       select: {
@@ -193,13 +193,30 @@ export const getOrder = async (req: Request, res: Response) => {
         id: true,
         totalAmount: true,
         pending: true,
+        admin: {
+          select: {
+            baseUser: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                image: true,
+                createdAt: true,
+                status: true,
+              },
+            },
+          },
+        },
         client: {
           select: {
             baseUser: {
               select: {
                 id: true,
-                image: true,
+                email: true,
                 username: true,
+                image: true,
+                createdAt: true,
+                status: true,
               },
             },
           },
@@ -297,7 +314,7 @@ export const addOrderItemAdmin = async (req: Request, res: Response) => {
 
     let orderFind = await prisma.order.findFirst({
       where: {
-        clientId: userId,
+        adminId: userId,
         pending: true,
       },
       include: {
@@ -316,7 +333,7 @@ export const addOrderItemAdmin = async (req: Request, res: Response) => {
     if (!orderFind) {
       orderFind = await prisma.order.create({
         data: {
-          clientId: userId,
+          adminId: userId,
           pending: true,
           totalAmount: 0,
         },
@@ -401,3 +418,65 @@ export const updateOrderItemAdmin = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error al agregar el Producto al carrito." });
   }
 };
+
+export const confirmOrderAdmin = async (req: Request, res: Response) => {
+  try {
+    const orderID = req.body.orderID;
+    const transactionID = req.body.transactionID || null;
+    const amount = req.body.amount;
+    const fastDelivery = false;
+    const paymentMethod = req.body.paymentMethod;
+    const adminId = req.userId;
+
+    const order = await prismaNew.order.update({
+      where: {
+        id: Number(orderID),
+      },
+      data: {
+        pending: false,
+      },
+    });
+
+    await prisma.payment.create({
+      data: {
+        transactionID,
+        orderId: Number(orderID),
+        amount,
+        fastDelivery,
+        paymentMethodId: paymentMethod,
+        adminId,
+        paymentStatus: "COMPLETED"
+      },
+    });
+
+    let data = await prisma.order.findFirst({
+      where: {
+        adminId: adminId,
+        pending: true,
+      },
+      include: {
+        orderItems: true,
+      },
+    });
+
+    if (!data) {
+      data = await prisma.order.create({
+        data: {
+          adminId: adminId,
+          pending: true,
+          totalAmount: 0,
+        },
+        include: {
+          orderItems: true,
+        },
+      });
+    }
+
+    res.status(200).json({
+      data: data,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al confirmar la orden" });
+  }
+} 

@@ -27,17 +27,13 @@ import {
   SortDescriptor,
   Tooltip,
   Spinner,
-  useDisclosure,
 } from "@nextui-org/react";
 import { type User as Users } from "../../type";
 import {
   ChevronDownIcon,
   DeleteIcon,
-  EditIcon,
-  PlusIcon,
   SearchIcon,
 } from "../Icons";
-import ModalAddUser from "./ModalAddUser";
 import useUser from "../../customHooks/useUser";
 import { toast } from "sonner";
 import { deleteUsersRequest } from "../../services/user";
@@ -59,8 +55,8 @@ const columns = [
 ];
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
-  online: "success",
-  offline: "danger",
+  true: "success",
+  false: "danger",
 };
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -73,7 +69,6 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 export default function UsersTable() {
   const { users, error, loading, setUsers } = useUser();
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
 
@@ -86,18 +81,6 @@ export default function UsersTable() {
   const [page, setPage] = useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
-
-  const [selectedUser, setSelectedUser] = useState<Users | null>(null);
-
-  const handleAddProduct = () => {
-    setSelectedUser(null);
-    onOpen();
-  };
-
-  const handleEditProduct = (user: Users) => {
-    setSelectedUser(user);
-    onOpen();
-  };
 
   const formatearFecha = (isoString: string) => {
     const meses = [
@@ -208,6 +191,7 @@ export default function UsersTable() {
                 {user.username}
               </span>
             }
+            description={user.email}
           ></User>
         );
       case "createdAt": {
@@ -244,14 +228,6 @@ export default function UsersTable() {
       case "actions":
         return (
           <div className="relative flex justify-center items-center gap-2">
-            <Tooltip content="Edit user">
-              <button
-                onClick={() => handleEditProduct(user)}
-                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-              >
-                <EditIcon />
-              </button>
-            </Tooltip>
             <Tooltip color="danger" content="Delete user">
               <button
                 onClick={() => {
@@ -344,13 +320,6 @@ export default function UsersTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button
-              color="primary"
-              endContent={<PlusIcon />}
-              onPress={handleAddProduct}
-            >
-              Nuevo Usuario
-            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
@@ -376,7 +345,6 @@ export default function UsersTable() {
     filterValue,
     onSearchChange,
     visibleColumns,
-    onOpen,
     users?.length,
     onRowsPerPageChange,
     onClear,
@@ -469,12 +437,6 @@ export default function UsersTable() {
           )}
         </TableBody>
       </Table>
-      <ModalAddUser
-        isOpen={isOpen}
-        onClose={onClose}
-        setUsers={setUsers}
-        {...selectedUser}
-      />
     </>
   );
 }

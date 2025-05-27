@@ -40,7 +40,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
           </button>
         </div>
         
-        <div className="max-h-[calc(100vh-10rem)] overflow-y-auto">
+        <div className="max-h-[calc(100vh-10rem)] overflow-y-auto scrollbar-hide">
           {children}
         </div>
       </div> 

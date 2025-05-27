@@ -4,9 +4,10 @@ import { authMiddleware } from "../Middlewares/middlewares";
 import {
   addOrderItem,
   addOrderItemAdmin,
+  confirmOrderAdmin,
   deleteOrderItem,
   deleteOrderItemAdmin,
-  getOrder,
+  getOrderAdmin,
   getOrderItems,
   getOrderItemsAdmin,
   updateOrderItem,
@@ -24,16 +25,17 @@ router.delete("/products/order", authMiddleware, deleteOrderItem);
 
 
 
-
-router.get("/order", authAdmin, getOrder);
+router.get("/order", authAdmin, getOrderAdmin);
 
 router.get("/order/items/:id", authAdmin, getOrderItemsAdmin);
 
 router.post("/order", authAdmin, addOrderItemAdmin)
 
-router.put("/order", authMiddleware, updateOrderItemAdmin);
+router.put("/order", authAdmin, updateOrderItemAdmin);
 
 router.delete("/order", authAdmin, deleteOrderItemAdmin);
+
+router.post("/order/confirm", authAdmin, confirmOrderAdmin);
 
 
 export default router;
