@@ -78,12 +78,15 @@ const confirmTransaction = async (
       },
     });
 
-    //actualizar el inventario
+    //actualizar el inventario solo si esta en stock
     const orderItems = payment.order.orderItems;
     for (const item of orderItems) {
       const product = await prisma.product.findUnique({
         where: {
           id: item.productId,
+          inventoryCount: {
+            gte: item.quantity,
+          },
         },
         select: {
           inventoryCount: true,
@@ -177,6 +180,8 @@ export const initBot = () => {
     ctx.reply("HOLA REYCEL, ESPEREMOS A QUE NOS TRANSFIERAN...");
     ctx.reply(ctx.chat.id.toString());
   });
+
+  
 
   bot.on("callback_query", async (ctx) => {
     try {
