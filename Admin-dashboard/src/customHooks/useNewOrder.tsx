@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNewOrderStore } from "../store/useProductStore";
-import { getOrderItemsRequest } from "../services/order";
+import { getOrderItemsRequest } from "../services/neworder";
 
 export default function useNewOrder(id: string | undefined) {
   const { order, setOrder, errors, setErrors, isLoading, setIsLoading } =

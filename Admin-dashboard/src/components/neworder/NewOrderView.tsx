@@ -1,8 +1,8 @@
-import { Input } from "@nextui-org/react";
+import { Input } from "@heroui/react";
 import { FC, useState } from "react";
 import { OrderAdd } from "../../type";
-import { deleteOrderItemRequest, updateOrderItemRequest } from "../../services/order";
 import { toast } from "sonner";
+import { deleteOrderItemRequest, updateOrderItemRequest } from "../../services/neworder";
 
 interface Product {
   quantity: number;

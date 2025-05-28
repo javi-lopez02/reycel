@@ -9,9 +9,8 @@ import {
   Select,
   SelectItem,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useEffect, useState } from "react";
-import { confirmOrderRequest } from "../../services/order";
 import { toast } from "sonner";
 import { BiTransferAlt } from "react-icons/bi";
 import usePaymentMethod from "../../customHooks/usePaymentMethod";
@@ -19,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import NewOrderView from "./NewOrderView";
 import useNewOrder from "../../customHooks/useNewOrder";
 import { useAuth } from "../../context/AuthContext";
+import { confirmOrderRequest } from "../../services/neworder";
 
 interface Props {
   onClose: () => void;
@@ -66,6 +66,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
       })
         .then((res) => {
           toast.success("Orden Confirmada");
+          setOrder(res.data.data);
 
           onClose();
           navigate("/order");
@@ -84,6 +85,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
       })
         .then((res) => {
           toast.success("Orden Confirmada");
+          setOrder(res.data.data);
 
           onClose();
           navigate("/order");

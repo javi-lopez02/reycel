@@ -11,7 +11,7 @@ import {
   Select,
   SelectItem,
   Spinner,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FC, useState } from "react";
 import { toast } from "sonner";
 import { AddPaymentMethodProps, PaymentOptions } from "../../type";

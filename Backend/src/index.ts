@@ -20,6 +20,7 @@ import analytics from "./Routes/analytics.routes";
 import paymentMethod from "./Routes/paymentMethod.routes";
 import currencyExchange from "./Routes/currencyExchange.routes";
 import notification from "./Routes/notification.routes";
+import neworder from "./Routes/neworder.routes";
 
 // import { initBot } from "./Controllers/bot.controller";
 
@@ -56,6 +57,7 @@ app.use("/api", paymentMethod);
 app.use("/api", currencyExchange);
 app.use("/api/analytics", analytics);
 app.use("/api", notification);
+app.use("/api", neworder)
 
 app.use("/public", express.static(path.join(__dirname, "/Upload")));
 

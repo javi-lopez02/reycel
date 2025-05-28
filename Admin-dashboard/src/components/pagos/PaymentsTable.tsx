@@ -29,7 +29,7 @@ import {
   Tooltip,
   Spinner,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { ChevronDownIcon, EditIcon, EyeIcon, SearchIcon } from "../Icons";
 import usePayments from "../../customHooks/usePayments";
 import { Payment } from "../../type";

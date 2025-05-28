@@ -10,7 +10,7 @@ import {
   SelectItem,
   Spinner,
   Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FC, useEffect, useState } from "react";
 import Selected from "./Selected";
 import Rating from "./Rating";

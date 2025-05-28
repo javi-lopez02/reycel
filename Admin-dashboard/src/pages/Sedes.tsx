@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/react";
 
 
 const TableSedes  =lazy(()=>import("../components/sedes/TableSedes"))

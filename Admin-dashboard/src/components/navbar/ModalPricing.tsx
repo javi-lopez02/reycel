@@ -10,7 +10,7 @@ import {
   Spinner,
   Tooltip,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useCallback, useEffect, useState } from "react";
 import { editCurrency, getCurrency } from "../../services/currencyExchange";
 import { toast } from "sonner";

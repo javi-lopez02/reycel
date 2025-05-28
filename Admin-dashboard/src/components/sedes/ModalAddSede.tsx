@@ -10,7 +10,7 @@ import {
   SelectItem,
   Spinner,
   Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FC, Key, useEffect, useRef, useState } from "react";
 import { Sede, Workers } from "../../type";
 import { toast } from "sonner";

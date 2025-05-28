@@ -3,15 +3,11 @@ import { authMiddleware as authAdmin } from "../Middlewares/middlewareAdmin";
 import { authMiddleware } from "../Middlewares/middlewares";
 import {
   addOrderItem,
-  addOrderItemAdmin,
-  confirmOrderAdmin,
   deleteOrderItem,
-  deleteOrderItemAdmin,
   getOrderAdmin,
   getOrderItems,
-  getOrderItemsAdmin,
+  getOrderItemsTable,
   updateOrderItem,
-  updateOrderItemAdmin,
 } from "../Controllers/order.controller";
 const router = Router();
 
@@ -27,15 +23,7 @@ router.delete("/products/order", authMiddleware, deleteOrderItem);
 
 router.get("/order", authAdmin, getOrderAdmin);
 
-router.get("/order/:id", authAdmin, getOrderItemsAdmin);
-
-router.post("/order", authAdmin, addOrderItemAdmin)
-
-router.put("/order", authAdmin, updateOrderItemAdmin);
-
-router.delete("/order", authAdmin, deleteOrderItemAdmin);
-
-router.post("/order/confirm", authAdmin, confirmOrderAdmin);
+router.get("/order/:id", authAdmin, getOrderItemsTable);
 
 
 export default router;

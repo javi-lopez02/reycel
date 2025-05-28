@@ -21,7 +21,7 @@ import {
   User,
   Spinner,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   ChevronDownIcon,
   DeleteIcon,
