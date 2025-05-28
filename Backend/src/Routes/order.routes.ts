@@ -27,7 +27,7 @@ router.delete("/products/order", authMiddleware, deleteOrderItem);
 
 router.get("/order", authAdmin, getOrderAdmin);
 
-router.get("/order/items/:id", authAdmin, getOrderItemsAdmin);
+router.get("/order/:id", authAdmin, getOrderItemsAdmin);
 
 router.post("/order", authAdmin, addOrderItemAdmin)
 

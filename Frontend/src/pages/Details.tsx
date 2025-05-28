@@ -96,13 +96,13 @@ export default function Details() {
             </div>
             <div className="md:w-full md:pr-8 mt-4 md:mt-0 md:col-start-2">
               <h1 className="text-4xl font-semibold text-gray-800">
-                {product.category.name === "Moviles" && (
+                {product.category.name === "Smartphones" && (
                   <>
                     {`${product.name},  Ram ${product.ram}GB, Almacenamiento ${product.storage}GB `}
                   </>
                 )}
 
-                {product.category.name !== "Moviles" && (
+                {product.category.name !== "Smartphones" && (
                   <>{`${product.name} `}</>
                 )}
               </h1>

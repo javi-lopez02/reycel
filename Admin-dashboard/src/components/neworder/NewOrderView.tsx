@@ -1,7 +1,8 @@
 import { Input } from "@nextui-org/react";
 import { FC, useState } from "react";
-import { OrderItem } from "../../type";
-import { deleteOrderItemRequest } from "../../services/order";
+import { OrderAdd } from "../../type";
+import { deleteOrderItemRequest, updateOrderItemRequest } from "../../services/order";
+import { toast } from "sonner";
 
 interface Product {
   quantity: number;
@@ -10,11 +11,8 @@ interface Product {
   price: number;
   id: string;
   inventaryCount: number;
-  setError: (value: string[]) => void;
-  setOrder: React.Dispatch<React.SetStateAction<OrderItem[] | null>>;
-  setCount: React.Dispatch<React.SetStateAction<number>>;
-  setTotalAmount: React.Dispatch<React.SetStateAction<number>>;
-  handleQuantity: (value: string, id: string, price: number) => void;
+  setOrder: (order: OrderAdd | null) => void;
+  setErrors: (errors: Array<string>) => void;
 }
 
 const NewOrderView: FC<Product> = ({
@@ -25,10 +23,7 @@ const NewOrderView: FC<Product> = ({
   price,
   inventaryCount,
   setOrder,
-  setCount,
-  setTotalAmount,
-  setError,
-  handleQuantity,
+  setErrors,
 }) => {
   const [value, setvalue] = useState(`${quantity}`);
   const [realPrice, setNewPrice] = useState(price);
@@ -36,21 +31,26 @@ const NewOrderView: FC<Product> = ({
   const handleOrderDelete = () => {
     deleteOrderItemRequest(id)
       .then((res) => {
-        setOrder((prev: OrderItem[] | null) => {
-          if (!prev) {
-            return null;
-          }
-          return prev?.filter((item) => item.id !== id);
-        });
-        setCount((count) => {
-          return count - 1;
-        });
-        setTotalAmount(res.data.data.totalAmount);
+        setOrder(res.data.data);
+        toast.success("Producto eliminado del carrito");
       })
       .catch((error) => {
         console.log(error);
-        setError(["Error al elimiar el producto del carrito"]);
+        setErrors(["Error al elimiar el producto del carrito"]);
       });
+  };
+
+  const handleQuantity = (value: string, id: string, price: number) => {
+    updateOrderItemRequest(id, Number(value), price)
+      .then((res) => {
+        setOrder(res.data.data);
+        toast.success("Cantidad actualizado en el carrito");
+      })
+      .catch((error) => {
+        console.log(error);
+        setErrors(["Error al actualizar el producto en el carrito"]);
+      }
+      );
   };
 
   return (

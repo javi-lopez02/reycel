@@ -241,9 +241,9 @@ export const getOrderItemsAdmin = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "El id es requerido" });
     }
 
-    const order = await prisma.order.findUnique({
+    const order = await prisma.order.findFirst({
       where: {
-        id: Number(id),
+        AND: [{ pending: true }, { adminId: id }],
       },
       select: {
         id: true,
@@ -357,6 +357,35 @@ export const addOrderItemAdmin = async (req: Request, res: Response) => {
         },
         totalAmount: orderFind.totalAmount + priceTotal,
       },
+      select: {
+        id: true,
+        createdAt: true,
+        totalAmount: true,
+        _count: {
+          select: {
+            orderItems: true,
+          },
+        },
+        orderItems: {
+          select: {
+            id: true,
+            createdAt: true,
+            price: true,
+            quantity: true,
+            product: {
+              select: {
+                imagen: true,
+                name: true,
+                ratingAverage: true,
+                inventoryCount: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
+      },
     });
 
     res
@@ -376,10 +405,48 @@ export const deleteOrderItemAdmin = async (req: Request, res: Response) => {
       where: {
         id: orderID,
       },
+      select: {
+        orderId: true,
+      },
+    });
+
+    const data = await prisma.order.findFirst({
+      where: {
+        id: orderItem.orderId,
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        totalAmount: true,
+        _count: {
+          select: {
+            orderItems: true,
+          },
+        },
+        orderItems: {
+          select: {
+            id: true,
+            createdAt: true,
+            price: true,
+            quantity: true,
+            product: {
+              select: {
+                imagen: true,
+                name: true,
+                ratingAverage: true,
+                inventoryCount: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
+      },
     });
 
     res.status(200).json({
-      data: orderItem,
+      data: data,
     });
   } catch (error) {
     console.error(error);
@@ -403,15 +470,48 @@ export const updateOrderItemAdmin = async (req: Request, res: Response) => {
         price: newPrice,
         quantity: quantity,
       },
-      include: {
-        product: true,
+      select: {
+        orderId: true,
       },
     });
 
-    console.log(orderItem);
+    const data = await prisma.order.findFirst({
+      where: {
+        id: orderItem.orderId,
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        totalAmount: true,
+        _count: {
+          select: {
+            orderItems: true,
+          },
+        },
+        orderItems: {
+          select: {
+            id: true,
+            createdAt: true,
+            price: true,
+            quantity: true,
+            product: {
+              select: {
+                imagen: true,
+                name: true,
+                ratingAverage: true,
+                inventoryCount: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
+      },
+    });
 
     res.status(200).json({
-      data: orderItem,
+      data: data,
     });
   } catch (error) {
     console.error(error);
@@ -445,7 +545,7 @@ export const confirmOrderAdmin = async (req: Request, res: Response) => {
         fastDelivery,
         paymentMethodId: paymentMethod,
         adminId,
-        paymentStatus: "COMPLETED"
+        paymentStatus: "COMPLETED",
       },
     });
 
@@ -479,4 +579,4 @@ export const confirmOrderAdmin = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({ error: "Error al confirmar la orden" });
   }
-} 
+};

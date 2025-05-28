@@ -23,8 +23,6 @@ export interface User {
   email: string;
   image: string;
   status: boolean;
-  orders: { id: string; pending: boolean }[];
-  orderCount: number;
   createdAt: string;
   sede: string
 }
@@ -164,6 +162,17 @@ export interface UserPayment {
   username: string;
   image: string;
   role: string;
+}
+
+export interface OrderAdd {
+  id: string;
+  createdAt: string;
+  totalAmount: number;
+  orderItems: OrderItem[];
+  admin: Admin;
+  _count: {
+    orderItems: number;
+  };
 }
 
 export interface OrderItem {

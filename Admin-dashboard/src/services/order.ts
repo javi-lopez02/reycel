@@ -5,7 +5,7 @@ export const getOrderRequest = () => {
 };
 
 export const getOrderItemsRequest = (id: string | undefined) => {
-  return axios.get(`/order/items/${id}`);
+  return axios.get(`/order/${id}`);
 };
 
 export const addItemOrderRequest = (id: string, quantity: number) => {
@@ -27,7 +27,7 @@ export const deleteOrderItemRequest = (id: string) => {
 interface ConfirmParams {
   transactionID?: string;
   orderID?: string;
-  amount: number;
+  amount?: number;
   paymentMethod: string
   userId?: string;
 }
