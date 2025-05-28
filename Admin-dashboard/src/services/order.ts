@@ -4,7 +4,7 @@ export const getOrderRequest = () => {
   return axios.get(`/order`);
 };
 
-export const getOrderItemsRequest = (id: string | undefined) => {
+export const getOrderItemsRequest = (id: string) => {
   return axios.get(`/order/items/${id}`);
 };
 

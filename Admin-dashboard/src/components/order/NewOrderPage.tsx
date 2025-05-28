@@ -47,14 +47,16 @@ export default function NewOrderPage() {
         </div>
       </div>
       {error && error.map((err) => toast.error(err))}
-      <div className="flex items-center h-10">
-        <DrawerOrderView
-          orderId={pendingOrder?.id}
-          userId={user?.id}
-          totalAmount={totalAmount}
-          setTotalAmount={setTotalAmount}
-        />
-      </div>
+      {pendingOrder && user && (
+        <div className="flex items-center h-10">
+          <DrawerOrderView
+            orderId={pendingOrder.id}
+            userId={user.id}
+            totalAmount={totalAmount}
+            setTotalAmount={setTotalAmount}
+          />
+        </div>
+      )}
     </div>
   );
 }

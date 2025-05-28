@@ -237,13 +237,15 @@ export const getOrderItemsAdmin = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
+    console.log(id);
+
     if (!id) {
       return res.status(400).json({ message: "El id es requerido" });
     }
 
     const order = await prisma.order.findUnique({
       where: {
-        id: Number(id),
+        id: parseInt(id),
       },
       select: {
         id: true,
@@ -430,7 +432,7 @@ export const confirmOrderAdmin = async (req: Request, res: Response) => {
 
     const order = await prismaNew.order.update({
       where: {
-        id: Number(orderID),
+        id: parseInt(orderID),
       },
       data: {
         pending: false,
@@ -440,16 +442,16 @@ export const confirmOrderAdmin = async (req: Request, res: Response) => {
     await prisma.payment.create({
       data: {
         transactionID,
-        orderId: Number(orderID),
+        orderId: parseInt(orderID),
         amount,
         fastDelivery,
         paymentMethodId: paymentMethod,
         adminId,
-        paymentStatus: "COMPLETED"
+        paymentStatus: "COMPLETED",
       },
     });
 
-    let data = await prisma.order.findFirst({
+    const dataFind = await prisma.order.findFirst({
       where: {
         adminId: adminId,
         pending: true,
@@ -459,18 +461,27 @@ export const confirmOrderAdmin = async (req: Request, res: Response) => {
       },
     });
 
-    if (!data) {
-      data = await prisma.order.create({
-        data: {
-          adminId: adminId,
-          pending: true,
-          totalAmount: 0,
-        },
-        include: {
-          orderItems: true,
-        },
+    if (dataFind) {
+      return res.status(200).json({
+        data: dataFind,
       });
     }
+
+    const data = await prisma.order.create({
+      data: {
+        adminId: adminId,
+        pending: true,
+        totalAmount: 0,
+      },
+      include: {
+        orderItems: true,
+        _count: {
+          select: {
+            orderItems: true,
+          },
+        },
+      },
+    });
 
     res.status(200).json({
       data: data,
@@ -479,4 +490,4 @@ export const confirmOrderAdmin = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({ error: "Error al confirmar la orden" });
   }
-} 
+};

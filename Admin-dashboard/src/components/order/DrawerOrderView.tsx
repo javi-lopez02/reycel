@@ -25,8 +25,8 @@ import usePaymentMethod from "../../customHooks/usePaymentMethod";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
-  userId: string | undefined;
-  orderId: string | undefined;
+  userId: string;
+  orderId: string;
   totalAmount: number;
   setTotalAmount: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -69,7 +69,7 @@ export default function DrawerOrderView({
       .finally(() => {
         setLoading(false);
       });
-  }, [orderId, totalAmount, setTotalAmount]);
+  }, [orderId, setTotalAmount]);
 
   const handleQuantity = (value: string, id: string, price: number) => {
     try {
