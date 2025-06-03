@@ -21,10 +21,8 @@ import { useAuth } from "../../context/AuthContext";
 import { confirmOrderRequest } from "../../services/neworder";
 
 interface Props {
-  userId: string;
-  orderId: string;
-  totalAmount: number;
-  setTotalAmount: React.Dispatch<React.SetStateAction<number>>;
+  onClose: () => void;
+  isOpen: boolean;
 }
 
 export default function DrawerOrderView({ onClose, isOpen }: Props) {
@@ -36,41 +34,13 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
   const { user } = useAuth();
 
   const { order, setOrder, errors, setErrors, isLoading } =
-    useNewOrder(user?.id);
+    useNewOrder(user?.userId);
 
   useEffect(() => {
     if (selectedMethod === "CASH" || selectedMethod === "") {
       setDisable(true);
     } else setDisable(false);
   }, [selectedMethod]);
-
-  useEffect(() => {
-    setLoading(true);
-    getOrderItemsRequest(orderId)
-      .then((res) => {
-        setTotalAmount(res.data.data.totalAmount);
-        setItems(res.data.data.orderItems);
-        setCount(res.data.data._count.orderItems);
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Error al cargar los productos");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [orderId, setTotalAmount]);
-
-  const handleQuantity = (value: string, id: string, price: number) => {
-    try {
-      updateOrderItemRequest(id, Number(value), price).then((res) => {
-        setTotalAmount(res.data.data.totalAmount);
-      });
-    } catch (error) {
-      console.log(error);
-      setErrors(["Error al incrementar el producto"]);
-    }
-  };
 
   const handleMethodChange = (value: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMethod(value.target.value);
@@ -92,7 +62,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
         orderID: order?.id,
         amount: order?.totalAmount,
         paymentMethod: selectedId,
-        userId: user?.id,
+        userId: user?.userId,
         sede: user?.sede
       })
         .then((res) => {
@@ -111,7 +81,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
         orderID: order?.id,
         amount: order?.totalAmount,
         paymentMethod: selectedId,
-        userId: user?.id,
+        userId: user?.userId,
         transactionID: transactionIdInput,
         sede: user?.sede
       })
