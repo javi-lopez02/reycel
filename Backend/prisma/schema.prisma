@@ -73,7 +73,7 @@ model Product {
   description           String
   price                 Float
   categoryId            String
-  investments           Int
+  investments           Int?
   imagen                String?
   color                 String?
   ram                   Int?

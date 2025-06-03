@@ -43,7 +43,7 @@ const Card: FC<Products> = (product) => {
       <div className="h-56 w-full">
         <Link to={`/details?p=${product.id}`}>
           <img
-            className="mx-auto h-full"
+            className="mx-auto h-full object-fill"
             src={product.imagen}
             alt={product.name}
           />
