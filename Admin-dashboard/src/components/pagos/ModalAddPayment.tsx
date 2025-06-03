@@ -43,7 +43,6 @@ export const paymentOptions = [
 
 const ModalAddPayment: FC<Props> = ({
   id,
-  image,
   numberCard,
   selected,
   isOpen,

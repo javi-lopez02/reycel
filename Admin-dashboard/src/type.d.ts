@@ -26,6 +26,7 @@ export interface User {
   createdAt: string;
   sede: string;
   role: "OWNER" | "MODERATOR";
+  orderCount: number;
 }
 
 export interface Worker {
