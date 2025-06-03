@@ -33,7 +33,7 @@ export const notificationReadAll = async (req: Request, res: Response) => {
     const userId = req.userId;
     const notifications = await prisma.notification.updateMany({
       where: {
-        userId,
+        clientId: userId,
         isRead: false,
       },
       data: {
@@ -62,7 +62,7 @@ export const notificationDelete = async (req: Request, res: Response) => {
         id,
       },
     });
-    
+
     if (!notification) {
       return res.status(400).json(["Notificación no encontrada"]);
     }
@@ -81,7 +81,7 @@ export const notificationDeleteAll = async (req: Request, res: Response) => {
     const userId = req.userId;
     const notifications = await prisma.notification.deleteMany({
       where: {
-        userId,
+        clientId: userId,
       },
     });
 
@@ -96,4 +96,4 @@ export const notificationDeleteAll = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json(["Error al eliminar las notificaciones."]);
   }
-}
+};

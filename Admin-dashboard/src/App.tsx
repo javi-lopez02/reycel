@@ -13,6 +13,7 @@ import Payments from "./pages/Payments";
 import Sedes from "./pages/Sedes";
 import Order from "./pages/Order";
 import NewOrderPage from "./components/order/NewOrderPage";
+import Workers from "./pages/Workers";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               <Route element={<NavBar />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/users" element={<User />} />
+                <Route path="/workers" element={<Workers/>} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/payments" element={<Payments />} />

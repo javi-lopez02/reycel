@@ -18,9 +18,13 @@ export const getProductID = async (req: Request, res: Response) => {
             createdAt: true,
             updatedAt: true,
             id: true,
-            User: {
+            client: {
               select: {
-                username: true,
+                baseUser: {
+                  select: {
+                    username: true,
+                  },
+                },
               },
             },
           },
@@ -320,7 +324,7 @@ export const createProduct = async (req: Request, res: Response) => {
       await prisma.rating.create({
         data: {
           productID: product.id,
-          userID: userId,
+          administratorId: userId,
           value: rating,
         },
       });
@@ -358,7 +362,7 @@ export const createProduct = async (req: Request, res: Response) => {
       await prisma.rating.create({
         data: {
           productID: product.id,
-          userID: userId,
+          administratorId: userId,
           value: rating,
         },
       });
@@ -386,7 +390,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
             productID: id,
           },
           {
-            userID: userId,
+            administratorId: userId,
           },
         ],
       },
@@ -459,7 +463,7 @@ export const updateProduct = async (req: Request, res: Response) => {
       const existingRating = await prisma.rating.findFirst({
         where: {
           productID: id,
-          userID: userId,
+          administratorId: userId,
         },
       });
 
@@ -476,7 +480,7 @@ export const updateProduct = async (req: Request, res: Response) => {
         await prisma.rating.create({
           data: {
             productID: id,
-            userID: userId,
+            administratorId: userId,
             value: rating,
           },
         });

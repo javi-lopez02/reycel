@@ -48,7 +48,6 @@ export function Capitalize(s: string) {
 
 const columns = [
   { name: "USUARIO", uid: "username", sortable: true },
-  { name: "ROL", uid: "role", sortable: true },
   { name: "PRECIO TOTAL", uid: "totalAmount", sortable: true },
   { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
   { name: "ESTADO", uid: "pending", sortable: true },
@@ -68,7 +67,6 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 const INITIAL_VISIBLE_COLUMNS = [
   "username",
-  "role",
   "totalAmount",
   "productquantity",
   "createdAt",
@@ -76,7 +74,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "actions",
 ];
 
-export default function OrerTable() {
+export default function OrderTable() {
   const { error, loading, orders } = useOrder();
   const navigate = useNavigate();
 
@@ -118,10 +116,12 @@ export default function OrerTable() {
     if (hasSearchFilter) {
       filteredOrders = filteredOrders.filter(
         (order) =>
-          order.user.username
+          order.client?.baseUser?.username
             .toLowerCase()
             .includes(filterValue.toLowerCase()) ||
-          order.user.role.toLowerCase().includes(filterValue.toLowerCase()) ||
+          order.admin?.baseUser?.username
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) ||
           order.totalAmount
             .toString()
             .toLowerCase()
@@ -194,19 +194,16 @@ export default function OrerTable() {
 
       switch (columnKey) {
         case "username":
-          return (
+          return orders.client ? (
             <User
-              avatarProps={{ radius: "lg", src: orders.user.image }}
-              name={orders.user.username}
+              avatarProps={{ radius: "lg", src: orders.client.baseUser.image }}
+              name={orders.client?.baseUser.username}
             />
-          );
-        case "role":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                {orders.user.role}
-              </p>
-            </div>
+          ) : (
+            <User
+              avatarProps={{ radius: "lg", src: orders.admin.baseUser.image }}
+              name={orders.admin?.baseUser?.username}
+            />
           );
         case "totalAmount":
           return (
@@ -244,13 +241,14 @@ export default function OrerTable() {
         case "actions":
           return (
             <div className="relative flex justify-center items-center gap-2">
-              <Tooltip content="Details">
-                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+              <Tooltip content="Details" color="success">
+                <span className="text-lg text-success cursor-pointer active:opacity-50">
                   <EyeIcon
                     onClick={() => {
                       onOpen();
                       setOrderId(orders.id);
                     }}
+                    color="success"
                   />
                 </span>
               </Tooltip>
@@ -473,8 +471,7 @@ export default function OrerTable() {
               align={
                 column.uid === "actions" ||
                 column.uid === "productquantity" ||
-                column.uid === "totalAmount" ||
-                column.uid === "role"
+                column.uid === "totalAmount"
                   ? "center"
                   : "start"
               }

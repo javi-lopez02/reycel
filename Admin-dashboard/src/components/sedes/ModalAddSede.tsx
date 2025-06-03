@@ -12,9 +12,9 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import { FC, Key, useEffect, useRef, useState } from "react";
-import { Sede, Users } from "../../type";
+import { Sede, Workers } from "../../type";
 import { toast } from "sonner";
-import { getUsersRequest } from "../../services/user";
+import { getWorkersRequest } from "../../services/sedes";
 
 interface Props {
   sede?: Sede;
@@ -42,23 +42,15 @@ const ModalAddSede: FC<Props> = ({
   addSede,
   updateSede,
 }) => {
-  const [usersModerador, setUsersModerador] = useState<Users[]>([]);
+  const [usersModerador, setUsersModerador] = useState<Workers[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      getUsersRequest()
+      getWorkersRequest()
         .then((res) => {
-          return setUsersModerador(
-            (res.data.data as Users[]).filter((user) => {
-              if (sede?.id) {
-                return user.role !== "USER" && user.role !== "ADMIN";
-              }
-              return (
-                user.role !== "USER" && user.role !== "ADMIN" && !user.Sede
-              );
-            })
-          );
+          console.log(res.data.data)
+          setUsersModerador(res.data.data);
         })
         .catch((err) => {
           console.log(err);
@@ -184,14 +176,13 @@ const ModalAddSede: FC<Props> = ({
                       defaultSelectedKeys={sede?.workers.flatMap(
                         (worker) => worker.id
                       )}
-                      /*     selectedKeys={values}
-                      onSelectionChange={setValues} */
+
                       placeholder="Seleccione el Trabajador"
                       labelPlacement="outside"
                       selectionMode="multiple"
                     >
                       {usersModerador.map((user) => (
-                        <SelectItem key={user.id}>{user.username}</SelectItem>
+                        <SelectItem key={user.id}>{user.baseUser.username}</SelectItem>
                       ))}
                     </Select>
                   </div>

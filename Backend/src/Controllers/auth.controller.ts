@@ -13,38 +13,50 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { username, email, password } = req.body;
 
-    const userfind = await prisma.user.findFirst({
+    const baseUserFind = await prisma.baseUser.findFirst({
       where: {
-        OR: [
-          {
-            username: username,
-          },
-          {
-            email: email,
-          },
-        ],
+        OR: [{ username: username }, { email: email }],
+      },
+      include: {
+        client: true,
       },
     });
 
-    if (userfind) {
-      return res.status(400).json(["Email o Username en uso"]);
+    if (baseUserFind?.client) {
+      return res
+        .status(400)
+        .json(["Email o Username ya registrado como cliente"]);
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
-    const newUser = await prisma.user.create({
+    // Primero crear el BaseUser con el cliente asociado
+    const newBaseUser = await prisma.baseUser.create({
       data: {
         username,
         email,
         password: hashedPassword,
         status: false,
-        orders: {
+        client: {
           create: {
-            totalAmount: 0,
+            orders: {
+              create: {
+                totalAmount: 0,
+              },
+            },
           },
         },
       },
+      include: {
+        client: true,
+      },
     });
+
+    if (!newBaseUser.client) {
+      throw new Error("Error al crear el cliente");
+    }
+
+    const newUser = newBaseUser.client;
 
     const token = await createToken(String(newUser.id));
 
@@ -65,52 +77,55 @@ export const login = async (req: Request, res: Response) => {
     if (!username || !password) {
       return res
         .status(401)
-        .json(["Nesecita user name y contraseña para logearce"]);
+        .json(["Necesita username y contraseña para iniciar sesión"]);
     }
 
-    const user = await prisma.user.findFirst({
+    // Buscar el usuario base primero
+    const baseUser = await prisma.baseUser.findFirst({
       where: {
         username: username,
       },
-      select: {
-        id: true,
-        username: true,
-        status: true,
-        role: true,
-        image: true,
-        notification: true,
-        password: true,
-      },
+      include: {
+        client: {
+          include: {
+            notification: true
+          }
+        }
+      }
     });
 
-    if (user?.status === false) {
-      return res.status(401).json(["Usuario no verificado"]);
-    }
-
-    if (!user) {
+    if (!baseUser) {
       return res.status(401).json(["Usuario no encontrado"]);
     }
 
-    const isMatch = await bcryptjs.compare(password, user.password);
+    if (baseUser.status === false) {
+      return res.status(401).json(["Usuario no verificado"]);
+    }
+
+    const isMatch = await bcryptjs.compare(password, baseUser.password);
 
     if (!isMatch) {
       return res.status(401).json(["Contraseña incorrecta"]);
     }
 
-    const token = await createToken(String(user.id));
+    if (!baseUser.client) {
+      return res.status(401).json(["Esta cuenta no es un cliente"]);
+    }
+
+    const token = await createToken(String(baseUser.client.id));
 
     res.cookie("token", token, {
       httpOnly: false,
       secure: true,
       sameSite: "none",
     });
+
     res.json({
-      username: user.username,
-      status: user.status,
-      userId: user.id,
-      notifications: user.notification.reverse(),
-      userRole: user.role,
-      image: user.image,
+      username: baseUser.username,
+      status: baseUser.status,
+      userId: baseUser.client.id,
+      notifications: baseUser.client.notification.reverse(),
+      image: baseUser.image,
     });
   } catch (error) {
     console.log(error);
@@ -126,27 +141,25 @@ export const verifyToken = async (req: Request, res: Response) => {
     const decode = jwt.verify(token, TOKEN_SECRET) as TokenPayload;
     if (!decode) return res.status(401);
 
-    const userFound = await prisma.user.findUnique({
+    const client = await prisma.client.findUnique({
       where: { id: decode.id },
-      select: {
-        id: true,
-        username: true,
-        status: true,
-        notification: true,
-      },
+      include: {
+        baseUser: true,
+        notification: true
+      }
     });
 
-    if (!userFound) return res.status(401).json(["User Not found"]);
+    if (!client || !client.baseUser) return res.status(401).json(["Usuario no encontrado"]);
 
     return res.json({
-      userId: userFound.id,
-      notifications: userFound.notification.reverse(),
-      username: userFound.username,
-      status: userFound.status,
+      userId: client.id,
+      notifications: client.notification.reverse(),
+      username: client.baseUser.username,
+      status: client.baseUser.status,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json(["Error del servidor"]);
+    return res.send(false);
   }
 };
 
@@ -169,30 +182,26 @@ export const confirmEmail = async (req: Request, res: Response) => {
 
     const decode = jwt.verify(token, TOKEN_SECRET) as TokenPayload;
 
-    const user = await prisma.user.findUnique({
+    const client = await prisma.client.findUnique({
       where: {
         id: decode.id,
       },
+      include: {
+        baseUser: true,
+        notification: true
+      }
     });
 
-    if (!user) {
+    if (!client || !client.baseUser) {
       return res.status(404).json(["Usuario no encontrado"]);
     }
 
-    const userUpdated = await prisma.user.update({
+    const baseUserUpdated = await prisma.baseUser.update({
       where: {
-        id: decode.id,
+        id: client.baseUser.id,
       },
       data: {
         status: true,
-      },
-      select: {
-        id: true,
-        username: true,
-        status: true,
-        role: true,
-        image: true,
-        notification: true,
       },
     });
 
@@ -201,13 +210,13 @@ export const confirmEmail = async (req: Request, res: Response) => {
       secure: true,
       sameSite: "none",
     });
+
     res.json({
-      username: userUpdated.username,
-      notifications: userUpdated.notification.reverse(),
-      status: userUpdated.status,
-      userId: userUpdated.id,
-      userRole: userUpdated.role,
-      image: userUpdated.image,
+      username: baseUserUpdated.username,
+      notifications: client.notification.reverse(),
+      status: baseUserUpdated.status,
+      userId: client.id,
+      image: baseUserUpdated.image,
     });
   } catch (error) {
     console.log(error);
@@ -226,22 +235,25 @@ export const resetPassword = async (req: Request, res: Response) => {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(401).json(["Email no valido"]);
+      return res.status(401).json(["Email no válido"]);
     }
 
-    const user = await prisma.user.findUnique({
+    const baseUser = await prisma.baseUser.findUnique({
       where: {
         email: email,
       },
+      include: {
+        client: true
+      }
     });
 
-    if (!user) {
+    if (!baseUser || !baseUser.client) {
       return res.status(404).json(["Usuario no encontrado"]);
     }
 
-    const token = await createToken(String(user.id));
+    const token = await createToken(String(baseUser.client.id));
 
-    await sendPasswordResetEmail(email, user.username, token);
+    await sendPasswordResetEmail(email, baseUser.username, token);
 
     res.json({ message: "Email enviado" });
   } catch (error) {
@@ -261,32 +273,28 @@ export const confirmResetPassword = async (req: Request, res: Response) => {
 
     const decode = jwt.verify(token, TOKEN_SECRET) as TokenPayload;
 
-    const user = await prisma.user.findUnique({
+    const client = await prisma.client.findUnique({
       where: {
         id: decode.id,
       },
+      include: {
+        baseUser: true,
+        notification: true
+      }
     });
 
-    if (!user) {
+    if (!client || !client.baseUser) {
       return res.status(404).json(["Usuario no encontrado"]);
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
-    const userUpdated = await prisma.user.update({
+    const baseUserUpdated = await prisma.baseUser.update({
       where: {
-        id: decode.id,
+        id: client.baseUser.id,
       },
       data: {
         password: hashedPassword,
-      },
-      select: {
-        id: true,
-        username: true,
-        status: true,
-        role: true,
-        image: true,
-        notification: true,
       },
     });
 
@@ -295,13 +303,13 @@ export const confirmResetPassword = async (req: Request, res: Response) => {
       secure: true,
       sameSite: "none",
     });
+
     res.json({
-      username: userUpdated.username,
-      status: userUpdated.status,
-      userId: userUpdated.id,
-      userRole: userUpdated.role,
-      image: userUpdated.image,
-      notifications: userUpdated.notification.reverse(),
+      username: baseUserUpdated.username,
+      status: baseUserUpdated.status,
+      userId: client.id,
+      image: baseUserUpdated.image,
+      notifications: client.notification.reverse(),
     });
   } catch (error) {
     console.log(error);
@@ -324,11 +332,24 @@ export const updatePassword = async (req: Request, res: Response) => {
       return res.status(401).json(["Usuario no validado"]);
     }
 
-    const hashedPassword = await bcryptjs.hash(password, 10);
-
-    await prisma.user.update({
+    const client = await prisma.client.findUnique({
       where: {
         id: userId,
+      },
+      include: {
+        baseUser: true
+      }
+    });
+
+    if (!client || !client.baseUser) {
+      return res.status(404).json(["Usuario no encontrado"]);
+    }
+
+    const hashedPassword = await bcryptjs.hash(password, 10);
+
+    await prisma.baseUser.update({
+      where: {
+        id: client.baseUser.id,
       },
       data: {
         password: hashedPassword,

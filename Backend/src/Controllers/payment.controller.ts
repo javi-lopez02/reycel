@@ -8,6 +8,7 @@ export const addPayment = async (req: Request, res: Response) => {
     const id = req.body.transactionID;
     const orderId = req.body.orderId;
     const amount = req.body.amount;
+    const fastDelivery = req.body.fastDelivery;
     const paymentMethod = req.body.paymentMethod;
 
     const userId = req.userId;
@@ -27,6 +28,7 @@ export const addPayment = async (req: Request, res: Response) => {
         id,
         orderId,
         amount,
+        fastDelivery,
         paymentMethodId: paymentMethod,
         userId,
       },
@@ -43,11 +45,26 @@ export const getPayments = async (req: Request, res: Response) => {
   try {
     const payments = await prisma.payment.findMany({
       include: {
-        User: {
+        client: {
           select: {
-            username: true,
-            image: true,
-            role: true,
+            baseUser: {
+              select: {
+                username: true,
+                image: true,
+                email: true,
+              },
+            },
+          },
+        },
+        admin: {
+          select: {
+            baseUser: {
+              select: {
+                username: true,
+                image: true,
+                email: true,
+              },
+            },
           },
         },
         PaymentMethod: {

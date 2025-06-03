@@ -46,14 +46,13 @@ const Card: React.FC<Props> = ({
         setTotalAmount(res.data.data.totalAmount);
         toast.success("Producto eliminado del carrito");
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
         setError(["Error al elimiar el producto del carrito"]);
       });
   };
 
   return (
-    <div className="p-6 bg-white min-w-min shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] rounded-md relative">
+    <div className="p-6 bg-white min-w-min shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] rounded-md relative z-10">
       <div className="flex items-center max-sm:flex-col gap-4 max-sm:gap-6">
         <div className="max-w-52 shrink-0">
           <Link to={`/details?p=${product.id}`}>
@@ -117,7 +116,7 @@ const Card: React.FC<Props> = ({
                   color="primary"
                   value={value}
                   onValueChange={(event) => {
-                    if (Number(event) > 0) {
+                    if (Number(event) > 0 && product.inventoryCount >= Number(event)) {
                       setvalue(event);
                       handleQuantity(event, id, product.price);
                     }

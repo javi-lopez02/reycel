@@ -6,8 +6,8 @@ import axios, { AxiosError } from "axios";
 import { Spinner } from "@heroui/spinner";
 import { toast } from "sonner";
 import { useDisclosure } from "@heroui/react";
-import ModalMessage from "../components/Car/ModalMessage";
 import { useUserStore } from "../store/useUserStore";
+import PurchaseConfirmationModal from "../components/checkout/PurchaseConfirmationModal";
 
 const App: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -43,10 +43,10 @@ const App: React.FC = () => {
           if (axiosError.response) {
             setError(axiosError.response.data as Array<string>);
           } else if (axiosError.request) {
-            console.error("No se recibió respuesta:", axiosError.request);
+            toast.error("No se recibió respuesta:");
           }
         } else {
-          console.error("Error desconocido:", error);
+          toast.error("Error desconocido:");
           setError(["Error con la peticion al servidor"]);
         }
       })
@@ -64,11 +64,26 @@ const App: React.FC = () => {
 
   const handleQuantity = (value: string, id: string, price: number) => {
     try {
-      updateOrderItemRequest(id, Number(value), price).then((res) => {
-        setTotalAmount(res.data.data.totalAmount);
+      updateOrderItemRequest(id, Number(value), price)
+      .then((res) => {
+        if (res.status === 200) {
+          setTotalAmount(res.data.data.totalAmount);
+        }
+        if (res.status === 202) {
+          toast.error(
+            `Aviso: ${res.data.message || "Hubo un problema con la solicitud."}`
+          );
+        }
+        if (res.status === 203) {
+          toast.warning(
+            `Aviso: ${res.data.message || "Hubo un problema con la solicitud."}`
+          );
+        }
+      })
+      .catch(() => {
+        setError(["Error al incrementar el producto"]);
       });
     } catch (error) {
-      console.log(error);
       setError(["Error al incrementar el producto"]);
     }
   };
@@ -81,7 +96,7 @@ const App: React.FC = () => {
         </h2>
 
         <div className="grid grid-cols-[auto_auto] gap-5 max-lg:grid-cols-1">
-          <div className="bg-white h-max rounded-md p-6 shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] max-lg:w-full lg:max-w-[335px] lg:sticky top-16 ">
+          <div className="bg-white h-max rounded-md p-6 shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] max-lg:w-full lg:max-w-[335px] top-16 ">
             <h3 className="text-xl font-bold text-gray-800">Orden</h3>
 
             <ul className="text-gray-800 text-sm divide-y mt-4">
@@ -109,7 +124,7 @@ const App: React.FC = () => {
               Realizar Pago
             </button>
 
-            <ModalMessage
+            <PurchaseConfirmationModal
               count={count}
               totalAmount={totalAmount}
               orderID={orderID}
@@ -119,7 +134,7 @@ const App: React.FC = () => {
             />
           </div>
 
-          <div className="grid  gap-4 relative max-lg:pt-5">
+          <div className="grid  gap-4 relative max-lg:pt-5 z-0">
             <div className="lg:col-span-2 space-y-4">
               {order?.length === 0 && <h1 className="text-2xl font-medium text-neutral-500">No hay productos en el carrito.</h1>}
               {order !== null &&

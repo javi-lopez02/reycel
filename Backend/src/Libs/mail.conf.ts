@@ -27,8 +27,8 @@ interface orderItems {
 }
 
 interface OrderData {
-  email: string;
-  name: string;
+  email?: string;
+  name?: string;
   orderNumber: number;
   orderDate: string;
   estimatedDelivery: string;

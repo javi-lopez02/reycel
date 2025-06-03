@@ -16,7 +16,6 @@ export const createUsersRequest = (user: UserRequest) => {
   return axios.post(`/user`, user);
 };
 
-
 export const editUsersRequest = (id: string, user: UserRequest) => {
   return axios.put(`/user/${id}`, user);
 };

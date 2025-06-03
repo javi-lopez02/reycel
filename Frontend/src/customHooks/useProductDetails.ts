@@ -5,6 +5,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { ratingRequest } from '../services/rating'
 import { addItemOrderRequest } from "../services/order";
 import { useUserStore } from "../store/useUserStore";
+import { toast } from "sonner";
 
 interface Product extends Products {
   Rating: Rating[];
@@ -43,10 +44,10 @@ export const useProductDetails = (query: string) => {
           if (axiosError.response) {
             setError(axiosError.response.data as Array<string>);
           } else if (axiosError.request) {
-            console.error("No se recibió respuesta:", axiosError.request);
+            toast.error("No se recibió respuesta:");
           }
         } else {
-          console.error("Error desconocido:", error);
+          toast.error("Error desconocido:");
           setError(["Error con la peticion al servidor"]);
         }
       }).finally(() => {
@@ -63,7 +64,6 @@ export const useProductDetails = (query: string) => {
       setRating(value)
     } catch (error) {
       setError(["Error con la peticion... "])
-      console.log(error)
     }
   }
   const createComment = async (value: string) => {
@@ -75,7 +75,6 @@ export const useProductDetails = (query: string) => {
         })
       }
     } catch (error) {
-      console.log(error)
       setError(["Error al crear el comentario"])
     }
   }
@@ -85,7 +84,6 @@ export const useProductDetails = (query: string) => {
       const response =  await addItemOrderRequest(query, quantity)
       return response
     } catch (error) {
-      console.log(error)
       setError(["Error al añadir el producto"])
       throw new Error("Error al añadir el producto"); 
     }

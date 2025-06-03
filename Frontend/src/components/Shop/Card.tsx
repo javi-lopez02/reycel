@@ -8,7 +8,7 @@ import AuthUser from "../../pages/auth/AuthUser";
 import { useUserStore } from "../../store/useUserStore";
 
 const Card: FC<Products> = (product) => {
-  const { isAuth, user } = useUserStore();
+  const { isAuth } = useUserStore();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const handleClikAddProduct = () => {
@@ -17,7 +17,6 @@ const Card: FC<Products> = (product) => {
       return;
     }
 
-    console.log(user);
 
     addItemOrderRequest(product.id, 1)
       .then((res) => {
@@ -35,8 +34,7 @@ const Card: FC<Products> = (product) => {
           );
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         toast.error("Error al añadir un producto al carrito.");
       });
   };

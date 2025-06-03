@@ -41,8 +41,10 @@ export interface Comment {
   content: string;
   createdAt: Date;
   updatedAt: Date;
-  User: {
-    username: string;
+  client: {
+    baseUser: {
+      username: string;
+    };
   };
 }
 
@@ -97,15 +99,16 @@ export type AuthContextType = {
 
 export interface TransactionType {
   transactionID: string;
-  price: number;
   productCount: number;
+  price: number;
   fastDelivery: boolean;
   address: string;
   town: string;
-  userID: string | undefined;
   orderID: number | null;
   paymentMethodId: string | undefined
 }
+
+
 
 export interface Category {
   id: string;

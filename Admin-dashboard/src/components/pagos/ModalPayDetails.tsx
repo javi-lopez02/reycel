@@ -40,7 +40,7 @@ const ModalPayDetails: FC<Props> = ({ id, isOpen, onClose }) => {
     setLoading(true);
     getOrderItemsRequest(id)
       .then((res) => {
-        setItems(res.data.data);
+        setItems(res.data.data.orderItems);
       })
       .catch((err) => {
         console.log(err);

@@ -37,8 +37,6 @@ export const useProduct = (
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     });
 
-  console.log(hasNextPage);
-
   return {
     refetch,
     fetchNextPage,

@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import path from "path";
 import { io, server, app } from "./Libs/socketServer";
+import { startReservationCleanup } from "./Utils/cleanReservations";
 
 import auth from "./Routes/auth.routes";
 import product from "./Routes/product.routes";
@@ -15,12 +16,11 @@ import bots from "./Routes/bot.routes";
 import payment from "./Routes/payment.routes";
 import sedes from "./Routes/sedes.routes";
 import users from "./Routes/user.routes";
+import workers from "./Routes/workers.routes"
 import analytics from "./Routes/analytics.routes";
 import paymentMethod from "./Routes/paymentMethod.routes";
 import currencyExchange from "./Routes/currencyExchange.routes";
 import notification from "./Routes/notification.routes";
-
-import { initBot } from "./Controllers/bot.controller";
 
 dotenv.config();
 const port = 4000;
@@ -32,7 +32,6 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "http://localhost:8000",
-      "https://q55z9fw0-5173.usw2.devtunnels.ms",
     ],
     credentials: true,
   })
@@ -51,6 +50,7 @@ app.use("/api", bots);
 app.use("/api", payment);
 app.use("/api", sedes);
 app.use("/api", users);
+app.use("/api", workers);
 app.use("/api", paymentMethod);
 app.use("/api", currencyExchange);
 app.use("/api/analytics", analytics);
@@ -58,8 +58,8 @@ app.use("/api", notification);
 
 app.use("/public", express.static(path.join(__dirname, "/Upload")));
 
-//initBot();
-
 server.listen(port, () => {
   console.log(`Server on port ${port}`);
+  // Iniciar el programador de limpieza de reservas
+  startReservationCleanup();
 });

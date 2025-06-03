@@ -13,9 +13,13 @@ export const getSedes = async (req: Request, res: Response) => {
         phone: true,
         workers: {
           select: {
+            baseUser: {
+              select: {
+                username: true,
+                image: true,
+              },
+            },
             id: true,
-            username: true,
-            image: true,
           },
         },
       },
@@ -49,9 +53,13 @@ export const getSedeId = async (req: Request, res: Response) => {
         phone: true,
         workers: {
           select: {
+            baseUser: {
+              select: {
+                username: true,
+                image: true,
+              },
+            },
             id: true,
-            username: true,
-            image: true,
           },
         },
       },
@@ -79,7 +87,7 @@ export const createSede = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Datos inválidos o incompletos" });
     }
 
-    const existingWorkers = await prisma.user.findMany({
+    const existingWorkers = await prisma.administrator.findMany({
       where: {
         id: { in: workers },
       },
@@ -129,7 +137,7 @@ export const updateSede = async (req: Request, res: Response) => {
 
     let connectedWorkers: Array<{ id: string }> = [];
     if (workers && Array.isArray(workers)) {
-      const existingWorkers = await prisma.user.findMany({
+      const existingWorkers = await prisma.administrator.findMany({
         where: {
           id: { in: workers },
         },

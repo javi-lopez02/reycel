@@ -12,6 +12,10 @@ export const getSedesRequest = () => {
   return axios.get(`/sedes`);
 };
 
+export const getWorkersRequest = () => {
+  return axios.get(`/workers`);
+};
+
 export const getSedeIdRequest = (id: string) => {
   return axios.get(`/sedes/${id}`);
 };
@@ -27,3 +31,4 @@ export const updateSedeRequest = (id: string, data: Sede) => {
 export const deleteSedeRequest = (id: string) => {
   return axios.delete(`/sedes/${id}`);
 };
+

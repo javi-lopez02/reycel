@@ -27,7 +27,7 @@ export const useNotificationStore = create<Store>()((set, get) => ({
   notifications: [],
   setNotifications: (notifications: Notifications[]) => set({ notifications }),
   addNotifications: (notification) =>
-    set((state) => ({ notifications: [...state.notifications, notification] })),
+    set((state) => ({ notifications: [ notification,...state.notifications] })),
 
   checkNotification: (id) => {
     const { notifications } = get();
@@ -49,9 +49,8 @@ export const useNotificationStore = create<Store>()((set, get) => ({
       .then(() => {
         set({ notifications: newNotifications });
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error("Error al leer la notificación");
-        console.log(error);
         set({ notifications });
       });
   },
@@ -77,9 +76,8 @@ export const useNotificationStore = create<Store>()((set, get) => ({
       .then(() => {
         set({ notifications: notificationsDelete });
       })
-      .catch((error) => {
+      .catch(() => {
         toast.error("Error al leer la notificación");
-        console.log(error);
         set({ notifications });
       });
   },

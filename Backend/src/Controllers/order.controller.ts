@@ -33,7 +33,7 @@ export const addOrderItem = async (req: Request, res: Response) => {
 
     let orderFind = await prisma.order.findFirst({
       where: {
-        userId: userId,
+        clientId: userId,
         pending: true,
       },
       include: {
@@ -52,7 +52,7 @@ export const addOrderItem = async (req: Request, res: Response) => {
     if (!orderFind) {
       orderFind = await prisma.order.create({
         data: {
-          userId: userId,
+          clientId: userId,
           pending: true,
           totalAmount: 0,
         },
@@ -91,7 +91,7 @@ export const getOrderItems = async (req: Request, res: Response) => {
 
     const items = await prisma.order.findMany({
       where: {
-        userId: userId,
+        clientId: userId,
         pending: true,
       },
       select: {
@@ -180,7 +180,7 @@ export const deleteOrderItem = async (req: Request, res: Response) => {
   }
 };
 
-export const getOrder = async (req: Request, res: Response) => {
+export const getOrderAdmin = async (req: Request, res: Response) => {
   try {
     const orders = await prisma.order.findMany({
       select: {
@@ -193,12 +193,32 @@ export const getOrder = async (req: Request, res: Response) => {
         id: true,
         totalAmount: true,
         pending: true,
-        user: {
+        admin: {
           select: {
-            id: true,
-            image: true,
-            role: true,
-            username: true,
+            baseUser: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                image: true,
+                createdAt: true,
+                status: true,
+              },
+            },
+          },
+        },
+        client: {
+          select: {
+            baseUser: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                image: true,
+                createdAt: true,
+                status: true,
+              },
+            },
           },
         },
       },
@@ -217,13 +237,15 @@ export const getOrderItemsAdmin = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
+    console.log(id);
+
     if (!id) {
       return res.status(400).json({ message: "El id es requerido" });
     }
 
     const order = await prisma.order.findUnique({
       where: {
-        id: Number(id),
+        id: parseInt(id),
       },
       select: {
         id: true,
@@ -294,7 +316,7 @@ export const addOrderItemAdmin = async (req: Request, res: Response) => {
 
     let orderFind = await prisma.order.findFirst({
       where: {
-        userId: userId,
+        adminId: userId,
         pending: true,
       },
       include: {
@@ -313,7 +335,7 @@ export const addOrderItemAdmin = async (req: Request, res: Response) => {
     if (!orderFind) {
       orderFind = await prisma.order.create({
         data: {
-          userId: userId,
+          adminId: userId,
           pending: true,
           totalAmount: 0,
         },
@@ -396,5 +418,76 @@ export const updateOrderItemAdmin = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al agregar el Producto al carrito." });
+  }
+};
+
+export const confirmOrderAdmin = async (req: Request, res: Response) => {
+  try {
+    const orderID = req.body.orderID;
+    const transactionID = req.body.transactionID || null;
+    const amount = req.body.amount;
+    const fastDelivery = false;
+    const paymentMethod = req.body.paymentMethod;
+    const adminId = req.userId;
+
+    const order = await prismaNew.order.update({
+      where: {
+        id: parseInt(orderID),
+      },
+      data: {
+        pending: false,
+      },
+    });
+
+    await prisma.payment.create({
+      data: {
+        transactionID,
+        orderId: parseInt(orderID),
+        amount,
+        fastDelivery,
+        paymentMethodId: paymentMethod,
+        adminId,
+        paymentStatus: "COMPLETED",
+      },
+    });
+
+    const dataFind = await prisma.order.findFirst({
+      where: {
+        adminId: adminId,
+        pending: true,
+      },
+      include: {
+        orderItems: true,
+      },
+    });
+
+    if (dataFind) {
+      return res.status(200).json({
+        data: dataFind,
+      });
+    }
+
+    const data = await prisma.order.create({
+      data: {
+        adminId: adminId,
+        pending: true,
+        totalAmount: 0,
+      },
+      include: {
+        orderItems: true,
+        _count: {
+          select: {
+            orderItems: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      data: data,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al confirmar la orden" });
   }
 };

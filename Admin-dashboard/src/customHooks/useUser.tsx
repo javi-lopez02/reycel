@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Users } from "../type";
+import { User } from "../type";
 import { getUsersRequest } from "../services/user";
 
 function useUser() {
-  const [users, setUsers] = useState<Users[] | null>(null);
+  const [users, setUsers] = useState<User[] | null>(null);
   const [error, setError] = useState<Array<string> | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -12,7 +12,7 @@ function useUser() {
     setLoading(true);
     getUsersRequest()
       .then((res) => {
-        setUsers(res.data.data);
+        setUsers(res.data);
       })
       .catch((err) => {
         console.log(err);

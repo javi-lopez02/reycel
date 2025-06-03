@@ -20,12 +20,12 @@ export const ratingProductCreate = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Producto no encontrado." });
     }
 
-    const userRating = product.Rating.find((r) => r.userID === req.userId);
+    const userRating = product.Rating.find((r) => r.clientId === req.userId);
 
     if (userRating) {
       await prisma.rating.updateMany({
         where: {
-          userID: req.userId,
+          clientId: req.userId,
           productID: id,
         },
         data: {
@@ -37,7 +37,7 @@ export const ratingProductCreate = async (req: Request, res: Response) => {
         data: {
           value: parseInt(value),
           productID: id,
-          userID: req.userId,
+          clientId: req.userId,
         },
       });
     }

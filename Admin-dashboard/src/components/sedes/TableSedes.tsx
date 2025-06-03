@@ -178,8 +178,8 @@ export default function TableSedes() {
                     return (
                       <User
                         key={worker.id}
-                        avatarProps={{ radius: "lg", src: worker.image }}
-                        name={worker.username}
+                        avatarProps={{ radius: "lg", src: worker.baseUser.image }}
+                        name={worker.baseUser.username}
                       />
                     );
                   })}
@@ -192,10 +192,10 @@ export default function TableSedes() {
         case "actions":
           return (
             <div className="relative flex justify-center items-center gap-2">
-              <Tooltip content="Edit Sede">
+              <Tooltip content="Edit Sede" color="success">
                 <button
                   onClick={handleEditSede(sede)}
-                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                  className="text-lg text-success cursor-pointer active:opacity-50"
                 >
                   <EditIcon />
                 </button>

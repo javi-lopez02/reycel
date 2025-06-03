@@ -1,13 +1,12 @@
-import {Request, Response} from 'express'
-import {PrismaClient} from '@prisma/client'
-import bcryptjs from 'bcryptjs'
-import {createToken} from '../Libs/jwt'
-import jwt from 'jsonwebtoken'
-import { TokenPayload } from '../types'
-import { TOKEN_SECRET } from '../conf'
+import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
+import bcryptjs from "bcryptjs";
+import { createToken } from "../Libs/jwt";
+import jwt from "jsonwebtoken";
+import { TokenPayload } from "../types";
+import { TOKEN_SECRET } from "../conf";
 
-const prisma = new PrismaClient()
-
+const prisma = new PrismaClient();
 
 export const loginAdmin = async (req: Request, res: Response) => {
   try {
@@ -16,67 +15,117 @@ export const loginAdmin = async (req: Request, res: Response) => {
     if (!userName || !password) {
       return res
         .status(401)
-        .json(["Nesecita email y contraseña para logearce"]);
+        .json(["Necesita usuario y contraseña para iniciar sesión"]);
     }
 
-    const user = await prisma.user.findFirst({
+    const baseUser = await prisma.baseUser.findFirst({
       where: {
         username: userName,
       },
+      select: {
+        administrator: {
+          select: {
+            id: true,
+            role: true,
+            orders: {
+              select: {
+                id: true,
+                pending: true,
+              },
+            },
+            notification: true,
+            sede: {
+              select: {
+                direction: true
+              }
+            }
+          },
+        },
+        password: true,
+        username: true,
+        image: true,
+      },
     });
 
-    if (!user || user.role === "USER") {
-      return res.status(401).json(["Usuario no Valido"]);
+    if (!baseUser || !baseUser.administrator) {
+      return res.status(401).json(["Usuario no válido"]);
     }
 
-    const isMatch = await bcryptjs.compare(password, user.password);
+    const isMatch = await bcryptjs.compare(password, baseUser.password);
 
     if (!isMatch) {
-      return res.status(401).json(["Credenciales Incorrentas"]);
+      return res.status(401).json(["Credenciales incorrectas"]);
     }
 
-    const token = await createToken(String(user.id));
+    const token = await createToken(String(baseUser.administrator.id));
 
     res.cookie("token", token, {
       httpOnly: false,
       secure: true,
       sameSite: "none",
     });
+
     res.json({
-      username: user.username,
-      userRole: user.role,
-      userId: user.id,
-      image: user.image
+      username: baseUser.username,
+      userId: baseUser.administrator.id,
+      image: baseUser.image,
+      role: baseUser.administrator.role,
+      orderId: baseUser.administrator.orders,
+      notifications: baseUser.administrator.notification.reverse(),
+      sede: baseUser.administrator.sede?.direction
     });
   } catch (error) {
     console.log(error);
     res.status(500).json(["Error del servidor"]);
   }
 };
-
 
 export const verifyTokenAdmin = async (req: Request, res: Response) => {
   try {
     const { token } = req.cookies;
-    if (!token) return res.status(401);
+
+    if (!token) {
+      return res.status(401).json(["No autorizado"]);
+    }
 
     const decode = jwt.verify(token, TOKEN_SECRET) as TokenPayload;
-    if (!decode) return res.status(401);
 
-    const userFound = await prisma.user.findUnique({
-      where: { id: decode.id },
+    const administrator = await prisma.administrator.findUnique({
+      where: {
+        id: decode.id,
+      },
+      select: {
+        id: true,
+        orders: true,
+        baseUser: true,
+        notification: true,
+        role: true,
+        sede: {
+          select: {
+            direction: true
+          }
+        }
+      },
     });
 
-    if (!userFound || userFound.role === "USER") return res.status(401).json(["User Not Valid"]);
+    if (!administrator || !administrator.baseUser) {
+      return res.status(404).json(["Administrador no encontrado"]);
+    }
 
-    return res.json({
-      userId: userFound.id,
-      username: userFound.username,
-      userRole: userFound.role,
+    res.json({
+      username: administrator.baseUser.username,
+      userId: administrator.id,
+      image: administrator.baseUser.image,
+      role: administrator.role,
+      orders: administrator.orders,
+      notifications: administrator.notification.reverse(),
+      sede: administrator.sede?.direction
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json(["Error del servidor"]);
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json(["Token no válido"]);
+    }
+    return res.status(500).json(["Error interno del servidor"]);
   }
 };
-
