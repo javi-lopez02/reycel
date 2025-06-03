@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
-import { NextUIProvider } from "@nextui-org/react";
+import { HeroUIProvider } from "@heroui/react";
 import Home from "./pages/Home";
 import NavBar from "./components/navbar/NavBar";
 import User from "./pages/User";
@@ -12,12 +12,12 @@ import Categories from "./pages/Categories";
 import Payments from "./pages/Payments";
 import Sedes from "./pages/Sedes";
 import Order from "./pages/Order";
-import NewOrderPage from "./components/order/NewOrderPage";
 import Workers from "./pages/Workers";
+import NewOrderPage from "./components/neworder/NewOrderPage";
 
 function App() {
   return (
-    <NextUIProvider>
+    <HeroUIProvider>
       <BrowserRouter>
         <AuthProvider>
           <Toaster richColors expand={true} />
@@ -39,7 +39,7 @@ function App() {
           </Routes>
         </AuthProvider>
       </BrowserRouter>
-    </NextUIProvider>
+    </HeroUIProvider>
   );
 }
 

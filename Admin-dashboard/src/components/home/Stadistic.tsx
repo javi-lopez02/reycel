@@ -5,7 +5,7 @@ import { PaymentStatus } from "./Paymnets/PaymentStatus";
 import { ProductAnalytics } from "./ProductAnalytics";
 import useAnalytics from "../../customHooks/useAnalytics";
 import { toast } from "sonner";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/react";
 
 export default function Stadistic() {
   const { analytics, error, loading } = useAnalytics();

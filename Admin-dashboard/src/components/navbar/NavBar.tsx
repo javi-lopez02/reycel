@@ -4,7 +4,7 @@ import DropdownComp from "./DropdownMenu";
 import SideBar from "./DrawerSideBar";
 import Avatar from "./Avatar";
 import AllNotifications from "./AllNotifications";
-import { useDisclosure } from "@nextui-org/react";
+import { useDisclosure } from "@heroui/react";
 
 function NavBar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();

@@ -4,7 +4,7 @@ import {
   DrawerHeader,
   DrawerBody,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Link } from "react-router-dom";
 import useUser from "../../customHooks/useUser";
 import useCategory from "../../customHooks/useCategory";

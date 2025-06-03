@@ -27,7 +27,7 @@ import {
   Tooltip,
   useDisclosure,
   Spinner,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   ChevronDownIcon,
   DeleteIcon,
@@ -51,11 +51,22 @@ export function Capitalize(s: string) {
 const columns = [
   { name: "IMAGEN", uid: "image", sortable: true },
   { name: "TELEFONO", uid: "phone", sortable: true },
+  { name: "RENTA", uid: "rent" },
+  { name: "PERDIDAS O INVERSIONES", uid: "losses" },
+  { name: "GANANCIA NETA SEMANAL", uid: "profits" },
   { name: "TRABAJADOR", uid: "worker", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const INITIAL_VISIBLE_COLUMNS = ["image", "phone", "worker", "actions"];
+const INITIAL_VISIBLE_COLUMNS = [
+  "image",
+  "phone",
+  "rent",
+  "profits",
+  "losses",
+  "worker",
+  "actions",
+];
 
 export default function TableSedes() {
   const { sedes, loading, error, addSede, deleteSede, updateSede, getSedes } =
@@ -160,12 +171,27 @@ export default function TableSedes() {
             <User
               avatarProps={{ radius: "lg", src: sede.image }}
               name={sede.direction}
+              description={sede.phone}
             />
           );
-        case "phone":
+        case "rent":
           return (
             <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">{sede.phone}</p>
+              <p className="text-bold text-small capitalize">${sede.rent}</p>
+            </div>
+          );
+        case "losses":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">${sede.losses}</p>
+            </div>
+          );
+        case "profits":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                ${sede.netProfits}
+              </p>
             </div>
           );
         case "worker":
@@ -178,7 +204,10 @@ export default function TableSedes() {
                     return (
                       <User
                         key={worker.id}
-                        avatarProps={{ radius: "lg", src: worker.baseUser.image }}
+                        avatarProps={{
+                          radius: "lg",
+                          src: worker.baseUser.image,
+                        }}
                         name={worker.baseUser.username}
                       />
                     );

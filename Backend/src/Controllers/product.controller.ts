@@ -239,6 +239,13 @@ export const getProducts = async (req: Request, res: Response) => {
       include: {
         comment: true,
         Rating: true,
+        Sede: {
+          select: {
+            direction: true,
+            phone: true,
+            image: true,
+          },
+        },
         category: {
           select: {
             name: true,
@@ -285,7 +292,25 @@ export const createProduct = async (req: Request, res: Response) => {
       mpxCameraFront,
       mpxCameraBack,
       sedeId,
+      investments,
     } = req.body;
+
+    console.log(
+      name,
+      description,
+      categoryId,
+      price,
+      imagen,
+      inventoryCount,
+      rating,
+      ram,
+      storage,
+      battery,
+      mpxCameraFront,
+      mpxCameraBack,
+      sedeId,
+      investments
+    );
 
     const userId = req.userId;
 
@@ -304,6 +329,7 @@ export const createProduct = async (req: Request, res: Response) => {
           mpxCameraBack,
           mpxCameraFront,
           sedeId,
+          investments,
         },
         include: {
           category: {
@@ -312,12 +338,12 @@ export const createProduct = async (req: Request, res: Response) => {
               name: true,
             },
           },
-          Sede:{
+          Sede: {
             select: {
               id: true,
-              direction: true
-            }
-          }
+              direction: true,
+            },
+          },
         },
       });
 
@@ -332,7 +358,8 @@ export const createProduct = async (req: Request, res: Response) => {
       res.status(200).json({
         data: product,
       });
-    } else {
+    } 
+    else {
       const product = await prisma.product.create({
         data: {
           name,
@@ -342,6 +369,7 @@ export const createProduct = async (req: Request, res: Response) => {
           imagen,
           inventoryCount,
           sedeId,
+          investments,
         },
         include: {
           category: {
@@ -350,12 +378,12 @@ export const createProduct = async (req: Request, res: Response) => {
               name: true,
             },
           },
-          Sede:{
+          Sede: {
             select: {
               id: true,
-              direction: true
-            }
-          }
+              direction: true,
+            },
+          },
         },
       });
 
@@ -424,72 +452,136 @@ export const updateProduct = async (req: Request, res: Response) => {
       imagen,
       inventoryCount,
       rating,
+      ram,
+      storage,
+      battery,
+      mpxCameraFront,
+      mpxCameraBack,
+      sedeId,
+      investments,
     } = req.body;
 
     const userId = req.userId;
 
-    console.log({
-      name,
-      description,
-      categoryId,
-      price,
-      imagen,
-      inventoryCount,
-      rating,
-      id,
-    });
-
-    const product = await prisma.product.update({
-      where: { id },
-      data: {
-        name,
-        description,
-        categoryId,
-        price,
-        imagen,
-        inventoryCount,
-      },
-      include: {
-        category: {
-          select: {
-            id: true,
-            name: true,
-          },
+    if (ram || storage || battery || mpxCameraBack || mpxCameraFront) {
+      const product = await prisma.product.update({
+        where: { id: id },
+        data: {
+          name,
+          description,
+          categoryId,
+          price,
+          imagen,
+          inventoryCount,
+          ram,
+          storage,
+          battery,
+          mpxCameraBack,
+          mpxCameraFront,
+          sedeId,
+          investments,
         },
-      },
-    });
-
-    if (rating !== undefined) {
-      const existingRating = await prisma.rating.findFirst({
-        where: {
-          productID: id,
-          administratorId: userId,
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          Sede: {
+            select: {
+              id: true,
+              direction: true,
+            },
+          },
         },
       });
 
-      if (existingRating) {
-        await prisma.rating.update({
+      if (rating !== undefined) {
+        const existingRating = await prisma.rating.findFirst({
           where: {
-            id: existingRating.id,
-          },
-          data: {
-            value: rating,
-          },
-        });
-      } else {
-        await prisma.rating.create({
-          data: {
             productID: id,
             administratorId: userId,
-            value: rating,
           },
         });
-      }
-    }
 
-    res.status(200).json({
-      data: product,
-    });
+        if (existingRating) {
+          await prisma.rating.update({
+            where: {
+              id: existingRating.id,
+            },
+            data: {
+              value: rating,
+            },
+          });
+        } else {
+          await prisma.rating.create({
+            data: {
+              productID: id,
+              administratorId: userId,
+              value: rating,
+            },
+          });
+        }
+      }
+
+      res.status(200).json({
+        data: product,
+      });
+    } else {
+      const product = await prisma.product.update({
+        where: { id },
+        data: {
+          name,
+          description,
+          categoryId,
+          price,
+          imagen,
+          inventoryCount,
+          investments,
+        },
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      if (rating !== undefined) {
+        const existingRating = await prisma.rating.findFirst({
+          where: {
+            productID: id,
+            administratorId: userId,
+          },
+        });
+
+        if (existingRating) {
+          await prisma.rating.update({
+            where: {
+              id: existingRating.id,
+            },
+            data: {
+              value: rating,
+            },
+          });
+        } else {
+          await prisma.rating.create({
+            data: {
+              productID: id,
+              administratorId: userId,
+              value: rating,
+            },
+          });
+        }
+      }
+
+      res.status(200).json({
+        data: product,
+      });
+    }
   } catch (error) {
     console.log("Error:", error);
     res.status(500).send("Internal Server Error");

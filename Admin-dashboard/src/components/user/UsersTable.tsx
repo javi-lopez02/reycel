@@ -27,7 +27,7 @@ import {
   SortDescriptor,
   Tooltip,
   Spinner,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { type User as Users } from "../../type";
 import {
   ChevronDownIcon,
