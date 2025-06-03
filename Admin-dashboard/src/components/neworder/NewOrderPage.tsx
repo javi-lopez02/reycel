@@ -5,11 +5,13 @@ import { toast } from "sonner";
 import NewOrderCard from "./NewOrderCard";
 import DrawerOrderView from "./DrawerOrderView";
 import { useNewOrderStore } from "../../store/useProductStore";
+import { useAuth } from "../../context/AuthContext";
 
 export default function NewOrderPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { products, loading, error } = useProduct();
   const { setOrder } = useNewOrderStore();
+  const { user } = useAuth();
 
   const [searchFilter, setSearchFilter] = useState("");
 
@@ -85,13 +87,15 @@ export default function NewOrderPage() {
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
               {filteredProducts?.map((product) => {
-                return (
-                  <NewOrderCard
-                    product={product}
-                    setOrder={setOrder}
-                    key={product.id}
-                  />
-                );
+                if (product.Sede.direction === user?.sede) {
+                  return (
+                    <NewOrderCard
+                      product={product}
+                      setOrder={setOrder}
+                      key={product.id}
+                    />
+                  );
+                }
               })}
             </div>
           </div>

@@ -31,7 +31,7 @@ model Administrator {
   baseUser     BaseUser       @relation(fields: [baseUserId], references: [id])
   baseUserId   String         @unique
   salary       Int?
-  mouthSalary  Int?
+  mouthSalary  Int            @default(0)
   role         Role           @default(MODERATOR)
   sede         Sede?          @relation(fields: [sedeId], references: [id])
   sedeId       String?
@@ -59,11 +59,12 @@ enum Role {
 }
 
 model Category {
-  id        String    @id @default(uuid())
-  name      String    @unique
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id            String    @id @default(uuid())
+  name          String    @unique
+  products      Product[]
+  profitsBySell Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Product {
@@ -72,6 +73,7 @@ model Product {
   description           String
   price                 Float
   categoryId            String
+  investments           Int
   imagen                String?
   color                 String?
   ram                   Int?
@@ -156,15 +158,15 @@ model OrderItem {
 }
 
 model Payment {
-  id              Int           @id @default(autoincrement())
-  orderId         Int           @unique
-  order           Order         @relation(fields: [orderId], references: [id])
+  id              Int            @id @default(autoincrement())
+  orderId         Int            @unique
+  order           Order          @relation(fields: [orderId], references: [id])
   amount          Float
   transactionID   String?
   fastDelivery    Boolean
-  paymentStatus   PaymentStatus @default(PENDING)
-  createdAt       DateTime      @default(now())
-  PaymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  paymentStatus   PaymentStatus  @default(PENDING)
+  createdAt       DateTime       @default(now())
+  PaymentMethod   PaymentMethod  @relation(fields: [paymentMethodId], references: [id])
   paymentMethodId String
   client          Client?        @relation(fields: [userId], references: [id])
   userId          String?
@@ -196,12 +198,15 @@ enum PaymentStatus {
 }
 
 model Sede {
-  id        String          @id @default(uuid())
-  image     String
-  phone     Int             @unique
-  direction String
-  workers   Administrator[]
-  producto  Product[]
+  id         String          @id @default(uuid())
+  image      String
+  phone      Int             @unique
+  direction  String
+  rent       Int
+  losses     Int             @default(0)
+  netProfits Int             @default(0)
+  workers    Administrator[]
+  producto   Product[]
 }
 
 model CurrencyExchange {

@@ -52,7 +52,8 @@ export function Capitalize(s: string) {
 
 const columns = [
   { name: "NOMBRE", uid: "username", sortable: true },
-  { name: "SALARIO", uid: "salary" },
+  { name: "SALARIO BASICO", uid: "salary" },
+  { name: "SALARIO DEL MES", uid: "mouthSalary" },
   { name: "CREADO EL ", uid: "createdAt", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "# ORDENES", uid: "order" },
@@ -68,7 +69,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "username",
   "status",
   "actions",
-  "createdAt",
+  "mouthSalary",
   "order",
   "salary",
 ];
@@ -217,6 +218,20 @@ export default function UsersTable() {
           <div className="flex justify-left">
             <span>$</span>
             <p className={`text-bold text-small capitalize`}>{worker.salary}</p>
+          </div>
+        ) : (
+          <div className="flex justify-leftb ">
+            <p className={`text-bold text-small capitalize`}>ADMINISTRADOR</p>
+          </div>
+        );
+      }
+      case "mouthSalary": {
+        return worker.role === "MODERATOR" ? (
+          <div className="flex justify-left">
+            <span>$</span>
+            <p className={`text-bold text-small capitalize`}>
+              {worker.mouthSalary}
+            </p>
           </div>
         ) : (
           <div className="flex justify-leftb ">

@@ -33,7 +33,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { order, setOrder, errors, setErrors, isLoading, setIsLoading } =
+  const { order, setOrder, errors, setErrors, isLoading } =
     useNewOrder(user?.id);
 
   useEffect(() => {
@@ -63,6 +63,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
         amount: order?.totalAmount,
         paymentMethod: selectedId,
         userId: user?.id,
+        sede: user?.sede
       })
         .then((res) => {
           toast.success("Orden Confirmada");
@@ -82,6 +83,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
         paymentMethod: selectedId,
         userId: user?.id,
         transactionID: transactionIdInput,
+        sede: user?.sede
       })
         .then((res) => {
           toast.success("Orden Confirmada");
@@ -198,7 +200,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
                             image={item.product.imagen}
                             name={item.product.name}
                             price={item.price}
-                            inventaryCount={item.product.inventaryCount}
+                            inventoryCount={item.product.inventoryCount}
                             setErrors={setErrors}
                             setOrder={setOrder}
                             quantity={item.quantity}

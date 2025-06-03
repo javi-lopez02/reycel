@@ -50,7 +50,8 @@ export function Capitalize(s: string) {
 const columns = [
   { name: "NOMBRE", uid: "name", sortable: true },
   { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
-  { name: "Fecha de Creación", uid: "createdAt", sortable: true },
+  { name: "FECHA DE CREACION", uid: "createdAt", sortable: true },
+  { name: "GANANCIA POR VENTA DEL MODERADOR", uid: "profits" },
   { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -195,6 +196,14 @@ export default function CategoryTable() {
           <div className="flex ">
             <p className="text-bold text-small capitalize">
               {Category._count.products}
+            </p>
+          </div>
+        );
+      case "profits":
+        return (
+          <div className="flex ">
+            <p className="text-bold text-small capitalize">
+              {Category.profitsBySell}
             </p>
           </div>
         );

@@ -2,7 +2,10 @@ import { Input } from "@heroui/react";
 import { FC, useState } from "react";
 import { OrderAdd } from "../../type";
 import { toast } from "sonner";
-import { deleteOrderItemRequest, updateOrderItemRequest } from "../../services/neworder";
+import {
+  deleteOrderItemRequest,
+  updateOrderItemRequest,
+} from "../../services/neworder";
 
 interface Product {
   quantity: number;
@@ -10,7 +13,7 @@ interface Product {
   name: string;
   price: number;
   id: string;
-  inventaryCount: number;
+  inventoryCount: number;
   setOrder: (order: OrderAdd | null) => void;
   setErrors: (errors: Array<string>) => void;
 }
@@ -21,12 +24,14 @@ const NewOrderView: FC<Product> = ({
   name,
   quantity,
   price,
-  inventaryCount,
+  inventoryCount,
   setOrder,
   setErrors,
 }) => {
   const [value, setvalue] = useState(`${quantity}`);
   const [realPrice, setNewPrice] = useState(price);
+
+  console.log(inventoryCount);
 
   const handleOrderDelete = () => {
     deleteOrderItemRequest(id)
@@ -49,8 +54,7 @@ const NewOrderView: FC<Product> = ({
       .catch((error) => {
         console.log(error);
         setErrors(["Error al actualizar el producto en el carrito"]);
-      }
-      );
+      });
   };
 
   return (
@@ -72,10 +76,10 @@ const NewOrderView: FC<Product> = ({
             labelPlacement="outside"
             color="primary"
             value={value}
-            onValueChange={(event) => {
-              if (Number(event) > 0 && Number(value) < inventaryCount) {
-                setvalue(event);
-                handleQuantity(event, id, realPrice);
+            onValueChange={(value) => {
+              if (parseInt(value) > 0 && parseInt(value) <= inventoryCount) {
+                setvalue(value);
+                handleQuantity(value, id, realPrice);
               }
             }}
             type="number"

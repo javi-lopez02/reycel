@@ -1,11 +1,10 @@
-import { Key } from "react";
 import axios from "./axios";
 
 interface Sede {
   image: string;
   direction: string;
   phone: string;
-  workers: Key[];
+  rent: number;
 }
 
 export const getSedesRequest = () => {
@@ -31,4 +30,3 @@ export const updateSedeRequest = (id: string, data: Sede) => {
 export const deleteSedeRequest = (id: string) => {
   return axios.delete(`/sedes/${id}`);
 };
-

@@ -26,6 +26,7 @@ interface ConfirmParams {
   amount?: number;
   paymentMethod: string;
   userId?: string;
+  sede?: string
 }
 
 export const confirmOrderRequest = (params: ConfirmParams) => {

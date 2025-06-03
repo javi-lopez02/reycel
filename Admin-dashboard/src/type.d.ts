@@ -24,7 +24,7 @@ export interface User {
   image: string;
   status: boolean;
   createdAt: string;
-  sede: string
+  sede: string;
 }
 
 export interface Worker {
@@ -36,6 +36,7 @@ export interface Worker {
   orderCount: number;
   createdAt: string;
   salary: number;
+  mouthSalary: number;
   role: "OWNER" | "MODERATOR";
 }
 
@@ -65,6 +66,9 @@ interface Sede {
   phone: string;
   direction: string;
   workers: Workers[];
+  rent: number;
+  losses: number;
+  netProfits: number;
 }
 interface Count {
   orders: number;
@@ -79,11 +83,18 @@ export interface Products {
   imagen: string;
   createdAt: string;
   inventoryCount: number;
+  investments: number;
   category: Category;
+  Sede: {
+    direction: string;
+    image: string;
+    phone: string;
+  };
 }
 export interface Category {
   id: string;
   name: string;
+  profitsBySell: number;
   createdAt: string;
   _count: {
     products: number;
@@ -187,7 +198,7 @@ export interface ProductOrder {
   imagen: string;
   name: string;
   ratingAverage: number;
-  inventaryCount: number;
+  inventoryCount: number;
 }
 
 export interface Analytics {

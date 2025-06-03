@@ -10,6 +10,7 @@ interface CreateProps {
   price: number;
   rating: number;
   imagen: string;
+  investments: number;
   inventoryCount: number;
   categoryId: string;
   ram?: number;

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import prismaNew from "../Middlewares/prisma";
+import { error } from "console";
 const prisma = new PrismaClient();
 
 export const getOrderItemsAdmin = async (req: Request, res: Response) => {
@@ -297,10 +298,119 @@ export const confirmOrderAdmin = async (req: Request, res: Response) => {
     const fastDelivery = false;
     const paymentMethod = req.body.paymentMethod;
     const adminId = req.userId;
+    const direction = req.body.sede;
 
-    const order = await prismaNew.order.update({
+    //Datos de la orden
+    const order = await prismaNew.order.findFirst({
       where: {
-        id: Number(orderID),
+        id: parseInt(orderID),
+      },
+      select: {
+        orderItems: {
+          select: {
+            quantity: true,
+            product: {
+              select: {
+                id: true,
+                inventoryCount: true,
+                price: true,
+                investments: true,
+                category: {
+                  select: {
+                    name: true,
+                    profitsBySell: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!order) res.status(500).json({ error: "Error al confirmar la orden" });
+
+    //Datos del ususario
+    const user = await prisma.administrator.findUnique({
+      where: {
+        id: adminId,
+      },
+      select: {
+        mouthSalary: true,
+        sedeId: true,
+        sede: {
+          select: {
+            netProfits: true,
+          },
+        },
+      },
+    });
+
+    if (!user) res.status(500).json({ error: "Error al confirmar la orden" });
+
+    //Datos de la sede
+    const sede = await prisma.sede.findFirst({
+      where: {
+        direction,
+      },
+      select: {
+        netProfits: true,
+        id: true,
+      },
+    });
+
+    if (!sede) res.status(500).json({ error: "Error al confirmar la orden" });
+
+    if (user && sede && order) {
+      let NewSalary = user.mouthSalary;
+
+      order.orderItems.map(async (item) => {
+        const quantity = item.quantity;
+        const categoryGain = item.product.category.profitsBySell;
+
+        const Inversion = item.product.investments * quantity;
+        const Venta = item.product.price * quantity;
+
+        const newQuantity = item.product.inventoryCount - quantity;
+        const newNetProfits = sede.netProfits + Venta - Inversion;
+
+        NewSalary = NewSalary + quantity * categoryGain;
+
+        //Modificar cantidad en el inventario
+        await prisma.product.update({
+          where: {
+            id: item.product.id,
+          },
+          data: {
+            inventoryCount: newQuantity,
+          },
+        });
+
+        //Modificar Ganancia Neta
+        await prisma.sede.update({
+          where: {
+            id: sede.id,
+          },
+          data: {
+            netProfits: newNetProfits,
+          },
+        });
+
+        //Modificar Salario
+        await prisma.administrator.update({
+          where: {
+            id: adminId,
+          },
+          data: {
+            mouthSalary: NewSalary,
+          },
+        });
+      });
+    }
+
+    await prismaNew.order.update({
+      where: {
+        id: parseInt(orderID),
       },
       data: {
         pending: false,
