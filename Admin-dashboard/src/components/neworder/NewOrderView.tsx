@@ -29,7 +29,7 @@ const NewOrderView: FC<Product> = ({
   setErrors,
 }) => {
   const [value, setvalue] = useState(`${quantity}`);
-  const [realPrice, setNewPrice] = useState(price);
+  const [realPrice] = useState(price);
 
   console.log(inventoryCount);
 
