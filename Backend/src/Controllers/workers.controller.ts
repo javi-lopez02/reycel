@@ -198,8 +198,12 @@ export const createWorker = async (req: Request, res: Response) => {
 
 export const editWorker = async (req: Request, res: Response) => {
   try {
-    const { username, password, image, role, sedeId, salary } = req.body;
+    const { username, password, image } = req.body;
     const { id } = req.params;
+
+    console.log(`username: ${username}`);
+    console.log(`password: ${password}`);
+    console.log(`image: ${image}`);
 
     const worker = await prisma.administrator.findUnique({
       where: { id },
@@ -224,17 +228,6 @@ export const editWorker = async (req: Request, res: Response) => {
         username: username || undefined,
         image: image || undefined,
         password: hashedPassword,
-        administrator: {
-          update: {
-            data: {
-              role,
-              salary,
-              sede: {
-                connect: { id: sedeId },
-              },
-            },
-          },
-        },
       },
       include: {
         administrator: {

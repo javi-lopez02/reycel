@@ -12,11 +12,12 @@ import { useNotificationStore } from "../../store/useNotificationStore";
 import {
   getPaymentMethodRequest,
   transactionRequest,
+  validateTransactionRequest,
 } from "../../services/transaction";
 import { toast } from "sonner";
 import { io } from "socket.io-client";
 import { API_URL } from "../../conf";
-import { ScrollShadow } from "@heroui/react";
+import ModalErrorConfirm from "./ModalErrorConfirm";
 
 interface PaymentMethod {
   id: string;
@@ -37,7 +38,7 @@ const municipalities: Municipality[] = [
 
 interface PurchaseConfirmationModalProps {
   count: number;
-  orderID: number | null;
+  orderID: number;
   totalAmount: number;
   updateOrder: (order: Order) => void;
   isOpen: boolean;
@@ -46,9 +47,9 @@ interface PurchaseConfirmationModalProps {
 
 const PurchaseConfirmationModal: React.FC<PurchaseConfirmationModalProps> = ({
   count,
-  orderID,
   totalAmount,
   isOpen,
+  orderID,
   updateOrder,
   onClose,
 }) => {
@@ -58,6 +59,10 @@ const PurchaseConfirmationModal: React.FC<PurchaseConfirmationModalProps> = ({
   const [selectedMunicipality, setSelectedMunicipality] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [address, setAddress] = useState("");
+  const [step, setStep] = useState<"order" | "payment" | "success">("order");
+  const [errorProducts, setErrorProducts] = useState([]);
+  const [isOpenError, setIsOpenError] = useState(false);
 
   const expressDeliveryCost = 10; // Express delivery cost
 
@@ -65,7 +70,7 @@ const PurchaseConfirmationModal: React.FC<PurchaseConfirmationModalProps> = ({
     null
   );
 
-  const { user, isAuth } = useUserStore();
+  const { isAuth } = useUserStore();
 
   const { addNotifications } = useNotificationStore();
 
@@ -80,12 +85,15 @@ const PurchaseConfirmationModal: React.FC<PurchaseConfirmationModalProps> = ({
       });
   }, [isAuth]);
 
+  const onCloseError = () => {
+    setIsOpenError(false);
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
 
-    const address = data["textarea"] as string;
     const transferId = data["transfer-id"] as string;
 
     //validaciones
@@ -131,7 +139,6 @@ const PurchaseConfirmationModal: React.FC<PurchaseConfirmationModalProps> = ({
         fastDelivery: hasExpressDelivery,
         address,
         town: selectedMunicipality,
-        userID: user?.userId,
         orderID: orderID,
         paymentMethodId: selectedPaymentMethod,
       };
@@ -142,8 +149,12 @@ const PurchaseConfirmationModal: React.FC<PurchaseConfirmationModalProps> = ({
           updateOrder(res.data.order);
           setIsSuccess(true);
         })
-        .catch(() => {
-          toast.error("Error con la confirmacion de la transferencia.");
+        .catch((error) => {
+          if (error.response.status === 400) {
+            toast.error(error.response.data.message);
+          } else {
+            toast.error("Error con la confirmacion de la transferencia.");
+          }
         })
         .finally(() => {
           setIsSubmitting(false);
@@ -156,38 +167,89 @@ const PurchaseConfirmationModal: React.FC<PurchaseConfirmationModalProps> = ({
         setSelectedPaymentMethod("");
         setSelectedMunicipality("");
         onClose();
-      }, 2000);
+      }, 5000);
     } catch (error) {
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const handleOrderConfirm = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.currentTarget));
+
+    const addressForm = data["textarea"] as string;
+
+    setIsSubmitting(true);
+
+    //validaciones
+    if (!addressForm) {
+      toast.error("Debe ingresar una direccion");
+      return;
+    }
+    setAddress(addressForm);
+
+    validateTransactionRequest(orderID)
+      .then((res) => {
+        toast.success(res.data.message);
+        setStep("payment");
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.status === 400) {
+          toast.error("Productos agotados...");
+          setIsOpenError(true);
+          setErrorProducts(error.response.data.data);
+        } else {
+          toast.error("Error con la confirmacion de la transferencia.");
+        }
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+  };
+
+  const isPaymentFormValid = selectedPaymentMethod !== "";
+
+  const isOrderFormValid = selectedMunicipality !== "";
+  // Handle modal close
+  const handleClose = () => {
+    if (step === "success") return;
+    setStep("order");
+    onClose();
+  };
+
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={isSuccess ? () => {} : onClose}
-      title="Confirmar Compra"
-    >
-      {isSuccess ? (
-        <div className="py-8 flex flex-col items-center justify-center text-center">
-          <MdOutlineCheckCircleOutline className="w-16 h-16 text-green-500 mb-4" />
-          <h3 className="text-xl font-medium text-gray-900 mb-2">
-            ¡Compra Exitosa!
-          </h3>
-          <p className="text-gray-600">
-            Su pedido ha sido procesado correctamente. Recibirá un correo de
-            confirmación pronto.
-          </p>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <ScrollShadow
-            hideScrollBar
-            className=" max-h-[800px]"
-            offset={100}
-            orientation="vertical"
-          >
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={handleClose}
+        title={step === "payment" ? "Método de Pago" : "Confirmar Compra"}
+      >
+        {isSuccess ? (
+          <div className="py-8 flex flex-col items-center justify-center text-center">
+            <MdOutlineCheckCircleOutline className="w-16 h-16 text-green-500 mb-4" />
+            <h3 className="text-xl font-medium text-gray-900 mb-2">
+              ¡Compra Exitosa!
+            </h3>
+            <p className="text-gray-600">
+              Su pedido ha sido procesado correctamente. Recibirá un correo de
+              confirmación pronto.
+            </p>
+          </div>
+        ) : step === "success" ? (
+          <div className="py-8 flex flex-col items-center justify-center text-center">
+            <MdOutlineCheckCircleOutline className="w-16 h-16 text-green-500 mb-4" />
+            <h3 className="text-xl font-medium text-gray-900 mb-2">
+              ¡Compra Exitosa!
+            </h3>
+            <p className="text-gray-600">
+              Su pedido ha sido procesado correctamente. Recibirá un correo de
+              confirmación pronto.
+            </p>
+          </div>
+        ) : step === "order" ? (
+          <form onSubmit={handleOrderConfirm}>
             <OrderSummary
               price={totalAmount}
               quantity={count}
@@ -197,16 +259,39 @@ const PurchaseConfirmationModal: React.FC<PurchaseConfirmationModalProps> = ({
               currency={"$"}
             />
 
-            <PaymentMethodSelector
-              methods={paymentMethod || []}
-              selectedMethod={selectedPaymentMethod}
-              onSelectMethod={setSelectedPaymentMethod}
-            />
-
             <AddressSelector
               municipalities={municipalities}
               selectedMunicipality={selectedMunicipality}
               onMunicipalityChange={setSelectedMunicipality}
+            />
+
+            <div className="mt-8 flex justify-end">
+              <button
+                type="button"
+                onClick={handleClose}
+                className="mr-3 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={!isOrderFormValid}
+                className={`px-6 py-2 text-sm font-medium text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  isOrderFormValid
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : "bg-blue-400 cursor-not-allowed"
+                }`}
+              >
+                Continuar al Pago
+              </button>
+            </div>
+          </form>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <PaymentMethodSelector
+              methods={paymentMethod || []}
+              selectedMethod={selectedPaymentMethod}
+              onSelectMethod={setSelectedPaymentMethod}
             />
 
             <TransferIdInput />
@@ -214,17 +299,17 @@ const PurchaseConfirmationModal: React.FC<PurchaseConfirmationModalProps> = ({
             <div className="mt-8 flex justify-end">
               <button
                 type="button"
-                onClick={onClose}
+                onClick={() => setStep("order")}
                 className="mr-3 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={isSubmitting}
               >
-                Cancelar
+                Volver
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={!isPaymentFormValid || isSubmitting}
                 className={`px-6 py-2 text-sm font-medium text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  !isSubmitting
+                  isPaymentFormValid && !isSubmitting
                     ? "bg-blue-600 hover:bg-blue-700"
                     : "bg-blue-400 cursor-not-allowed"
                 }`}
@@ -239,10 +324,11 @@ const PurchaseConfirmationModal: React.FC<PurchaseConfirmationModalProps> = ({
                 )}
               </button>
             </div>
-          </ScrollShadow>
-        </form>
-      )}
-    </Modal>
+          </form>
+        )}
+      </Modal>
+      <ModalErrorConfirm isOpen={isOpenError} onClose={onCloseError} errorProducts={errorProducts}/>
+    </>
   );
 };
 

@@ -242,3 +242,15 @@ enum NotificationType {
   PAYMENT_FAILED
   REGISTER_SUCCESS
 }
+
+model TempInventoryReservation {
+  id      String @id @default(uuid())
+  userId  String // ID del usuario que hizo el pedido
+  orderId Int // ID de la orden
+  productId String // ID del producto reservado
+  quantity Int // Cantidad de productos reservados
+  expiresAt DateTime // Tiempo de expiración de la reserva
+  createdAt DateTime @default(now())
+
+  @@index([userId, orderId])
+}

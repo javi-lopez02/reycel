@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import path from "path";
 import { io, server, app } from "./Libs/socketServer";
+import { startReservationCleanup } from "./Utils/cleanReservations";
 
 import auth from "./Routes/auth.routes";
 import product from "./Routes/product.routes";
@@ -69,8 +70,8 @@ app.use("/api", neworder);
 
 app.use("/public", express.static(path.join(__dirname, "/Upload")));
 
-// initBot();
-
 server.listen(port, () => {
   console.log(`Server on port ${port}`);
+  // Iniciar el programador de limpieza de reservas
+  startReservationCleanup();
 });

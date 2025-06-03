@@ -1,13 +1,16 @@
-import { Navigate, Outlet } from "react-router-dom"
-import { useAuth } from "../context/AuthContext"
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Spinner } from "@nextui-org/react";
 
 function ProtectedRoutes() {
-  const { isAuth, loading } = useAuth()
+  const { isAuth, loading } = useAuth();
 
   if (loading) {
     return (
-      <h1>Cargando...</h1>
-    )
+      <h1 className="w-full h-full flex items-center justify-center">
+        <Spinner />
+      </h1>
+    );
   }
 
   if (!isAuth && !loading) return <Navigate to="/login" replace />;
@@ -15,4 +18,4 @@ function ProtectedRoutes() {
   return <Outlet />;
 }
 
-export default ProtectedRoutes
+export default ProtectedRoutes;

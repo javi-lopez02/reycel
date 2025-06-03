@@ -34,7 +34,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
   const { user } = useAuth();
 
   const { order, setOrder, errors, setErrors, isLoading } =
-    useNewOrder(user?.id);
+    useNewOrder(user?.userId);
 
   useEffect(() => {
     if (selectedMethod === "CASH" || selectedMethod === "") {
@@ -62,7 +62,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
         orderID: order?.id,
         amount: order?.totalAmount,
         paymentMethod: selectedId,
-        userId: user?.id,
+        userId: user?.userId,
         sede: user?.sede
       })
         .then((res) => {
@@ -81,7 +81,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
         orderID: order?.id,
         amount: order?.totalAmount,
         paymentMethod: selectedId,
-        userId: user?.id,
+        userId: user?.userId,
         transactionID: transactionIdInput,
         sede: user?.sede
       })
