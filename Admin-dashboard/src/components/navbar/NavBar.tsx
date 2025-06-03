@@ -1,13 +1,13 @@
 import { Link, Outlet } from "react-router-dom";
-import Notifications from "./Notifications";
+// import Notifications from "./Notifications";
 import DropdownComp from "./DropdownMenu";
 import SideBar from "./DrawerSideBar";
 import Avatar from "./Avatar";
-import AllNotifications from "./AllNotifications";
-import { useDisclosure } from "@heroui/react";
+// import AllNotifications from "./AllNotifications";
+// import { useDisclosure } from "@heroui/react";
 
 function NavBar() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  // const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
     <>
@@ -26,11 +26,11 @@ function NavBar() {
             </Link>
           </div>
           <div className="flex items-center lg:order-2 space-x-2">
-            <Notifications onOpen={onOpen} />
+            {/* <Notifications onOpen={onOpen} /> */}
             <DropdownComp />
             <Avatar />
           </div>
-          <AllNotifications onOpenChange={onOpenChange} isOpen={isOpen} />
+          {/* <AllNotifications onOpenChange={onOpenChange} isOpen={isOpen} /> */}
         </div>
       </nav>
       <Outlet />
