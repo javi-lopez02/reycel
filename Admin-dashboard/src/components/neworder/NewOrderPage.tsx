@@ -87,7 +87,16 @@ export default function NewOrderPage() {
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
               {filteredProducts?.map((product) => {
-                if (product.Sede.direction === user?.sede) {
+                if(user?.role === "OWNER") {
+                  return (
+                    <NewOrderCard
+                      product={product}
+                      setOrder={setOrder}
+                      key={product.id}
+                    />
+                  );
+                }
+                else if (product.Sede.direction === user?.sede) {
                   return (
                     <NewOrderCard
                       product={product}

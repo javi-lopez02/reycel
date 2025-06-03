@@ -30,7 +30,7 @@ import {
   Spinner,
   useDisclosure,
 } from "@heroui/react";
-import { ChevronDownIcon, EditIcon, EyeIcon, SearchIcon } from "../Icons";
+import { ChevronDownIcon, EyeIcon, SearchIcon } from "../Icons";
 import usePayments from "../../customHooks/usePayments";
 import { Payment } from "../../type";
 import { toast } from "sonner";
@@ -257,11 +257,6 @@ export default function PaymentsTable() {
                       setOrderId(payments.orderId);
                     }}
                   />
-                </span>
-              </Tooltip>
-              <Tooltip content="Editar pago" color="warning">
-                <span className="text-lg text-warning cursor-pointer active:opacity-50">
-                  <EditIcon />
                 </span>
               </Tooltip>
             </div>

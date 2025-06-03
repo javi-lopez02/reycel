@@ -25,6 +25,7 @@ export interface User {
   status: boolean;
   createdAt: string;
   sede: string;
+  role: "OWNER" | "MODERATOR";
 }
 
 export interface Worker {
