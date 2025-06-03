@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import path from "path";
 import { io, server, app } from "./Libs/socketServer";
+import { startReservationCleanup } from "./Utils/cleanReservations";
 
 import auth from "./Routes/auth.routes";
 import product from "./Routes/product.routes";
@@ -20,8 +21,6 @@ import analytics from "./Routes/analytics.routes";
 import paymentMethod from "./Routes/paymentMethod.routes";
 import currencyExchange from "./Routes/currencyExchange.routes";
 import notification from "./Routes/notification.routes";
-
-import { initBot } from "./Controllers/bot.controller";
 
 dotenv.config();
 const port = 4000;
@@ -59,8 +58,8 @@ app.use("/api", notification);
 
 app.use("/public", express.static(path.join(__dirname, "/Upload")));
 
-initBot();
-
 server.listen(port, () => {
   console.log(`Server on port ${port}`);
+  // Iniciar el programador de limpieza de reservas
+  startReservationCleanup();
 });
