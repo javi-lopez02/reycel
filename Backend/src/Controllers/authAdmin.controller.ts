@@ -61,7 +61,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
 
     res.json({
       username: baseUser.username,
-      id: baseUser.administrator.id,
+      userId: baseUser.administrator.id,
       image: baseUser.image,
       role: baseUser.administrator.role,
       notifications: baseUser.administrator.notification.reverse(),
@@ -106,7 +106,7 @@ export const verifyTokenAdmin = async (req: Request, res: Response) => {
 
     res.json({
       username: administrator.baseUser.username,
-      id: administrator.id,
+      userId: administrator.id,
       image: administrator.baseUser.image,
       role: administrator.role,
       notifications: administrator.notification.reverse(),

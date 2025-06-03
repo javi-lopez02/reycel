@@ -29,11 +29,7 @@ import {
   Spinner,
 } from "@heroui/react";
 import { type User as Users } from "../../type";
-import {
-  ChevronDownIcon,
-  DeleteIcon,
-  SearchIcon,
-} from "../Icons";
+import { ChevronDownIcon, DeleteIcon, SearchIcon } from "../Icons";
 import useUser from "../../customHooks/useUser";
 import { toast } from "sonner";
 import { deleteUsersRequest } from "../../services/user";
@@ -122,9 +118,8 @@ export default function UsersTable() {
     let filteredProducts = [...users];
 
     if (hasSearchFilter) {
-      filteredProducts = filteredProducts.filter(
-        (user) =>
-          user.username.toLowerCase().includes(filterValue.toLowerCase())
+      filteredProducts = filteredProducts.filter((user) =>
+        user.username.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     return filteredProducts;
@@ -159,7 +154,7 @@ export default function UsersTable() {
         setUsers((prev) => {
           return prev
             ? prev.filter((user) => {
-                return user.id !== id;
+                return user.userId !== id;
               })
             : null;
         });
@@ -231,7 +226,7 @@ export default function UsersTable() {
             <Tooltip color="danger" content="Delete user">
               <button
                 onClick={() => {
-                  handleDelete(user.id);
+                  handleDelete(user.userId);
                 }}
                 className="text-lg text-danger cursor-pointer active:opacity-50"
               >
@@ -429,7 +424,7 @@ export default function UsersTable() {
           items={sortedItems}
         >
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.userId}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
