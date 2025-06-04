@@ -51,7 +51,7 @@ function useSede() {
     image: string,
     direction: string,
     phone: string,
-    rent: number,
+    rent: number
   ) => {
     updateSedeRequest(id, { image, direction, phone, rent })
       .then((res) => {
@@ -81,6 +81,8 @@ function useSede() {
 
   return {
     sedes,
+    setSedes,
+    setError,
     error,
     loading,
     getSedes,

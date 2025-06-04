@@ -38,9 +38,14 @@ export const getWorkers = async (req: Request, res: Response) => {
   try {
     const worker = await prisma.administrator.findMany({
       where: {
-        baseUser: {
-          isDeleted: false,
-        },
+        AND: [
+          {
+            baseUser: {
+              isDeleted: false,
+            },
+          },
+          { role: "MODERATOR" },
+        ],
       },
       select: {
         id: true,
@@ -139,6 +144,10 @@ export const createWorker = async (req: Request, res: Response) => {
           status: baseUser.status,
           orderCount: baseUser.administrator._count.orders,
           createdAt: baseUser.createdAt,
+          email: baseUser.email,
+          salary: baseUser.administrator.salary,
+          mouthSalary: baseUser.administrator.mouthSalary,
+          role: baseUser.administrator.role,
         },
       });
     } else {
@@ -187,6 +196,7 @@ export const createWorker = async (req: Request, res: Response) => {
           status: baseUser.status,
           orderCount: baseUser.administrator._count.orders,
           createdAt: baseUser.createdAt,
+          email: baseUser.email,
         },
       });
     }
@@ -254,6 +264,10 @@ export const editWorker = async (req: Request, res: Response) => {
         status: updatedBaseUser.status,
         orderCount: updatedBaseUser.administrator._count.orders,
         createdAt: updatedBaseUser.createdAt,
+        email: updatedBaseUser.email,
+        salary: updatedBaseUser.administrator.salary,
+        mouthSalary: updatedBaseUser.administrator.mouthSalary,
+        role: updatedBaseUser.administrator.role,
       },
     });
   } catch (error) {

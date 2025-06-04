@@ -34,6 +34,7 @@ import useProduct from "../../customHooks/useProduct";
 import { toast } from "sonner";
 import ModalAddProduct from "./ModalAddProduct";
 import { deleteProductRequest } from "../../services/product";
+import { useAuth } from "../../context/AuthContext";
 
 export function Capitalize(s: string) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
@@ -65,6 +66,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 export default function ProductTable() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user } = useAuth();
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -352,13 +354,11 @@ export default function ProductTable() {
           </Chip>
         );
       case "actions":
-        return (
+        return user?.role === "OWNER" ? (
           <div className="relative flex justify-center items-center gap-2">
             <Tooltip content="Edit product" color="success">
               <button
-                onClick={() => {
-                  handleEditProduct(product);
-                }}
+                onClick={() => handleEditProduct(product)}
                 className="text-lg text-success cursor-pointer active:opacity-50"
               >
                 <EditIcon />
@@ -368,6 +368,29 @@ export default function ProductTable() {
               <button
                 onClick={() => {
                   handleDelete(product.id);
+                }}
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+              >
+                <DeleteIcon />
+              </button>
+            </Tooltip>
+          </div>
+        ) : (
+          <div className="relative flex justify-center items-center gap-2">
+            <Tooltip content="Edit product" color="success">
+              <button
+                onClick={() =>
+                  toast.error("Solo disponible para el Administrador")
+                }
+                className="text-lg text-success cursor-pointer active:opacity-50"
+              >
+                <EditIcon />
+              </button>
+            </Tooltip>
+            <Tooltip color="danger" content="Delete product">
+              <button
+                onClick={() => {
+                  toast.error("Solo disponible para el Administrador");
                 }}
                 className="text-lg text-danger cursor-pointer active:opacity-50"
               >

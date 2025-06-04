@@ -41,6 +41,7 @@ import { toast } from "sonner";
 import ModalAddWorker from "./ModalAddWorker";
 import useWorker from "../../customHooks/useWorker";
 import { deleteWorkersRequest } from "../../services/workers";
+import { useAuth } from "../../context/AuthContext";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -76,6 +77,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 export default function UsersTable() {
   const { workers, error, loading, setWorkers } = useWorker();
+  const { user } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [filterValue, setFilterValue] = useState("");
@@ -214,28 +216,20 @@ export default function UsersTable() {
           ></User>
         );
       case "salary": {
-        return worker.role === "MODERATOR" ? (
+        return (
           <div className="flex justify-left">
             <span>$</span>
             <p className={`text-bold text-small capitalize`}>{worker.salary}</p>
           </div>
-        ) : (
-          <div className="flex justify-leftb ">
-            <p className={`text-bold text-small capitalize`}>ADMINISTRADOR</p>
-          </div>
         );
       }
       case "mouthSalary": {
-        return worker.role === "MODERATOR" ? (
+        return (
           <div className="flex justify-left">
             <span>$</span>
             <p className={`text-bold text-small capitalize`}>
               {worker.mouthSalary}
             </p>
-          </div>
-        ) : (
-          <div className="flex justify-leftb ">
-            <p className={`text-bold text-small capitalize`}>ADMINISTRADOR</p>
           </div>
         );
       }
@@ -271,7 +265,7 @@ export default function UsersTable() {
           </div>
         );
       case "actions":
-        return (
+        return user?.role === "OWNER" ? (
           <div className="relative flex justify-center items-center gap-2">
             <Tooltip content="Edit worker" color="success">
               <button
@@ -285,6 +279,31 @@ export default function UsersTable() {
               <button
                 onClick={() => {
                   handleDelete(worker.id);
+                }}
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+              >
+                <DeleteIcon />
+              </button>
+            </Tooltip>
+          </div>
+        ) : (
+          <div className="relative flex justify-center items-center gap-2">
+            <Tooltip content="Edit worker" color="success">
+              <button
+                onClick={() =>
+                  toast.error("Solo disponible para el Administrador")
+                }
+                className="text-lg text-success cursor-pointer active:opacity-50"
+                disabled
+              >
+                <EditIcon />
+              </button>
+            </Tooltip>
+            <Tooltip color="danger" content="Delete worker">
+              <button
+                disabled
+                onClick={() => {
+                  toast.error("Solo disponible para el Administrador");
                 }}
                 className="text-lg text-danger cursor-pointer active:opacity-50"
               >

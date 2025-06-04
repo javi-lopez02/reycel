@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
@@ -27,6 +28,7 @@ import {
   Tooltip,
   useDisclosure,
   Spinner,
+  NumberInput,
 } from "@heroui/react";
 import {
   ChevronDownIcon,
@@ -39,6 +41,8 @@ import ModalAddSede from "./ModalAddSede";
 import useSede from "../../customHooks/useSede";
 import { Sede } from "../../type";
 import { toast } from "sonner";
+import { useAuth } from "../../context/AuthContext";
+import { addLossesRequest } from "../../services/sedes";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -69,8 +73,20 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 export default function TableSedes() {
-  const { sedes, loading, error, addSede, deleteSede, updateSede, getSedes } =
-    useSede();
+  const {
+    sedes,
+    loading,
+    error,
+    setError,
+    addSede,
+    deleteSede,
+    updateSede,
+    setSedes,
+    getSedes,
+  } = useSede();
+
+  const { user } = useAuth();
+  const inputRefs = useRef<{ [key: string]: number }>({});
 
   const [selectSede, setSelectSede] = useState<Sede | undefined>(undefined);
 
@@ -97,6 +113,24 @@ export default function TableSedes() {
       setSelectSede(sede);
     },
     [onOpen]
+  );
+
+  const handleAddLosses = useCallback(
+    (id: string) => {
+      const montoActual = inputRefs.current[id] || 0; // Obtener el valor del ref
+
+      addLossesRequest(id, montoActual)
+        .then((res) => {
+          const index = sedes?.findIndex((sede) => sede.id === id);
+          sedes?.splice(index as number, 1, res.data.sede);
+          setSedes([...(sedes as Sede[])]);
+          inputRefs.current[id] = 0;
+        })
+        .catch((err) => {
+          setError(err);
+        });
+    },
+    [setError, setSedes, sedes]
   );
 
   const handleAddSede = useCallback(() => {
@@ -182,8 +216,28 @@ export default function TableSedes() {
           );
         case "losses":
           return (
-            <div className="flex flex-col">
+            <div className="flex justify-center gap-10 items-center">
               <p className="text-bold text-small capitalize">${sede.losses}</p>
+
+              <div className="flex gap-3">
+                <NumberInput
+                  label="Amount"
+                  placeholder="Enter the amount"
+                  defaultValue={0}
+                  onValueChange={(value) => {
+                    inputRefs.current[sede.id] = value; // Guardar en el ref
+                  }}
+                />
+
+                <Tooltip content="Agregar Perdida" color="primary">
+                  <button
+                    onClick={() => handleAddLosses(sede.id)}
+                    className="text-lg text-primary cursor-pointer active:opacity-50"
+                  >
+                    <PlusIcon />
+                  </button>
+                </Tooltip>
+              </div>
             </div>
           );
         case "profits":
@@ -219,19 +273,44 @@ export default function TableSedes() {
             </Tooltip>
           );
         case "actions":
-          return (
+          return user?.role === "OWNER" ? (
             <div className="relative flex justify-center items-center gap-2">
-              <Tooltip content="Edit Sede" color="success">
+              <Tooltip content="Edit sede" color="success">
                 <button
-                  onClick={handleEditSede(sede)}
+                  onClick={() => handleEditSede(sede)}
                   className="text-lg text-success cursor-pointer active:opacity-50"
                 >
                   <EditIcon />
                 </button>
               </Tooltip>
-              <Tooltip color="danger" content="Delete Sede">
+              <Tooltip color="danger" content="Delete sede">
                 <button
-                  onClick={handleDelete(sede.id)}
+                  onClick={() => {
+                    handleDelete(sede.id);
+                  }}
+                  className="text-lg text-danger cursor-pointer active:opacity-50"
+                >
+                  <DeleteIcon />
+                </button>
+              </Tooltip>
+            </div>
+          ) : (
+            <div className="relative flex justify-center items-center gap-2">
+              <Tooltip content="Edit sede" color="success">
+                <button
+                  onClick={() =>
+                    toast.error("Solo disponible para el Administrador")
+                  }
+                  className="text-lg text-success cursor-pointer active:opacity-50"
+                >
+                  <EditIcon />
+                </button>
+              </Tooltip>
+              <Tooltip color="danger" content="Delete sede">
+                <button
+                  onClick={() => {
+                    toast.error("Solo disponible para el Administrador");
+                  }}
                   className="text-lg text-danger cursor-pointer active:opacity-50"
                 >
                   <DeleteIcon />
@@ -243,7 +322,7 @@ export default function TableSedes() {
           return String(cellValue);
       }
     },
-    [handleDelete, handleEditSede]
+    [handleDelete, handleEditSede, handleAddLosses, user?.role]
   );
 
   const onNextPage = useCallback(() => {

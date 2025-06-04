@@ -20,6 +20,7 @@ interface Props {
   id?: string;
   image?: string;
   numberCard?: string;
+  numberPhone?: string;
   selected?: PaymentOptions;
   updatePaymentMethod: (
     id: string,
@@ -44,6 +45,7 @@ export const paymentOptions = [
 const ModalAddPayment: FC<Props> = ({
   id,
   numberCard,
+  numberPhone,
   selected,
   isOpen,
   onClose,
@@ -60,6 +62,7 @@ const ModalAddPayment: FC<Props> = ({
     const imageData = data["radioGrup"] as string;
     const numberCardData = data["inputNumberCard"] as string;
     const selectedData = data["paymentOptions"] as PaymentOptions;
+    const numberPhoneData = data["inputNumberPhone"] as string;
 
     if (!imageData && selectedData !== "CASH") {
       toast.error("Debe selelcionar una imagen.");
@@ -69,6 +72,12 @@ const ModalAddPayment: FC<Props> = ({
 
     if (!selectedData) {
       toast.error("Debe selelcionar un metodo de pago.");
+      setLoading(false);
+      return;
+    }
+
+    if (!numberPhoneData) {
+      toast.error("Debe selelcionar un numero a confirmar.");
       setLoading(false);
       return;
     }
@@ -83,6 +92,7 @@ const ModalAddPayment: FC<Props> = ({
       addPaymentMethod({
         image: imageData,
         numberCard: numberCardData,
+        phoneNumber: numberPhoneData,
         selected: selectedData,
       })
         .then(() => {
@@ -101,6 +111,7 @@ const ModalAddPayment: FC<Props> = ({
       updatePaymentMethod(id, {
         image: imageData,
         numberCard: numberCardData,
+        phoneNumber: numberPhoneData,
         selected: selectedData,
       })
         .then(() => {
@@ -112,8 +123,7 @@ const ModalAddPayment: FC<Props> = ({
         })
         .finally(() => {
           setLoading(false);
-        }
-      )
+        });
     }
   };
   return (
@@ -176,7 +186,22 @@ const ModalAddPayment: FC<Props> = ({
                       </span>
                     }
                     placeholder="XXXX-XXXX-XXXX-XXXX"
+                    label="Numero de Tarjeta"
                     variant="bordered"
+                    labelPlacement="outside"
+                  />
+                  <Input
+                    name="inputNumberPhone"
+                    defaultValue={numberPhone}
+                    className="min-w-1/5 pt-5"
+                    startContent={
+                      <span className="text-md text-default-800 pointer-events-none flex-shrink-0">
+                        +53
+                      </span>
+                    }
+                    placeholder="55555555"
+                    variant="bordered"
+                    label="Movil a Confirmar"
                     labelPlacement="outside"
                   />
                   <div className="flex min-w-full justify-end mt-5 gap-3">
