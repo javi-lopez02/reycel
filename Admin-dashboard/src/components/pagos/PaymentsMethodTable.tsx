@@ -51,6 +51,7 @@ export function Capitalize(s: string) {
 const columns = [
   { name: "TARJETA", uid: "card", sortable: true },
   { name: "NÚMERO", uid: "number", sortable: true },
+  { name: "MOVIL A CONFIRMAR", uid: "movil", sortable: true },
   { name: "CANTIDAD DE PAGOS", uid: "payment", sortable: true },
   { name: "FECHA", uid: "createdAt", sortable: true },
   { name: "ACTIONS", uid: "actions" },
@@ -59,6 +60,7 @@ const columns = [
 const INITIAL_VISIBLE_COLUMNS = [
   "card",
   "number",
+  "movil",
   "payment",
   "createdAt",
   "actions",
@@ -198,6 +200,14 @@ export default function PaymentsMethodTable() {
               </p>
             </div>
           );
+          case "movil":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">
+                {paymentMethod.phoneNumber}
+              </p>
+            </div>
+          );
         case "payment":
           return (
             <div className="flex justify-center">
@@ -230,6 +240,7 @@ export default function PaymentsMethodTable() {
                       setSelectedPaymantMethod({
                         image: paymentMethod.cardImage,
                         numberCard: paymentMethod.cardNumber,
+                        phoneNumber: paymentMethod.phoneNumber,
                         selected: paymentMethod.paymentOptions,
                         id: paymentMethod.id,
                       });

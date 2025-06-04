@@ -340,8 +340,9 @@ export const createProduct = async (req: Request, res: Response) => {
           },
           Sede: {
             select: {
-              id: true,
               direction: true,
+              phone: true,
+              image: true,
             },
           },
         },
@@ -358,8 +359,7 @@ export const createProduct = async (req: Request, res: Response) => {
       res.status(200).json({
         data: product,
       });
-    } 
-    else {
+    } else {
       const product = await prisma.product.create({
         data: {
           name,
@@ -380,8 +380,9 @@ export const createProduct = async (req: Request, res: Response) => {
           },
           Sede: {
             select: {
-              id: true,
               direction: true,
+              phone: true,
+              image: true,
             },
           },
         },
@@ -490,8 +491,9 @@ export const updateProduct = async (req: Request, res: Response) => {
           },
           Sede: {
             select: {
-              id: true,
               direction: true,
+              phone: true,
+              image: true,
             },
           },
         },
@@ -545,6 +547,13 @@ export const updateProduct = async (req: Request, res: Response) => {
             select: {
               id: true,
               name: true,
+            },
+          },
+          Sede: {
+            select: {
+              direction: true,
+              phone: true,
+              image: true,
             },
           },
         },

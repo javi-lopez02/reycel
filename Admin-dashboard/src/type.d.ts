@@ -127,6 +127,7 @@ export interface PaymentMethod {
   id: string;
   cardImage: string;
   cardNumber?: string;
+  phoneNumber?: string;
   createdAt: string;
   _count: {
     payment: number;
@@ -235,5 +236,6 @@ export interface AddPaymentMethodProps {
   id?: string;
   image: string;
   numberCard: string;
+  phoneNumber?: string;
   selected: PaymentOptions;
 }

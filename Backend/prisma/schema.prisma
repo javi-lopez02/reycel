@@ -178,6 +178,7 @@ model PaymentMethod {
   id             String         @id @default(uuid())
   cardImage      String
   cardNumber     String?
+  phoneNumber    String?
   createdAt      DateTime       @default(now())
   payment        Payment[]
   paymentOptions PaymentOptions
@@ -244,11 +245,11 @@ enum NotificationType {
 }
 
 model TempInventoryReservation {
-  id      String @id @default(uuid())
-  userId  String // ID del usuario que hizo el pedido
-  orderId Int // ID de la orden
+  id        String   @id @default(uuid())
+  userId    String // ID del usuario que hizo el pedido
+  orderId   Int // ID de la orden
   productId String // ID del producto reservado
-  quantity Int // Cantidad de productos reservados
+  quantity  Int // Cantidad de productos reservados
   expiresAt DateTime // Tiempo de expiración de la reserva
   createdAt DateTime @default(now())
 
