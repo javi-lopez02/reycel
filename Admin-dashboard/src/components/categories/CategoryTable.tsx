@@ -38,6 +38,7 @@ import useCategory from "../../customHooks/useCategory";
 import { Category } from "../../type";
 import { toast } from "sonner";
 import { deleteCategoryRequest } from "../../services/category";
+import { useAuth } from "../../context/AuthContext";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -65,6 +66,8 @@ const INITIAL_VISIBLE_COLUMNS = [
 export default function CategoryTable() {
   const { category, error, setCategory } = useCategory();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { user } = useAuth();
 
   const [filterValue, setFilterValue] = useState("");
 
@@ -216,7 +219,7 @@ export default function CategoryTable() {
           </div>
         );
       case "actions":
-        return (
+        return user?.role === "OWNER" ? (
           <div className="relative flex justify-center items-center gap-2">
             <Tooltip content="Edit Category" color="success">
               <button
@@ -228,7 +231,32 @@ export default function CategoryTable() {
             </Tooltip>
             <Tooltip color="danger" content="Delete Category">
               <button
-                onClick={() => handleDelete(Category.id)}
+                onClick={() => {
+                  handleDelete(Category.id);
+                }}
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+              >
+                <DeleteIcon />
+              </button>
+            </Tooltip>
+          </div>
+        ) : (
+          <div className="relative flex justify-center items-center gap-2">
+            <Tooltip content="Edit Category" color="success">
+              <button
+                onClick={() =>
+                  toast.error("Solo disponible para el Administrador")
+                }
+                className="text-lg text-success cursor-pointer active:opacity-50"
+              >
+                <EditIcon />
+              </button>
+            </Tooltip>
+            <Tooltip color="danger" content="Delete Category">
+              <button
+                onClick={() => {
+                  toast.error("Solo disponible para el Administrador");
+                }}
                 className="text-lg text-danger cursor-pointer active:opacity-50"
               >
                 <DeleteIcon />
