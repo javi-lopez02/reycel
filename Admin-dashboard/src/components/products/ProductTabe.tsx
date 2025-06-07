@@ -218,7 +218,7 @@ export default function ProductTable() {
               <span
                 style={{
                   display: "inline-block",
-                  maxWidth: "200px",
+                  maxWidth: "100px",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -231,7 +231,7 @@ export default function ProductTable() {
               <span
                 style={{
                   display: "inline-block",
-                  maxWidth: "250px",
+                  maxWidth: "150px",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -250,7 +250,7 @@ export default function ProductTable() {
               <span
                 style={{
                   display: "inline-block",
-                  maxWidth: "200px",
+                  maxWidth: "70px",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -263,7 +263,7 @@ export default function ProductTable() {
               <span
                 style={{
                   display: "inline-block",
-                  maxWidth: "250px",
+                  maxWidth: "100px",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -441,7 +441,7 @@ export default function ProductTable() {
   const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 items-end ">
           <Input
             isClearable
             color="primary"
@@ -452,9 +452,9 @@ export default function ProductTable() {
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full justify-center sm:w-auto ">
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger>
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
@@ -480,7 +480,7 @@ export default function ProductTable() {
               </DropdownMenu>
             </Dropdown>
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger>
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
@@ -553,13 +553,14 @@ export default function ProductTable() {
           total={pages}
           onChange={setPage}
         />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
+        <div className=" justify-end gap-2">
           <Button
             isDisabled={pages === 1}
             size="md"
             variant="flat"
             onPress={onPreviousPage}
             color="danger"
+            className="mx-2"
           >
             Anterior
           </Button>

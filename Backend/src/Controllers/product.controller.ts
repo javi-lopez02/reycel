@@ -70,7 +70,7 @@ export const searchProduct = async (req: Request, res: Response) => {
     //filters
     const minPrice = parseInt(req.query.minPrice as string) || 0;
 
-    const maxPrice = parseInt(req.query.maxPrice as string) || 2000;
+    const maxPrice = parseInt(req.query.maxPrice as string) || 1000000;
 
     const category = (req.query.category as string) || undefined;
 
@@ -96,6 +96,8 @@ export const searchProduct = async (req: Request, res: Response) => {
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
+
+    console.log(maxPrice)
 
     const result = await prisma.product.findMany({
       where: {

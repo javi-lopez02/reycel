@@ -307,7 +307,7 @@ export default function UsersTable() {
           />
           <div className="flex gap-3">
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger className="">
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
@@ -372,13 +372,14 @@ export default function UsersTable() {
           total={pages}
           onChange={setPage}
         />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
+        <div className="justify-end gap-2">
           <Button
             isDisabled={pages === 1}
             size="md"
             variant="flat"
             onPress={onPreviousPage}
             color="danger"
+            className="mx-2"
           >
             Anterior
           </Button>

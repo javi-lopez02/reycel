@@ -305,7 +305,7 @@ export default function PaymentsTable() {
   const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 items-end">
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
@@ -316,9 +316,9 @@ export default function PaymentsTable() {
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full justify-center sm:w-auto ">
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger>
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
@@ -342,7 +342,7 @@ export default function PaymentsTable() {
               </DropdownMenu>
             </Dropdown>
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger >
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
@@ -411,13 +411,14 @@ export default function PaymentsTable() {
           total={pages}
           onChange={setPage}
         />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
+        <div className=" justify-end gap-2">
           <Button
             isDisabled={pages === 1}
             size="md"
             variant="flat"
             onPress={onPreviousPage}
             color="danger"
+            className="mx-2"
           >
             Anterior
           </Button>

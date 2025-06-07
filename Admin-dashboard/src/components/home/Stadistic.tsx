@@ -18,8 +18,8 @@ export default function Stadistic() {
           <Spinner color="success" />
         </div>
       )}
-      <section className="pt-10 px-10">
-        <section className="w-full flex ">
+      <section className="px-2 ml-0 lg:px-5 lg:ml-5">
+        <section className="grid gap-4 sm:grid-cols-2 ">
           {analytics?.dataProductsByMonth !== undefined && (
             <CardGeneralData
               title="Productos"
@@ -36,17 +36,9 @@ export default function Stadistic() {
               total={analytics.totalUser}
             />
           )}
-          {analytics?.dataCategoriesByMonth !== undefined && (
-            <CardGeneralData
-              title="Categorias"
-              chartdata={analytics?.dataCategoriesByMonth}
-              growth={Number(analytics.growthCategories)}
-              total={analytics.totalCategory}
-            />
-          )}
         </section>
 
-        <section className="pt-10">
+        <section className="pt-5">
           <Card>
             <MonthlyEarnings />
           </Card>
@@ -56,7 +48,10 @@ export default function Stadistic() {
           <div className="flex justify-end items-center">
             <DateRangePicker className="max-w-md" />
           </div>
-          <div className="pt-3 w-full flex justify-center items-center space-x-5">
+          <div className="pt-3 w-full grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <Card>
+              <PaymentStatus />
+            </Card>
             <Card>
               <PaymentStatus />
             </Card>
@@ -70,11 +65,12 @@ export default function Stadistic() {
         </section>
 
         <section className="pt-10">
-          <Card className="bg-neutral-200/50  pt-4">
-            <div className="flex justify-end items-center">
+          <Card className="bg-neutral-200/50 pt-4">
+            <div className="flex justify-end items-center pb-2">
               <DateRangePicker className="max-w-md" />
             </div>
-            <div className="flex justify-between items-center pt-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <ProductAnalytics />
               <ProductAnalytics />
               <ProductAnalytics />
               <ProductAnalytics />
