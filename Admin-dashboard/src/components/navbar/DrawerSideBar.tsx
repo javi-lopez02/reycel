@@ -6,22 +6,9 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { Link } from "react-router-dom";
-import useUser from "../../customHooks/useUser";
-import useCategory from "../../customHooks/useCategory";
-import useProduct from "../../customHooks/useProduct";
-import useOrder from "../../customHooks/useOrder";
-import usePayments from "../../customHooks/usePayments";
-import useSede from "../../customHooks/useSede";
 
 export default function SideBar() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { users } = useUser();
-  const { category } = useCategory();
-  const { products } = useProduct();
-  const { orders } = useOrder();
-  const { payments } = usePayments();
-  const { sedes } = useSede();
-
   return (
     <>
       <button
@@ -94,9 +81,6 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Usuarios
                         </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
-                          {users && users.length}
-                        </span>
                       </Link>
                     </li>
                     <li onClick={onClose}>
@@ -115,9 +99,6 @@ export default function SideBar() {
                         </svg>
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Trabajadores
-                        </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
-                          {users && users.length}
                         </span>
                       </Link>
                     </li>
@@ -138,9 +119,6 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Categorias
                         </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
-                          {category && category.length}
-                        </span>
                       </Link>
                     </li>
                     <li onClick={onClose}>
@@ -160,9 +138,6 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Productos
                         </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
-                          {products && products.length}
-                        </span>
                       </Link>
                     </li>
                     <li onClick={onClose}>
@@ -181,9 +156,6 @@ export default function SideBar() {
                         </svg>
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Ordenes
-                        </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
-                          {orders && orders.length}
                         </span>
                       </Link>
                     </li>
@@ -210,9 +182,6 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Pagos
                         </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
-                          {payments && payments.length}
-                        </span>
                       </Link>
                     </li>
                     <li onClick={onClose}>
@@ -238,8 +207,30 @@ export default function SideBar() {
                         <span className="flex-1 ms-3 whitespace-nowrap">
                           Sedes
                         </span>
-                        <span className="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium bg-success-300 text-gray-950 rounded-ss-lg rounded-ee-lg ">
-                          {sedes && sedes.length}
+                      </Link>
+                    </li>
+                    <li onClick={onClose}>
+                      <Link
+                        to={"/trash"}
+                        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                      >
+                        <svg
+                          className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M10 3v4M10 13v4m0-6h4m-8 0H5M17 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM5 15a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM17 15a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
+                          />
+                        </svg>
+                        <span className="flex-1 ms-3 whitespace-nowrap">
+                          Inversiones o Merma
                         </span>
                       </Link>
                     </li>

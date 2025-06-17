@@ -14,7 +14,6 @@ import comment from "./Routes/comment.routes";
 import order from "./Routes/order.routes";
 import bots from "./Routes/bot.routes";
 import payment from "./Routes/payment.routes";
-import sedes from "./Routes/sedes.routes";
 import users from "./Routes/user.routes";
 import workers from "./Routes/workers.routes";
 import analytics from "./Routes/analytics.routes";
@@ -22,16 +21,12 @@ import paymentMethod from "./Routes/paymentMethod.routes";
 import currencyExchange from "./Routes/currencyExchange.routes";
 import notification from "./Routes/notification.routes";
 import neworder from "./Routes/neworder.routes";
+import sedes from "./Routes/sedes.routes"
+import investments from "./Routes/investments.routes"
 
-// import { initBot } from "./Controllers/bot.controller";
-
-import cron from "node-cron";
 import resetSalaryMouth from "./Utils/resetSalaryMouth";
 
-// Ejecutar todos los días a las 00:00
-cron.schedule("0 0 * * *", () => {
-  resetSalaryMouth();
-});
+
 
 dotenv.config();
 const port = 4000;
@@ -67,6 +62,8 @@ app.use("/api", currencyExchange);
 app.use("/api/analytics", analytics);
 app.use("/api", notification);
 app.use("/api", neworder);
+app.use("/api", investments);
+
 
 app.use("/public", express.static(path.join(__dirname, "/Upload")));
 
@@ -74,4 +71,5 @@ server.listen(port, () => {
   console.log(`Server on port ${port}`);
   // Iniciar el programador de limpieza de reservas
   startReservationCleanup();
+  resetSalaryMouth()
 });

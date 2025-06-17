@@ -14,6 +14,7 @@ import Sedes from "./pages/Sedes";
 import Order from "./pages/Order";
 import Workers from "./pages/Workers";
 import NewOrderPage from "./components/neworder/NewOrderPage";
+import Investments from "./pages/Investments";
 
 function App() {
   return (
@@ -27,13 +28,14 @@ function App() {
               <Route element={<NavBar />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/users" element={<User />} />
-                <Route path="/workers" element={<Workers/>} />
+                <Route path="/workers" element={<Workers />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/payments" element={<Payments />} />
                 <Route path="/order" element={<Order />} />
                 <Route path="/neworder" element={<NewOrderPage />} />
                 <Route path="/sedes" element={<Sedes />} />
+                <Route path="/trash" element={<Investments />}></Route>
               </Route>
             </Route>
           </Routes>

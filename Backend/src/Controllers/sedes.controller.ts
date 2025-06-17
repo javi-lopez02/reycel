@@ -13,6 +13,7 @@ export const getSedes = async (req: Request, res: Response) => {
         phone: true,
         netProfits: true,
         losses: true,
+        finalLosses: true,
         rent: true,
         workers: {
           select: {
@@ -130,42 +131,6 @@ export const updateSede = async (req: Request, res: Response) => {
         image,
         direction,
         rent,
-      },
-      include: {
-        workers: true,
-      },
-    });
-
-    return res.status(200).json({
-      message: "Sede actualizada exitosamente",
-      sede: updatedSede,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      error: "Ocurrió un error al actualizar la sede",
-    });
-  }
-};
-
-export const addLosses = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { monto } = req.body;
-
-  try {
-    const existingSede = await prisma.sede.findUnique({ where: { id } });
-    if (!existingSede) {
-      return res.status(404).json({ error: "Sede no encontrada" });
-    }
-
-    console.log(id, monto);
-
-    const newMonto = existingSede.losses + monto;
-
-    const updatedSede = await prisma.sede.update({
-      where: { id },
-      data: {
-        losses: newMonto,
       },
       include: {
         workers: true,

@@ -24,22 +24,14 @@ import {
   Pagination,
   Selection,
   SortDescriptor,
-  Tooltip,
   useDisclosure,
   Spinner,
 } from "@heroui/react";
-import {
-  ChevronDownIcon,
-  DeleteIcon,
-  EditIcon,
-  PlusIcon,
-  SearchIcon,
-} from "../Icons";
-import ModalAddSede from "./ModalAddSede";
-import useSede from "../../customHooks/useSede";
-import { Sede } from "../../type";
+import { ChevronDownIcon, PlusIcon, SearchIcon } from "../Icons";
 import { toast } from "sonner";
-import { useAuth } from "../../context/AuthContext";
+import { Investments } from "../../type";
+import useInvestments from "../../customHooks/useInvestments";
+import ModalAddInvestments from "./ModalAddInvestments";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -50,32 +42,16 @@ export function Capitalize(s: string) {
 }
 
 const columns = [
-  { name: "IMAGEN", uid: "image", sortable: true },
-  { name: "TELEFONO", uid: "phone", sortable: true },
-  { name: "RENTA", uid: "rent" },
-  { name: "PERDIDAS O INVERSIONES", uid: "losses" },
-  { name: "GANANCIA NETA SEMANAL", uid: "profits" },
-  { name: "TRABAJADOR", uid: "worker", sortable: true },
-  { name: "ACTIONS", uid: "actions" },
+  { name: "SEDE", uid: "image", sortable: true },
+  { name: "DESCRIPCION", uid: "description", sortable: true },
+  { name: "IMPORTE", uid: "price" },
 ];
 
-const INITIAL_VISIBLE_COLUMNS = [
-  "image",
-  "phone",
-  "rent",
-  "profits",
-  "losses",
-  "worker",
-  "actions",
-];
+const INITIAL_VISIBLE_COLUMNS = ["image", "description", "price"];
 
-export default function TableSedes() {
-  const { sedes, loading, error, addSede, deleteSede, updateSede, getSedes } =
-    useSede();
-
-  const { user } = useAuth();
-
-  const [selectSede, setSelectSede] = useState<Sede | undefined>(undefined);
+export default function TableInvestments() {
+  const { investments, error, getInvestments, addInvestments, loading } =
+    useInvestments();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -94,22 +70,13 @@ export default function TableSedes() {
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const handleEditSede = useCallback(
-    (sede: Sede) => () => {
-      onOpen();
-      setSelectSede(sede);
-    },
-    [onOpen]
-  );
-
-  const handleAddSede = useCallback(() => {
-    setSelectSede(undefined);
+  const handleAddInvestments = useCallback(() => {
     onOpen();
   }, [onOpen]);
 
   useEffect(() => {
-    getSedes();
-  }, [getSedes]);
+    getInvestments();
+  }, [getInvestments]);
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -120,21 +87,24 @@ export default function TableSedes() {
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    if (!sedes) {
+    if (!investments) {
       return [];
     }
-    let filteredsedes = [...sedes];
+    let filteredsedes = [...investments];
 
     if (hasSearchFilter) {
       filteredsedes = filteredsedes.filter(
         (sede) =>
-          sede.phone.toLowerCase().includes(filterValue.toLowerCase()) ||
-          sede.direction.toLowerCase().includes(filterValue.toLowerCase())
+          sede.description.toLowerCase().includes(filterValue.toLowerCase()) ||
+          sede.price
+            .toString()
+            .toLowerCase()
+            .includes(filterValue.toLowerCase())
       );
     }
 
     return filteredsedes;
-  }, [filterValue, hasSearchFilter, sedes]);
+  }, [filterValue, hasSearchFilter, investments]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -146,10 +116,12 @@ export default function TableSedes() {
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = useMemo(() => {
-    return [...items].sort((a: Sede, b: Sede) => {
-      const first = a[sortDescriptor.column as keyof Sede] as unknown as number;
+    return [...items].sort((a: Investments, b: Investments) => {
+      const first = a[
+        sortDescriptor.column as keyof Investments
+      ] as unknown as number;
       const second = b[
-        sortDescriptor.column as keyof Sede
+        sortDescriptor.column as keyof Investments
       ] as unknown as number;
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
@@ -157,122 +129,38 @@ export default function TableSedes() {
     });
   }, [sortDescriptor, items]);
 
-  const handleDelete = useCallback(
-    (id: string) => () => {
-      deleteSede(id);
-    },
-    [deleteSede]
-  );
+  const renderCell = useCallback((investments: Investments, columnKey: Key) => {
+    const cellValue = investments[columnKey as keyof Investments];
 
-  const renderCell = useCallback(
-    (sede: Sede, columnKey: Key) => {
-      const cellValue = sede[columnKey as keyof Sede];
-
-      switch (columnKey) {
-        case "image":
-          return (
-            <User
-              avatarProps={{ radius: "lg", src: sede.image }}
-              name={sede.direction}
-              description={sede.phone}
-            />
-          );
-        case "rent":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">${sede.rent}</p>
-            </div>
-          );
-        case "losses":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                ${sede.finalLosses}
-              </p>
-            </div>
-          );
-        case "profits":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-small capitalize">
-                ${sede.netProfits}
-              </p>
-            </div>
-          );
-        case "worker":
-          return (
-            <Tooltip
-              content={
-                <div className=" flex flex-col items-start gap-2 p-4">
-                  <span className="font-semibold pb-2">Trabajadores </span>
-                  {sede.workers.map((worker) => {
-                    return (
-                      <User
-                        key={worker.id}
-                        avatarProps={{
-                          radius: "lg",
-                          src: worker.baseUser.image,
-                        }}
-                        name={worker.baseUser.username}
-                      />
-                    );
-                  })}
-                </div>
-              }
-            >
-              {sede.workers.length}
-            </Tooltip>
-          );
-        case "actions":
-          return user?.role === "OWNER" ? (
-            <div className="relative flex justify-center items-center gap-2">
-              <Tooltip content="Edit Sede" color="success">
-                <button
-                  onClick={handleEditSede(sede)}
-                  className="text-lg text-success cursor-pointer active:opacity-50"
-                >
-                  <EditIcon />
-                </button>
-              </Tooltip>
-              <Tooltip color="danger" content="Delete Sede">
-                <button
-                  onClick={handleDelete(sede.id)}
-                  className="text-lg text-danger cursor-pointer active:opacity-50"
-                >
-                  <DeleteIcon />
-                </button>
-              </Tooltip>
-            </div>
-          ) : (
-            <div className="relative flex justify-center items-center gap-2">
-              <Tooltip content="Edit Sede" color="success">
-                <button
-                  onClick={() =>
-                    toast.error("Solo disponible para el administrador")
-                  }
-                  className="text-lg text-success cursor-pointer active:opacity-50"
-                >
-                  <EditIcon />
-                </button>
-              </Tooltip>
-              <Tooltip color="danger" content="Delete Sede">
-                <button
-                  onClick={() =>
-                    toast.error("Solo disponible para el administrador")
-                  }
-                  className="text-lg text-danger cursor-pointer active:opacity-50"
-                >
-                  <DeleteIcon />
-                </button>
-              </Tooltip>
-            </div>
-          );
-        default:
-          return String(cellValue);
-      }
-    },
-    [handleDelete, handleEditSede, user?.role]
-  );
+    switch (columnKey) {
+      case "image":
+        return (
+          <User
+            avatarProps={{ radius: "lg", src: investments.Sede?.image }}
+            name={investments.Sede?.direction}
+            description={investments.Sede?.phone}
+          />
+        );
+      case "description":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">
+              {investments.description}
+            </p>
+          </div>
+        );
+      case "price":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">
+              ${investments.price}
+            </p>
+          </div>
+        );
+      default:
+        return String(cellValue);
+    }
+  }, []);
 
   const onNextPage = useCallback(() => {
     if (page < pages) {
@@ -349,15 +237,15 @@ export default function TableSedes() {
             <Button
               color="success"
               endContent={<PlusIcon />}
-              onPress={handleAddSede}
+              onPress={handleAddInvestments}
             >
-              Nueva Sede
+              Nueva Investments
             </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {sedes?.length} sedes
+            Total {investments?.length} investments
           </span>
           <label className="flex items-center text-default-400 text-small">
             Filas por páginas:
@@ -377,8 +265,8 @@ export default function TableSedes() {
     filterValue,
     onSearchChange,
     visibleColumns,
-    handleAddSede,
-    sedes?.length,
+    handleAddInvestments,
+    investments?.length,
     onRowsPerPageChange,
     onClear,
   ]);
@@ -449,7 +337,7 @@ export default function TableSedes() {
         <TableBody
           isLoading={loading}
           loadingContent={<Spinner color="success" />}
-          emptyContent={"No users found"}
+          emptyContent={"No investments found"}
           items={sortedItems}
         >
           {(item) => (
@@ -461,12 +349,10 @@ export default function TableSedes() {
           )}
         </TableBody>
       </Table>
-      <ModalAddSede
+      <ModalAddInvestments
         isOpen={isOpen}
         onClose={onClose}
-        sede={selectSede}
-        addSede={addSede}
-        updateSede={updateSede}
+        addInvestment={addInvestments}
       />
     </>
   );

@@ -34,6 +34,12 @@ interface Props {
   description?: string;
   imagen?: string;
   category?: Category;
+  battery?: number;
+  ram?: number;
+  storage?: number;
+  mpxCameraFront?: number;
+  mpxCameraBack?: number;
+  investments?: number;
 }
 
 const ModalAddProduct: FC<Props> = ({
@@ -48,6 +54,12 @@ const ModalAddProduct: FC<Props> = ({
   category,
   setProducts,
   imagen: initialImageUrl,
+  battery,
+  ram,
+  storage,
+  mpxCameraFront,
+  mpxCameraBack,
+  investments,
 }) => {
   const [ratingValue, setRatingValue] = useState(rating || 0);
   const [imageUrl, setImageUrl] = useState<string>("./producto.webp");
@@ -216,7 +228,7 @@ const ModalAddProduct: FC<Props> = ({
       }
 
       if (!name) {
-        console.log("Creando telefono")
+        console.log("Creando telefono");
         createProductRequest({
           categoryId: selectedCategoryId,
           name: inputName,
@@ -374,16 +386,18 @@ const ModalAddProduct: FC<Props> = ({
                         placeholder="Introduce el nombre del Producto."
                         type="text"
                       />
-                      {selectedCategory === "Smartphones" || selectedCategory === "Telefonos" && (
-                        <Input
-                          name="bateria"
-                          label="Bateria:"
-                          labelPlacement="outside"
-                          isRequired
-                          placeholder="Introduce la bateria del Producto."
-                          type="text"
-                        />
-                      )}
+                      {selectedCategory === "Smartphones" ||
+                        (selectedCategory === "Telefonos" && (
+                          <Input
+                            name="bateria"
+                            label="Bateria:"
+                            labelPlacement="outside"
+                            defaultValue={battery?.toString()}
+                            isRequired
+                            placeholder="Introduce la bateria del Producto."
+                            type="text"
+                          />
+                        ))}
                     </div>
                     <div className="flex gap-8 justify-between">
                       <Selected setSelectedCategory={setSelectedCategory} />
@@ -410,7 +424,7 @@ const ModalAddProduct: FC<Props> = ({
                             <Input
                               name="ram"
                               label="RAM:"
-                              defaultValue={name}
+                              defaultValue={ram?.toString()}
                               labelPlacement="outside"
                               isRequired
                               placeholder="Introduce la RAM del Producto."
@@ -419,7 +433,7 @@ const ModalAddProduct: FC<Props> = ({
                             <Input
                               name="storage"
                               label="Storage:"
-                              defaultValue={name}
+                              defaultValue={storage?.toString()}
                               labelPlacement="outside"
                               isRequired
                               placeholder="Introduce el almacenamiento del Producto."
@@ -430,7 +444,7 @@ const ModalAddProduct: FC<Props> = ({
                             <Input
                               name="front"
                               label="MPX Frontal:"
-                              defaultValue={name}
+                              defaultValue={mpxCameraFront?.toString()}
                               labelPlacement="outside"
                               isRequired
                               placeholder="Introduce los mpx frontal del Producto."
@@ -439,7 +453,7 @@ const ModalAddProduct: FC<Props> = ({
                             <Input
                               name="back"
                               label="MPX Trasera:"
-                              defaultValue={name}
+                              defaultValue={mpxCameraBack?.toString()}
                               labelPlacement="outside"
                               isRequired
                               placeholder="Introduce los mpx traseros del Producto."
@@ -458,6 +472,7 @@ const ModalAddProduct: FC<Props> = ({
                         name="inversion"
                         isRequired
                         labelPlacement="outside"
+                        defaultValue={investments?.toString()}
                         placeholder="0.00"
                         startContent={
                           <div className="pointer-events-none flex items-center">
