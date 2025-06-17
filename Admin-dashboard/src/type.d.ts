@@ -69,9 +69,17 @@ interface Sede {
   direction: string;
   workers: Workers[];
   rent: number;
-  losses: number;
   netProfits: number;
+  finalLosses: number;
 }
+
+interface Investments {
+  id: string;
+  description: string;
+  price: number;
+  Sede: Sede;
+}
+
 interface Count {
   orders: number;
 }
@@ -86,6 +94,11 @@ export interface Products {
   createdAt: string;
   inventoryCount: number;
   investments: number;
+  battery: number;
+  ram: number;
+  storage: number;
+  mpxCameraFront: number;
+  mpxCameraBack: number;
   category: Category;
   Sede: {
     direction: string;

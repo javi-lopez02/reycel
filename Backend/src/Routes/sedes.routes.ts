@@ -6,7 +6,6 @@ import {
   createSede,
   updateSede,
   deleteSede,
-  addLosses,
 } from "../Controllers/sedes.controller";
 const router = Router();
 
@@ -17,8 +16,6 @@ router.get("/sedes/:id", getSedeId);
 router.post("/sedes", authMiddleware, createSede);
 
 router.put("/sedes/:id", authMiddleware, updateSede);
-
-router.put("/losses/:id", authMiddleware, addLosses);
 
 router.delete("/sedes/:id", authMiddleware, deleteSede);
 

@@ -13,6 +13,7 @@ interface PropsSideBar {
 }
 
 const SideBar: FC<PropsSideBar> = ({isOpen, onOpenChange}) => {
+  
   const { users } = useUser();
   const { category } = useCategory();
   const { products } = useProduct();
@@ -218,6 +219,31 @@ const SideBar: FC<PropsSideBar> = ({isOpen, onOpenChange}) => {
                   </span>
                 </Link>
               </li>
+              <li onClick={onOpenChange}>
+                      <Link
+                        to={"/trash"}
+                        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                      >
+                        <svg
+                          className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M10 3v4M10 13v4m0-6h4m-8 0H5M17 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM5 15a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM17 15a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"
+                          />
+                        </svg>
+                        <span className="flex-1 ms-3 whitespace-nowrap">
+                          Inversiones o Merma
+                        </span>
+                      </Link>
+                    </li>
             </ul>
           </div>
         </div>

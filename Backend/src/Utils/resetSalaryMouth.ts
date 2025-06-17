@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import nodeCron from "node-cron";
 
 const prisma = new PrismaClient();
 
@@ -30,10 +31,12 @@ export default async function resetSalaryMouth() {
 
     await prisma.sede.updateMany({
       data: {
-        losses: 0,
+        finalLosses: 0,
         netProfits: 0,
       },
     });
+
+    await prisma.investments_Losses.deleteMany({});
 
     console.log(
       `✅ mouthSalary actualizado correctamente para ${admins.length} administradores.`
@@ -42,7 +45,7 @@ export default async function resetSalaryMouth() {
     console.log("Actualizando Ganancia Neta Semanal");
     const sedes = await prisma.sede.findMany({
       where: {
-        losses: {
+        finalLosses: {
           not: undefined,
         },
         netProfits: {
@@ -51,27 +54,54 @@ export default async function resetSalaryMouth() {
       },
       select: {
         id: true,
-        losses: true,
+        finalLosses: true,
         netProfits: true,
+        workers: true,
       },
     });
     for (const sede of sedes) {
-      let netProfit = sede.netProfits - sede.losses;
+      let netProfit = sede.netProfits - sede.finalLosses;
 
-      await prisma.sede.update({
+      const updateSede = await prisma.sede.update({
         where: { id: sede.id },
         data: {
           netProfits: netProfit,
         },
+        include: {
+          workers: true,
+        },
       });
+
+      if (updateSede && updateSede.netProfits >= 50000) {
+        const salarySede =
+          1000 * parseInt((updateSede.netProfits / 50000).toFixed(0));
+        const salarySede100 =
+          100 * parseInt((updateSede.netProfits / 5000).toFixed(0));
+
+        for (const workers of updateSede.workers) {
+          const finalSalary = salarySede + salarySede100 + workers.mouthSalary;
+
+          await prisma.administrator.update({
+            where: {
+              id: workers.id,
+            },
+            data: {
+              mouthSalary: finalSalary,
+            },
+          });
+        }
+      }
     }
   }
 }
 
-resetSalaryMouth()
-  .then(() => prisma.$disconnect())
-  .catch(async (e) => {
-    console.error("❌ Error al actualizar mouthSalary:", e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+// Ejecutar todos los días a las 00:00
+nodeCron.schedule("55 23 * * *", () => {
+  resetSalaryMouth()
+    .then(() => prisma.$disconnect())
+    .catch(async (e) => {
+      console.error("❌ Error al actualizar mouthSalary:", e);
+      await prisma.$disconnect();
+      process.exit(1);
+    });
+});

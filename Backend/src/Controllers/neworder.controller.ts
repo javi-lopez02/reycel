@@ -368,7 +368,7 @@ export const confirmOrderAdmin = async (req: Request, res: Response) => {
         const quantity = item.quantity;
         const categoryGain = item.product.category.profitsBySell;
 
-        const Inversion = item.product.investments || 0 * quantity;
+        const Inversion = (item.product.investments || 0) * quantity;
         const Venta = item.product.price * quantity;
 
         const newQuantity = item.product.inventoryCount - quantity;
