@@ -21,7 +21,7 @@ import {
   User,
   Spinner,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   ChevronDownIcon,
   DeleteIcon,
@@ -34,6 +34,7 @@ import useProduct from "../../customHooks/useProduct";
 import { toast } from "sonner";
 import ModalAddProduct from "./ModalAddProduct";
 import { deleteProductRequest } from "../../services/product";
+import { useAuth } from "../../context/AuthContext";
 
 export function Capitalize(s: string) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
@@ -41,17 +42,21 @@ export function Capitalize(s: string) {
 
 const columns = [
   { name: "NOMBRE", uid: "name", sortable: true },
+  { name: "SEDE", uid: "sede", sorteable: true },
   { name: "CATEGORIA", uid: "category", sortable: true },
   { name: "PRECIO", uid: "price", sortable: true },
-  { name: "RATING", uid: "ratingAverage", sortable: true },
+  { name: "INVERSION", uid: "invertments" },
   { name: "CANTIDAD", uid: "quantity", sortable: true },
+  { name: "RATING", uid: "ratingAverage", sortable: true },
   { name: "FECHA DE CREACIÓN", uid: "createdAt", sortable: true },
   { name: "ACCIONES", uid: "actions" },
 ];
 
 const INITIAL_VISIBLE_COLUMNS = [
   "name",
+  "sede",
   "price",
+  "invertments",
   "category",
   "quantity",
   "actions",
@@ -61,6 +66,7 @@ const INITIAL_VISIBLE_COLUMNS = [
 
 export default function ProductTable() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user } = useAuth();
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -212,7 +218,7 @@ export default function ProductTable() {
               <span
                 style={{
                   display: "inline-block",
-                  maxWidth: "200px",
+                  maxWidth: "100px",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -225,13 +231,45 @@ export default function ProductTable() {
               <span
                 style={{
                   display: "inline-block",
-                  maxWidth: "250px",
+                  maxWidth: "150px",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
                 }}
               >
                 {String(cellValue)}
+              </span>
+            }
+          />
+        );
+      case "sede":
+        return (
+          <User
+            avatarProps={{ radius: "lg", src: product.Sede.image }}
+            description={
+              <span
+                style={{
+                  display: "inline-block",
+                  maxWidth: "70px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {product.Sede.phone}
+              </span>
+            }
+            name={
+              <span
+                style={{
+                  display: "inline-block",
+                  maxWidth: "100px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {product.Sede.direction}
               </span>
             }
           />
@@ -272,10 +310,18 @@ export default function ProductTable() {
             <p className="text-bold text-small capitalize">${product.price}</p>
           </div>
         );
+      case "invertments":
+        return (
+          <div className="flex flex-col ml-2">
+            <p className="text-bold text-small capitalize">
+              ${product.investments}
+            </p>
+          </div>
+        );
       case "ratingAverage":
         return (
-          <div className="mt-2 flex items-center justify-center gap-2">
-            <div className="flex items-center mt-2">
+          <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center">
               <div className="flex text-yellow-500">
                 {[...Array(5)].map((_, index) => (
                   <svg
@@ -308,13 +354,11 @@ export default function ProductTable() {
           </Chip>
         );
       case "actions":
-        return (
+        return user?.role === "OWNER" ? (
           <div className="relative flex justify-center items-center gap-2">
             <Tooltip content="Edit product" color="success">
               <button
-                onClick={() => {
-                  handleEditProduct(product);
-                }}
+                onClick={() => handleEditProduct(product)}
                 className="text-lg text-success cursor-pointer active:opacity-50"
               >
                 <EditIcon />
@@ -324,6 +368,29 @@ export default function ProductTable() {
               <button
                 onClick={() => {
                   handleDelete(product.id);
+                }}
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+              >
+                <DeleteIcon />
+              </button>
+            </Tooltip>
+          </div>
+        ) : (
+          <div className="relative flex justify-center items-center gap-2">
+            <Tooltip content="Edit product" color="success">
+              <button
+                onClick={() =>
+                  toast.error("Solo disponible para el Administrador")
+                }
+                className="text-lg text-success cursor-pointer active:opacity-50"
+              >
+                <EditIcon />
+              </button>
+            </Tooltip>
+            <Tooltip color="danger" content="Delete product">
+              <button
+                onClick={() => {
+                  toast.error("Solo disponible para el Administrador");
                 }}
                 className="text-lg text-danger cursor-pointer active:opacity-50"
               >
@@ -374,7 +441,7 @@ export default function ProductTable() {
   const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 items-end ">
           <Input
             isClearable
             color="primary"
@@ -385,9 +452,9 @@ export default function ProductTable() {
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full justify-center sm:w-auto ">
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger>
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
@@ -413,7 +480,7 @@ export default function ProductTable() {
               </DropdownMenu>
             </Dropdown>
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger>
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
@@ -486,13 +553,14 @@ export default function ProductTable() {
           total={pages}
           onChange={setPage}
         />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
+        <div className=" justify-end gap-2">
           <Button
             isDisabled={pages === 1}
             size="md"
             variant="flat"
             onPress={onPreviousPage}
             color="danger"
+            className="mx-2"
           >
             Anterior
           </Button>

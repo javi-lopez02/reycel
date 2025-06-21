@@ -18,15 +18,15 @@ export interface BaseUser {
 }
 
 export interface User {
-  id: string;
+  userId: string;
   username: string;
   email: string;
   image: string;
   status: boolean;
-  orders: { id: string; pending: boolean }[];
-  orderCount: number;
   createdAt: string;
-  sede: string
+  sede: string;
+  role: "OWNER" | "MODERATOR";
+  orderCount: number;
 }
 
 export interface Worker {
@@ -38,6 +38,7 @@ export interface Worker {
   orderCount: number;
   createdAt: string;
   salary: number;
+  mouthSalary: number;
   role: "OWNER" | "MODERATOR";
 }
 
@@ -67,7 +68,18 @@ interface Sede {
   phone: string;
   direction: string;
   workers: Workers[];
+  rent: number;
+  netProfits: number;
+  finalLosses: number;
 }
+
+interface Investments {
+  id: string;
+  description: string;
+  price: number;
+  Sede: Sede;
+}
+
 interface Count {
   orders: number;
 }
@@ -81,11 +93,23 @@ export interface Products {
   imagen: string;
   createdAt: string;
   inventoryCount: number;
+  investments: number;
+  battery: number;
+  ram: number;
+  storage: number;
+  mpxCameraFront: number;
+  mpxCameraBack: number;
   category: Category;
+  Sede: {
+    direction: string;
+    image: string;
+    phone: string;
+  };
 }
 export interface Category {
   id: string;
   name: string;
+  profitsBySell: number;
   createdAt: string;
   _count: {
     products: number;
@@ -116,6 +140,7 @@ export interface PaymentMethod {
   id: string;
   cardImage: string;
   cardNumber?: string;
+  phoneNumber?: string;
   createdAt: string;
   _count: {
     payment: number;
@@ -166,6 +191,17 @@ export interface UserPayment {
   role: string;
 }
 
+export interface OrderAdd {
+  id: string;
+  createdAt: string;
+  totalAmount: number;
+  orderItems: OrderItem[];
+  admin: Admin;
+  _count: {
+    orderItems: number;
+  };
+}
+
 export interface OrderItem {
   id: string;
   createdAt: string;
@@ -178,7 +214,7 @@ export interface ProductOrder {
   imagen: string;
   name: string;
   ratingAverage: number;
-  inventaryCount: number;
+  inventoryCount: number;
 }
 
 export interface Analytics {
@@ -213,5 +249,6 @@ export interface AddPaymentMethodProps {
   id?: string;
   image: string;
   numberCard: string;
+  phoneNumber?: string;
   selected: PaymentOptions;
 }

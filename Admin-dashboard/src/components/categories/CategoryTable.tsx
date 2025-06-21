@@ -25,7 +25,7 @@ import {
   Tooltip,
   // Spinner,
   useDisclosure,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   ChevronDownIcon,
   DeleteIcon,
@@ -38,6 +38,7 @@ import useCategory from "../../customHooks/useCategory";
 import { Category } from "../../type";
 import { toast } from "sonner";
 import { deleteCategoryRequest } from "../../services/category";
+import { useAuth } from "../../context/AuthContext";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -50,7 +51,8 @@ export function Capitalize(s: string) {
 const columns = [
   { name: "NOMBRE", uid: "name", sortable: true },
   { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
-  { name: "Fecha de Creación", uid: "createdAt", sortable: true },
+  { name: "FECHA DE CREACION", uid: "createdAt", sortable: true },
+  { name: "GANANCIA POR VENTA DEL MODERADOR", uid: "profits" },
   { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -64,6 +66,8 @@ const INITIAL_VISIBLE_COLUMNS = [
 export default function CategoryTable() {
   const { category, error, setCategory } = useCategory();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { user } = useAuth();
 
   const [filterValue, setFilterValue] = useState("");
 
@@ -198,6 +202,14 @@ export default function CategoryTable() {
             </p>
           </div>
         );
+      case "profits":
+        return (
+          <div className="flex ">
+            <p className="text-bold text-small capitalize">
+              {Category.profitsBySell}
+            </p>
+          </div>
+        );
       case "createdAt":
         return (
           <div className="flex ">
@@ -207,7 +219,7 @@ export default function CategoryTable() {
           </div>
         );
       case "actions":
-        return (
+        return user?.role === "OWNER" ? (
           <div className="relative flex justify-center items-center gap-2">
             <Tooltip content="Edit Category" color="success">
               <button
@@ -219,7 +231,32 @@ export default function CategoryTable() {
             </Tooltip>
             <Tooltip color="danger" content="Delete Category">
               <button
-                onClick={() => handleDelete(Category.id)}
+                onClick={() => {
+                  handleDelete(Category.id);
+                }}
+                className="text-lg text-danger cursor-pointer active:opacity-50"
+              >
+                <DeleteIcon />
+              </button>
+            </Tooltip>
+          </div>
+        ) : (
+          <div className="relative flex justify-center items-center gap-2">
+            <Tooltip content="Edit Category" color="success">
+              <button
+                onClick={() =>
+                  toast.error("Solo disponible para el Administrador")
+                }
+                className="text-lg text-success cursor-pointer active:opacity-50"
+              >
+                <EditIcon />
+              </button>
+            </Tooltip>
+            <Tooltip color="danger" content="Delete Category">
+              <button
+                onClick={() => {
+                  toast.error("Solo disponible para el Administrador");
+                }}
                 className="text-lg text-danger cursor-pointer active:opacity-50"
               >
                 <DeleteIcon />
@@ -270,7 +307,7 @@ export default function CategoryTable() {
   const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 items-end ">
           <Input
             isClearable
             color="success"
@@ -281,9 +318,9 @@ export default function CategoryTable() {
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full justify-center sm:w-auto ">
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger>
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
@@ -356,13 +393,14 @@ export default function CategoryTable() {
           total={pages}
           onChange={setPage}
         />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
+        <div className=" justify-end gap-2">
           <Button
             isDisabled={pages === 1}
             size="md"
             variant="flat"
             onPress={onPreviousPage}
             color="danger"
+            className="mx-2"
           >
             Anterior
           </Button>

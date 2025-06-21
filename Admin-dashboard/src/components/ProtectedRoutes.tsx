@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/react";
 
 function ProtectedRoutes() {
   const { isAuth, loading } = useAuth();

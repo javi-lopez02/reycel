@@ -34,17 +34,16 @@ export function MonthlyEarnings() {
 
   return (
     <>
-      <div className="flex justify-between items-center w-full">
+      <div className="flex flex-col sm:flex-row sm:justify-between items-center w-full">
         <div>
           <h3 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-            Ganancias del Mes
+            Ganancias Anuales
           </h3>
           <p className="text-tremor-metric text-tremor-content-strong dark:text-dark-tremor-content-strong font-semibold">
             $34,567
           </p>
         </div>
         <DateRangePicker
-          className=" max-w-md"
           value={value}
           onValueChange={setValue}
           locale={es}

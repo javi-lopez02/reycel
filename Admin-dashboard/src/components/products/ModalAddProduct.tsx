@@ -6,11 +6,12 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
+  ScrollShadow,
   Select,
   SelectItem,
   Spinner,
   Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FC, useEffect, useState } from "react";
 import Selected from "./Selected";
 import Rating from "./Rating";
@@ -34,6 +35,12 @@ interface Props {
   description?: string;
   imagen?: string;
   category?: Category;
+  battery?: number;
+  ram?: number;
+  storage?: number;
+  mpxCameraFront?: number;
+  mpxCameraBack?: number;
+  investments?: number;
 }
 
 const ModalAddProduct: FC<Props> = ({
@@ -48,6 +55,12 @@ const ModalAddProduct: FC<Props> = ({
   category,
   setProducts,
   imagen: initialImageUrl,
+  battery,
+  ram,
+  storage,
+  mpxCameraFront,
+  mpxCameraBack,
+  investments,
 }) => {
   const [ratingValue, setRatingValue] = useState(rating || 0);
   const [imageUrl, setImageUrl] = useState<string>("./producto.webp");
@@ -94,6 +107,7 @@ const ModalAddProduct: FC<Props> = ({
     const inventoryCount = parseInt(data["inventoryCount"] as string);
     const inputRating = ratingValue;
     const imagen = data["imageUrl"] as string;
+    const inversion = parseInt(data["inversion"] as string);
 
     // Validaciones
     if (!inputName) {
@@ -131,8 +145,16 @@ const ModalAddProduct: FC<Props> = ({
       setLoading(false);
       return;
     }
+    if (!inversion) {
+      toast.error("La inversion del producto es requerida.");
+      setLoading(false);
+      return;
+    }
 
-    if (selectedCategory === "Smartphones") {
+    if (
+      selectedCategory === "Smartphones" ||
+      selectedCategory === "Telefonos"
+    ) {
       const storage = parseInt(data["storage"] as string);
       const ram = parseInt(data["ram"] as string);
       const mpxback = parseInt(data["back"] as string);
@@ -179,6 +201,7 @@ const ModalAddProduct: FC<Props> = ({
           rating: inputRating,
           imagen,
           ram,
+          investments: inversion,
           storage,
           mpxCameraBack: mpxback,
           mpxCameraFront: mpxfront,
@@ -206,6 +229,8 @@ const ModalAddProduct: FC<Props> = ({
       }
 
       if (!name) {
+        console.log("Creando telefono");
+        console.log("Creando telefono");
         createProductRequest({
           categoryId: selectedCategoryId,
           name: inputName,
@@ -214,6 +239,7 @@ const ModalAddProduct: FC<Props> = ({
           inventoryCount,
           rating: inputRating,
           imagen,
+          investments: inversion,
           ram,
           storage,
           mpxCameraBack: mpxback,
@@ -249,6 +275,7 @@ const ModalAddProduct: FC<Props> = ({
           price,
           description,
           inventoryCount,
+          investments: inversion,
           rating: inputRating,
           imagen,
           sedeId,
@@ -280,6 +307,7 @@ const ModalAddProduct: FC<Props> = ({
           price,
           description,
           inventoryCount,
+          investments: inversion,
           rating: inputRating,
           imagen,
           sedeId,
@@ -313,7 +341,7 @@ const ModalAddProduct: FC<Props> = ({
             </ModalHeader>
             <ModalBody>
               <Form onSubmit={handleSubmit}>
-                <div className="flex gap-8 w-full">
+                <ScrollShadow hideScrollBar className=" flex gap-8 w-full flex-col lg:flex-row h-96 lg:h-auto">
                   <div className="flex flex-col items-center w-full gap-4">
                     <img
                       className="size-60 bg-neutral-300"
@@ -350,7 +378,7 @@ const ModalAddProduct: FC<Props> = ({
                     />
                   </div>
                   <div className="flex flex-col gap-4 w-full">
-                    <div className="flex gap-8 justify-between">
+                    <div className="flex gap-8 justify-between flex-col lg:flex-row">
                       <Input
                         name="name"
                         label="Nombre:"
@@ -360,18 +388,20 @@ const ModalAddProduct: FC<Props> = ({
                         placeholder="Introduce el nombre del Producto."
                         type="text"
                       />
-                      {selectedCategory === "Smartphones" && (
-                        <Input
-                          name="bateria"
-                          label="Bateria:"
-                          labelPlacement="outside"
-                          isRequired
-                          placeholder="Introduce la bateria del Producto."
-                          type="text"
-                        />
-                      )}
+                      {selectedCategory === "Smartphones" ||
+                        (selectedCategory === "Telefonos" && (
+                          <Input
+                            name="bateria"
+                            label="Bateria:"
+                            labelPlacement="outside"
+                            defaultValue={battery?.toString()}
+                            isRequired
+                            placeholder="Introduce la bateria del Producto."
+                            type="text"
+                          />
+                        ))}
                     </div>
-                    <div className="flex gap-8 justify-between">
+                    <div className="flex gap-8 justify-between flex-col lg:flex-row">
                       <Selected setSelectedCategory={setSelectedCategory} />
                       <Select
                         isRequired
@@ -389,55 +419,74 @@ const ModalAddProduct: FC<Props> = ({
                         ))}
                       </Select>
                     </div>
-                    {selectedCategory === "Smartphones" && (
-                      <div className="flex flex-col gap-4">
-                        <div className="flex gap-8">
-                          <Input
-                            name="ram"
-                            label="RAM:"
-                            defaultValue={name}
-                            labelPlacement="outside"
-                            isRequired
-                            placeholder="Introduce la RAM del Producto."
-                            type="text"
-                          />
-                          <Input
-                            name="storage"
-                            label="Storage:"
-                            defaultValue={name}
-                            labelPlacement="outside"
-                            isRequired
-                            placeholder="Introduce el almacenamiento del Producto."
-                            type="text"
-                          />
+                    {selectedCategory === "Smartphones" ||
+                      (selectedCategory === "Telefonos" && (
+                        <div className="flex flex-col gap-4">
+                          <div className="flex gap-8">
+                            <Input
+                              name="ram"
+                              label="RAM:"
+                              defaultValue={ram?.toString()}
+                              labelPlacement="outside"
+                              isRequired
+                              placeholder="Introduce la RAM del Producto."
+                              type="text"
+                            />
+                            <Input
+                              name="storage"
+                              label="Storage:"
+                              defaultValue={storage?.toString()}
+                              labelPlacement="outside"
+                              isRequired
+                              placeholder="Introduce el almacenamiento del Producto."
+                              type="text"
+                            />
+                          </div>
+                          <div className="flex gap-8">
+                            <Input
+                              name="front"
+                              label="MPX Frontal:"
+                              defaultValue={mpxCameraFront?.toString()}
+                              labelPlacement="outside"
+                              isRequired
+                              placeholder="Introduce los mpx frontal del Producto."
+                              type="text"
+                            />
+                            <Input
+                              name="back"
+                              label="MPX Trasera:"
+                              defaultValue={mpxCameraBack?.toString()}
+                              labelPlacement="outside"
+                              isRequired
+                              placeholder="Introduce los mpx traseros del Producto."
+                              type="text"
+                            />
+                          </div>
                         </div>
-                        <div className="flex gap-8">
-                          <Input
-                            name="front"
-                            label="MPX Frontal:"
-                            defaultValue={name}
-                            labelPlacement="outside"
-                            isRequired
-                            placeholder="Introduce los mpx frontal del Producto."
-                            type="text"
-                          />
-                          <Input
-                            name="back"
-                            label="MPX Trasera:"
-                            defaultValue={name}
-                            labelPlacement="outside"
-                            isRequired
-                            placeholder="Introduce los mpx traseros del Producto."
-                            type="text"
-                          />
-                        </div>
-                      </div>
-                    )}
-                    <Rating
-                      ratingValue={ratingValue}
-                      setRatingValue={setRatingValue}
-                    />
-                    <div className="flex justify-between w-full gap-8">
+                      ))}
+                    <div className="flex gap-8 flex-col lg:flex-row">
+                      <Rating
+                        ratingValue={ratingValue}
+                        setRatingValue={setRatingValue}
+                      />
+                      <Input
+                        label="Inversion"
+                        name="inversion"
+                        isRequired
+                        labelPlacement="outside"
+                        defaultValue={investments?.toString()}
+                        placeholder="0.00"
+                        startContent={
+                          <div className="pointer-events-none flex items-center">
+                            <span className="text-default-400 text-small">
+                              $
+                            </span>
+                          </div>
+                        }
+                        type="number"
+                      />
+                    </div>
+                    <div className="flex justify-between w-full gap-8 flex-col lg:flex-row">
                       <Input
                         label="Precio"
                         name="price"
@@ -466,7 +515,7 @@ const ModalAddProduct: FC<Props> = ({
                       />
                     </div>
                   </div>
-                </div>
+                </ScrollShadow>
                 <div className="flex justify-end p-5 w-full gap-8">
                   <Button
                     color="danger"
