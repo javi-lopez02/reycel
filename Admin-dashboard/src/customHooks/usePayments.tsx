@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Payment } from "../type";
-import { getPaymentsRequest } from "../services/payments";
+import { getPaymentsRequest } from "../api/services/payments";
 
 function usePayments() {
   const [payments, setPayments] = useState<Payment[] | null>(null);

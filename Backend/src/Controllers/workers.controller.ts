@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient, Role } from "@prisma/client";
 import bcryptjs from "bcryptjs";
+import { SERVER_URL } from "../conf";
 
 const prisma = new PrismaClient();
 
@@ -27,6 +28,64 @@ export const getWorkersSedes = async (req: Request, res: Response) => {
 
     res.status(200).json({
       data: workers,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los trabajadores." });
+  }
+};
+
+export const getWorkersById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const worker = await prisma.administrator.findUnique({
+      where: {
+        id: id,
+        baseUser: {
+          isDeleted: false,
+        },
+      },
+      select: {
+        id: true,
+        salary: true,
+        mouthSalary: true,
+        role: true,
+        sedeId: true,
+        baseUser: {
+          select: {
+            username: true,
+            image: true,
+            status: true,
+            createdAt: true,
+            email: true,
+          },
+        },
+        _count: {
+          select: {
+            orders: true,
+          },
+        },
+      },
+    });
+
+    if (!worker) {
+      res.status(404).json({ message: "Trabajador no encontrado" });
+      return;
+    }
+
+    res.status(200).json({
+      id: worker.id,
+      username: worker.baseUser.username,
+      image: worker.baseUser.image,
+      status: worker.baseUser.status,
+      orderCount: worker._count.orders,
+      createdAt: worker.baseUser.createdAt,
+      sedeId: worker.sedeId,
+      email: worker.baseUser.email,
+      salary: worker.salary,
+      mouthSalary: worker.mouthSalary,
+      role: worker.role,
     });
   } catch (error) {
     console.error(error);
@@ -91,115 +150,63 @@ export const getWorkers = async (req: Request, res: Response) => {
 
 export const createWorker = async (req: Request, res: Response) => {
   try {
-    const { username, password, image, email, sedeId, role, salary } = req.body;
+    const { username, password, sedeId, salary } = req.body;
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
-    if (role === Role.MODERATOR) {
-      const baseUser = await prisma.baseUser.create({
-        data: {
-          email,
-          username,
-          password: hashedPassword,
-          image,
-          status: true,
-          administrator: {
-            create: {
-              role,
-              salary,
-              mouthSalary: salary,
-              orders: {
-                create: {
-                  totalAmount: 0,
-                },
+    const baseUser = await prisma.baseUser.create({
+      data: {
+        username,
+        password: hashedPassword,
+        image: `${SERVER_URL}/public/logo.webp`,
+        status: true,
+        administrator: {
+          create: {
+            role: "MODERATOR",
+            salary: Number(salary),
+            mouthSalary: Number(salary),
+            orders: {
+              create: {
+                totalAmount: 0,
               },
-              sede: {
-                connect: { id: sedeId },
+            },
+            sede: {
+              connect: { id: sedeId },
+            },
+          },
+        },
+      },
+      include: {
+        administrator: {
+          include: {
+            _count: {
+              select: {
+                orders: true,
               },
             },
           },
         },
-        include: {
-          administrator: {
-            include: {
-              _count: {
-                select: {
-                  orders: true,
-                },
-              },
-            },
-          },
-        },
-      });
+      },
+    });
 
-      if (!baseUser.administrator) {
-        throw new Error("Error al crear el trabajador");
-      }
-
-      res.status(201).json({
-        data: {
-          id: baseUser.administrator.id,
-          username: baseUser.username,
-          image: baseUser.image,
-          status: baseUser.status,
-          orderCount: baseUser.administrator._count.orders,
-          createdAt: baseUser.createdAt,
-          email: baseUser.email,
-          salary: baseUser.administrator.salary,
-          mouthSalary: baseUser.administrator.mouthSalary,
-          role: baseUser.administrator.role,
-        },
-      });
-    } else {
-      const baseUser = await prisma.baseUser.create({
-        data: {
-          email,
-          username,
-          password: hashedPassword,
-          image,
-          status: true,
-          administrator: {
-            create: {
-              role,
-              salary: 0,
-              mouthSalary: 0,
-              orders: {
-                create: {
-                  totalAmount: 0,
-                },
-              },
-            },
-          },
-        },
-        include: {
-          administrator: {
-            include: {
-              _count: {
-                select: {
-                  orders: true,
-                },
-              },
-            },
-          },
-        },
-      });
-
-      if (!baseUser.administrator) {
-        throw new Error("Error al crear el trabajador");
-      }
-
-      res.status(201).json({
-        data: {
-          id: baseUser.administrator.id,
-          username: baseUser.username,
-          image: baseUser.image,
-          status: baseUser.status,
-          orderCount: baseUser.administrator._count.orders,
-          createdAt: baseUser.createdAt,
-          email: baseUser.email,
-        },
-      });
+    if (!baseUser.administrator) {
+      throw new Error("Error al crear el trabajador");
     }
+
+    res.status(201).json({
+      data: {
+        id: baseUser.administrator.id,
+        username: baseUser.username,
+        image: baseUser.image,
+        status: baseUser.status,
+        orderCount: baseUser.administrator._count.orders,
+        createdAt: baseUser.createdAt,
+        email: baseUser.email,
+        salary: baseUser.administrator.salary,
+        mouthSalary: baseUser.administrator.mouthSalary,
+        role: baseUser.administrator.role,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al crear el trabajador." });
@@ -208,12 +215,8 @@ export const createWorker = async (req: Request, res: Response) => {
 
 export const editWorker = async (req: Request, res: Response) => {
   try {
-    const { username, password, image } = req.body;
+    const { username, password, salary, sedeId } = req.body;
     const { id } = req.params;
-
-    console.log(`username: ${username}`);
-    console.log(`password: ${password}`);
-    console.log(`image: ${image}`);
 
     const worker = await prisma.administrator.findUnique({
       where: { id },
@@ -236,8 +239,13 @@ export const editWorker = async (req: Request, res: Response) => {
       },
       data: {
         username: username || undefined,
-        image: image || undefined,
         password: hashedPassword,
+        administrator: {
+          update:{
+            salary,
+            sedeId
+          }
+        }
       },
       include: {
         administrator: {

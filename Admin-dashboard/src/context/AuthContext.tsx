@@ -7,7 +7,7 @@ import {
   PropsWithChildren,
   FC,
 } from "react";
-import {loginRequest, LogoutRequest, verifyTokenRequest} from '../services/auth'
+import {loginRequest, LogoutRequest, verifyTokenRequest} from '../api/services/auth'
 import Cookies from "js-cookie";
 import axios, { AxiosError } from "axios";
 import { AuthContextType, User, UserLogin } from "../type";

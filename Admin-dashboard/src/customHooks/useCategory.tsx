@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Category } from "../type";
-import { categoryRequest } from "../services/category";
+import { categoryRequest } from "../api/services/category";
 
 function useCategory() {
   const [category, setCategory] = useState<Category[] | null>(null);

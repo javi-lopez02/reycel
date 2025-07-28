@@ -33,7 +33,7 @@ import { Products as Product } from "../../type";
 import useProduct from "../../customHooks/useProduct";
 import { toast } from "sonner";
 import ModalAddProduct from "./ModalAddProduct";
-import { deleteProductRequest } from "../../services/product";
+import { deleteProductRequest } from "../../api/services/product";
 import { useAuth } from "../../context/AuthContext";
 
 export function Capitalize(s: string) {

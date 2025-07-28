@@ -1,4 +1,4 @@
-import { PaymentOptions } from "../type";
+import { PaymentOptions } from "../../type";
 import axios from "./axios";
 
 interface PaymentMethod {

@@ -14,11 +14,11 @@ import { FC, useEffect, useState } from "react";
 import { BiDollar, BiLock, BiMailSend, BiUser } from "react-icons/bi";
 import { toast } from "sonner";
 import { Sede, Worker } from "../../type";
-import { getSedesRequest } from "../../services/sedes";
+import { getSedesRequest } from "../../api/services/sedes";
 import {
   createWorkersRequest,
   editWorkersRequest,
-} from "../../services/workers";
+} from "../../api/services/workers";
 
 interface Props {
   id?: string;

@@ -37,7 +37,7 @@ import ModalAddCategory from "./ModalAddCategory";
 import useCategory from "../../customHooks/useCategory";
 import { Category } from "../../type";
 import { toast } from "sonner";
-import { deleteCategoryRequest } from "../../services/category";
+import { deleteCategoryRequest } from "../../api/services/category";
 import { useAuth } from "../../context/AuthContext";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {

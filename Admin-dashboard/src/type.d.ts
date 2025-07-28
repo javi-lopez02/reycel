@@ -30,16 +30,24 @@ export interface User {
 }
 
 export interface Worker {
-  id: string;
+  id?: string;
   username: string;
-  email: string;
-  image: string;
-  status: boolean;
-  orderCount: number;
-  createdAt: string;
+  image?: string;
+  orderCount?: number;
+  createdAt?: string;
   salary: number;
-  mouthSalary: number;
-  role: "OWNER" | "MODERATOR";
+  sedeId: string;
+  mouthSalary?: number;
+  role?: "OWNER" | "MODERATOR";
+}
+
+export interface WorkerRequest
+  extends Omit<
+    Worker,
+    "image" | "orderCount" | "createdAt" | "mouthSalary" | "role"
+  > {
+  password?: string;
+  isPending?: boolean;
 }
 
 export interface AuthContextType {

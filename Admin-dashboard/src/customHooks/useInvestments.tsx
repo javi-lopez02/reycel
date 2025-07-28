@@ -3,7 +3,7 @@ import { Investments } from "../type";
 import {
   createInvestmentsRequest,
   getInvestmentsRequest,
-} from "../services/investments";
+} from "../api/services/investments";
 
 function useInvestments() {
   const [investments, setInvestments] = useState<Investments[] | null>([]);

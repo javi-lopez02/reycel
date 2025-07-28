@@ -1,29 +1,18 @@
 import { useEffect, useState } from "react";
 import { Worker } from "../type";
-import { getWorkersRequest } from "../services/workers";
+import { getWorkersRequest } from "../api/services/workers";
+import useWorkerQuery  from '../api/queries/workers'
+import workers from "../api/queries/workers";
 
 function useWorker() {
-  const [workers, setWorkers] = useState<Worker[] | null>(null);
-  const [error, setError] = useState<Array<string> | null>(null);
-  const [loading, setLoading] = useState(false);
+  const {workerQuery, deleteWorker} =  useWorkerQuery();
 
   useEffect(() => {
-    setError(null);
-    setLoading(true);
-    getWorkersRequest()
-      .then((res) => {
-        setWorkers(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        setError(["Error al cargar los trabajadores"]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    const {data : workers, isLoading, error} = workerQuery()
+    
   }, []);
 
-  return { workers, error, loading, setWorkers };
+  return { workers, error, isLoading, deleteWorker };
 }
 
 export default useWorker;

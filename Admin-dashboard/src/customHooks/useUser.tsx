@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { User } from "../type";
-import { getUsersRequest } from "../services/user";
+import { getUsersRequest } from "../api/services/user";
 
 function useUser() {
   const [users, setUsers] = useState<User[] | null>(null);

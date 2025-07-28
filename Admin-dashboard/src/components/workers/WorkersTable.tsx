@@ -19,15 +19,12 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  Chip,
   User,
   Pagination,
   Selection,
-  ChipProps,
   SortDescriptor,
   Tooltip,
   Spinner,
-  useDisclosure,
 } from "@heroui/react";
 import { Worker } from "../../type";
 import {
@@ -38,10 +35,9 @@ import {
   SearchIcon,
 } from "../Icons";
 import { toast } from "sonner";
-import ModalAddWorker from "./ModalAddWorker";
-import useWorker from "../../customHooks/useWorker";
-import { deleteWorkersRequest } from "../../services/workers";
+import {useWorker} from "../../api/queries/workers";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -61,14 +57,8 @@ const columns = [
   { name: "ACCIONES", uid: "actions" },
 ];
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  true: "success",
-  false: "danger",
-};
-
 const INITIAL_VISIBLE_COLUMNS = [
   "username",
-  "status",
   "actions",
   "mouthSalary",
   "order",
@@ -76,10 +66,10 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 export default function UsersTable() {
-  const { workers, error, loading, setWorkers } = useWorker();
+  const {workerQuery, deleteWorker } = useWorker();
+  const {data: workers, isLoading: loading} = workerQuery
   const { user } = useAuth();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const navigate = useNavigate();
   const [filterValue, setFilterValue] = useState("");
 
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
@@ -92,16 +82,14 @@ export default function UsersTable() {
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
-
   const handleAddWorkers = () => {
-    setSelectedWorker(null);
-    onOpen();
+    navigate("new");
   };
 
-  const handleEditWorkers = (user: Worker) => {
-    setSelectedWorker(user);
-    onOpen();
+  const handleEditWorkers = (id: string | undefined) => {
+    if (id) {
+      navigate(`${id}/edit`);
+    }
   };
 
   const formatearFecha = (isoString: string) => {
@@ -173,22 +161,17 @@ export default function UsersTable() {
     sortDescriptor?.direction,
   ]);
 
-  const handleDelete = (id: string) => {
-    deleteWorkersRequest(id)
-      .then(() => {
-        toast.success("Trabajador eliminado con exito");
-        setWorkers((prev) => {
-          return prev
-            ? prev.filter((worker) => {
-                return worker.id !== id;
-              })
-            : null;
+  const handleDelete = (id: string | undefined) => {
+    if (id) {
+      deleteWorker(id)
+        .then(() => {
+          toast.success("Trabajador eliminado con exito");
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Error al eliminar el trabajador");
         });
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Error al eliminar el trabajador");
-      });
+    }
   };
 
   const renderCell = useCallback((worker: Worker, columnKey: Key) => {
@@ -212,7 +195,6 @@ export default function UsersTable() {
                 {worker.username}
               </span>
             }
-            description={worker.email}
           ></User>
         );
       case "salary": {
@@ -237,7 +219,7 @@ export default function UsersTable() {
         return (
           <div className="flex justify-center">
             <p className={`text-bold text-small capitalize`}>
-              {formatearFecha(worker.createdAt)}
+              {formatearFecha(worker.createdAt || "")}
             </p>
           </div>
         );
@@ -251,25 +233,12 @@ export default function UsersTable() {
           </div>
         );
       }
-      case "status":
-        return (
-          <div className="w-full flex justify-center">
-            <Chip
-              className="capitalize"
-              color={statusColorMap[String(worker.status)]}
-              size="sm"
-              variant="flat"
-            >
-              {String(cellValue)}
-            </Chip>
-          </div>
-        );
       case "actions":
         return user?.role === "OWNER" ? (
           <div className="relative flex justify-center items-center gap-2">
             <Tooltip content="Edit worker" color="success">
               <button
-                onClick={() => handleEditWorkers(worker)}
+                onClick={() => handleEditWorkers(worker.id)}
                 className="text-lg text-success cursor-pointer active:opacity-50"
               >
                 <EditIcon />
@@ -424,7 +393,6 @@ export default function UsersTable() {
     filterValue,
     onSearchChange,
     visibleColumns,
-    onOpen,
     workers?.length,
     onRowsPerPageChange,
     onClear,
@@ -469,8 +437,6 @@ export default function UsersTable() {
 
   return (
     <>
-      {error && error.map((err) => toast.error(err))}
-
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
@@ -479,6 +445,7 @@ export default function UsersTable() {
         classNames={{
           wrapper: "max-h-[670px]",
         }}
+        className="z-0"
         color="danger"
         sortDescriptor={sortDescriptor}
         topContent={topContent}
@@ -518,12 +485,6 @@ export default function UsersTable() {
           )}
         </TableBody>
       </Table>
-      <ModalAddWorker
-        isOpen={isOpen}
-        onClose={onClose}
-        setWorkers={setWorkers}
-        {...selectedWorker}
-      />
     </>
   );
 }

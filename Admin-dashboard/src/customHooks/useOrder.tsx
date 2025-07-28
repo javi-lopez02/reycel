@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Order } from "../type";
-import { getOrderRequest } from "../services/order";
+import { getOrderRequest } from "../api/services/order";
 
 function useOrder() {
   const [orders, setOrders] = useState<Order[] | null>(null);

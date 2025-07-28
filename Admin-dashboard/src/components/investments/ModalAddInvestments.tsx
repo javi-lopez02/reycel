@@ -13,7 +13,7 @@ import {
 } from "@heroui/react";
 import { FC, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { getSedesRequest } from "../../services/sedes";
+import { getSedesRequest } from "../../api/services/sedes";
 
 interface Props {
   addInvestment: (

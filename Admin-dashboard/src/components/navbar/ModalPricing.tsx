@@ -16,7 +16,7 @@ import {
   addCurrency,
   editCurrency,
   getCurrency,
-} from "../../services/currencyExchange";
+} from "../../api/services/currencyExchange";
 import { toast } from "sonner";
 
 interface CurrencyExchange {

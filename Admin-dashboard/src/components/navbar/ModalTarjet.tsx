@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { PaymentMethod } from "../../type";
 import {
   getPaymentMethodRequest,
-} from "../../services/paymentMethod";
+} from "../../api/services/paymentMethod";
 import { toast } from "sonner";
 import ModalAddPayment from "../pagos/ModalAddPayment";
 import usePaymentMethod from "../../customHooks/usePaymentMethod";

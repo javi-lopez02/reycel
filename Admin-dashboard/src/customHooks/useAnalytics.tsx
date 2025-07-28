@@ -7,7 +7,7 @@ import {
   getLeastSellingProductRequest,
   getSedeWithMostSalesRequest,
   getSedeWithLeastSalesRequest,
-} from "../services/analytics";
+} from "../api/services/analytics";
 import { DateRangePickerValue } from "@tremor/react";
 import { AxiosError } from "axios";
 

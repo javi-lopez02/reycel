@@ -1,6 +1,6 @@
 import { AreaChart } from "@tremor/react";
 import { useCallback, useEffect, useState } from "react";
-import { getPaymentsRequest } from "../../services/analytics";
+import { getPaymentsRequest } from "../../api/services/analytics";
 import { PaymentAnalytics } from "../../type";
 import { toast } from "sonner";
 import { DateRangePickerValue } from "@tremor/react";

@@ -13,7 +13,7 @@ datasource db {
 // Base model con campos comunes para usuarios
 model BaseUser {
   id            String         @id @default(uuid())
-  email         String         @unique
+  email         String?        @unique
   username      String         @unique
   password      String
   image         String?

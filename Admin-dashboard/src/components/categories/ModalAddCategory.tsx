@@ -14,7 +14,7 @@ import { BiMoney, BiRename } from "react-icons/bi";
 import {
   createCategoryRequest,
   updateCategoryRequest,
-} from "../../services/category";
+} from "../../api/services/category";
 import { Category } from "../../type";
 import { toast } from "sonner";
 

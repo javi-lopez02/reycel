@@ -11,7 +11,7 @@ import {
 import { FC, useEffect, useState } from "react";
 import { BiLock, BiUser } from "react-icons/bi";
 import { toast } from "sonner";
-import { editUsersRequest } from "../services/user";
+import { editUsersRequest } from "../api/services/user";
 
 interface Props {
   id?: string;

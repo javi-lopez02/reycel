@@ -15,7 +15,7 @@ import {
   User,
 } from "@heroui/react";
 import React, { FC, useEffect, useMemo, useState } from "react";
-import { getOrderItemsRequest } from "../../services/order";
+import { getOrderItemsRequest } from "../../api/services/order";
 import { OrderItem } from "../../type";
 import { toast } from "sonner";
 

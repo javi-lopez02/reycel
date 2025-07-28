@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getProductRequest } from "../services/product";
+import { getProductRequest } from "../api/services/product";
 import { Category, Products } from "../type";
-import { categoryRequest } from "../services/category";
+import { categoryRequest } from "../api/services/category";
 
 function useProduct() {
   const [products, setProducts] = useState<Products[] | null>(null);

@@ -6,11 +6,14 @@ import {
   deleteWorker,
   editWorker,
   getWorkers,
+  getWorkersById,
   getWorkersSedes,
 } from "../Controllers/workers.controller";
 const router = Router();
 
 router.get("/worker", authAdmin, getWorkers);
+
+router.get("/worker/:id", authAdmin, getWorkersById);
 
 router.get("/workers", authAdmin, getWorkersSedes);
 

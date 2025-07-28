@@ -32,7 +32,7 @@ import { type User as Users } from "../../type";
 import { ChevronDownIcon, DeleteIcon, SearchIcon } from "../Icons";
 import useUser from "../../customHooks/useUser";
 import { toast } from "sonner";
-import { deleteUsersRequest } from "../../services/user";
+import { deleteUsersRequest } from "../../api/services/user";
 import { useAuth } from "../../context/AuthContext";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
