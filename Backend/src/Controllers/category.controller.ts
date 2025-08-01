@@ -28,6 +28,35 @@ export const getCategory = async (req: Request, res: Response) => {
   }
 };
 
+export const getCategoryById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const categories = await prisma.category.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        name: true,
+        createdAt: true,
+        profitsBySell: true,
+        _count: {
+          select: {
+            products: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      data: categories,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(["Internal server error"]);
+  }
+};
+
 export const createCategory = async (req: Request, res: Response) => {
   try {
     const { name, profitsBySell } = req.body;
@@ -35,7 +64,7 @@ export const createCategory = async (req: Request, res: Response) => {
     const category = await prisma.category.create({
       data: {
         name,
-        profitsBySell,
+        profitsBySell: Number(profitsBySell),
       },
       select: {
         id: true,
@@ -70,7 +99,7 @@ export const updateCategory = async (req: Request, res: Response) => {
       },
       data: {
         name,
-        profitsBySell,
+        profitsBySell: Number(profitsBySell),
       },
       select: {
         id: true,

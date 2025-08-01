@@ -24,7 +24,6 @@ import {
   SortDescriptor,
   Tooltip,
   // Spinner,
-  useDisclosure,
 } from "@heroui/react";
 import {
   ChevronDownIcon,
@@ -33,12 +32,11 @@ import {
   PlusIcon,
   SearchIcon,
 } from "../Icons";
-import ModalAddCategory from "./ModalAddCategory";
-import useCategory from "../../customHooks/useCategory";
 import { Category } from "../../type";
 import { toast } from "sonner";
-import { deleteCategoryRequest } from "../../api/services/category";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useCategory } from "../../api/queries/categgories";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -66,8 +64,9 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 export default function CategoryTable() {
-  const { category, error, setCategory } = useCategory();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { categoryQuery, deleteCategory } = useCategory();
+  const { data: category, error, isError, isLoading } = categoryQuery;
+  const navigate = useNavigate();
 
   const { user } = useAuth();
 
@@ -84,18 +83,12 @@ export default function CategoryTable() {
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
-  );
-
   const handleAddCategory = () => {
-    setSelectedCategory(null);
-    onOpen();
+    navigate(`new`);
   };
 
   const handleEditCategory = (category: Category) => {
-    setSelectedCategory(category);
-    onOpen();
+    navigate(`${category.id!}/edit`);
   };
 
   const headerColumns = useMemo(() => {
@@ -169,16 +162,9 @@ export default function CategoryTable() {
   };
 
   const handleDelete = (id: string) => {
-    deleteCategoryRequest(id)
+    deleteCategory(id)
       .then(() => {
         toast.success("Categoría eliminado con exito");
-        setCategory((prev) => {
-          return prev
-            ? prev.filter((category) => {
-                return category.id !== id;
-              })
-            : null;
-        });
       })
       .catch((err) => {
         console.log(err);
@@ -200,7 +186,7 @@ export default function CategoryTable() {
         return (
           <div className="flex ">
             <p className="text-bold text-small capitalize">
-              {category._count.products}
+              {category._count?.products}
             </p>
           </div>
         );
@@ -224,7 +210,7 @@ export default function CategoryTable() {
         return (
           <div className="flex ">
             <p className="text-bold text-small capitalize">
-              {formatearFecha(category.createdAt)}
+              {formatearFecha(category.createdAt!)}
             </p>
           </div>
         );
@@ -239,11 +225,11 @@ export default function CategoryTable() {
                 <EditIcon />
               </button>
             </Tooltip>
-            {category._count.products === 0 && (
+            {category._count?.products === 0 && (
               <Tooltip color="danger" content="Delete Category">
                 <button
                   onClick={() => {
-                    handleDelete(category.id);
+                    handleDelete(category.id!);
                   }}
                   className="text-lg text-danger cursor-pointer active:opacity-50"
                 >
@@ -388,7 +374,6 @@ export default function CategoryTable() {
     filterValue,
     onSearchChange,
     visibleColumns,
-    onOpen,
     category?.length,
     onRowsPerPageChange,
     onClear,
@@ -433,10 +418,11 @@ export default function CategoryTable() {
 
   return (
     <>
-      {error && error.map((err) => toast.error(err))}
+      {isError && toast.error(error.message)}
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
+        className="z-0"
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         classNames={{
@@ -459,7 +445,7 @@ export default function CategoryTable() {
           )}
         </TableHeader>
         <TableBody
-          isLoading={true}
+          isLoading={isLoading}
           // loadingContent={<Spinner color="white" />}
           emptyContent={"No categories found"}
           items={sortedItems}
@@ -473,12 +459,6 @@ export default function CategoryTable() {
           )}
         </TableBody>
       </Table>
-      <ModalAddCategory
-        isOpen={isOpen}
-        onClose={onClose}
-        setCategory={setCategory}
-        {...selectedCategory}
-      />
     </>
   );
 }

@@ -20,7 +20,6 @@ import {
   Tooltip,
   User,
   Spinner,
-  useDisclosure,
 } from "@heroui/react";
 import {
   ChevronDownIcon,
@@ -30,11 +29,12 @@ import {
   SearchIcon,
 } from "../Icons";
 import { Products as Product } from "../../type";
-import useProduct from "../../customHooks/useProduct";
 import { toast } from "sonner";
-import ModalAddProduct from "./ModalAddProduct";
-import { deleteProductRequest } from "../../api/services/product";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useCategory } from "../../api/queries/categgories";
+import { useProduct } from "../../api/queries/product";
+import { useDebouncedCallback } from "use-debounce";
 
 export function Capitalize(s: string) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
@@ -43,11 +43,11 @@ export function Capitalize(s: string) {
 const columns = [
   { name: "NOMBRE", uid: "name", sortable: true },
   { name: "SEDE", uid: "sede", sorteable: true },
-  { name: "CATEGORIA", uid: "category", sortable: true },
+  { name: "CATEGORIA", uid: "category" },
   { name: "PRECIO", uid: "price", sortable: true },
-  { name: "INVERSION", uid: "invertments" },
-  { name: "EN STOCK", uid: "quantity", sortable: true },
-  { name: "CANTIDAD INICIAL", uid: "inicial_quantity", sortable: true },
+  { name: "INVERSION", uid: "investments", sortable: true },
+  { name: "EN STOCK", uid: "inventoryCount", sortable: true },
+  { name: "CANTIDAD INICIAL", uid: "inicialInventory", sortable: true },
   { name: "RATING", uid: "ratingAverage", sortable: true },
   { name: "FECHA DE CREACIÓN", uid: "createdAt", sortable: true },
   { name: "ACCIONES", uid: "actions" },
@@ -56,50 +56,53 @@ const columns = [
 const INITIAL_VISIBLE_COLUMNS = [
   "name",
   "price",
-  "invertments",
+  "investments",
   "category",
-  "quantity",
-  "inicial_quantity",
+  "inventoryCount",
+  "inicialInventory",
   "actions",
   "createdAt",
   "ratingAverage",
 ];
 
 export default function ProductTable() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useAuth();
-
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const navigate = useNavigate();
 
   const handleAddProduct = () => {
-    setSelectedProduct(null);
-    onOpen();
+    navigate("new");
   };
 
   const handleEditProduct = (product: Product) => {
-    setSelectedProduct(product);
-    onOpen();
+    navigate(`${product.id}/edit`);
   };
 
+  const { deleteProduct, useProductsQuery } = useProduct();
+
+  const { categoryQuery } = useCategory();
   const {
-    category: categoryOptions,
-    products,
-    loading,
-    error,
-    setProducts,
-  } = useProduct();
-  const [filterValue, setFilterValue] = useState("");
+    data: categoryOptions,
+    isError: isErrorCategory,
+    error: errorCategory,
+  } = categoryQuery;
 
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
   const [categoryFilter, setcategoryFilter] = useState<Selection>("all");
+
+  const [filterValue, setFilterValue] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>();
-
   const [page, setPage] = useState(1);
 
-  const hasSearchFilter = Boolean(filterValue);
+  const { data, isLoading, isError, error } = useProductsQuery({
+    filterValue,
+    sortDescriptor,
+    rowsPerPage,
+    page,
+  });
+  const products = data?.products;
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -114,55 +117,18 @@ export default function ProductTable() {
       return [];
     }
     let filteredProducts = [...products];
-
-    if (hasSearchFilter) {
-      filteredProducts = filteredProducts.filter(
-        (product) =>
-          product.name.toLowerCase().includes(filterValue.toLowerCase()) ||
-          product.category.name
-            .toLowerCase()
-            .includes(filterValue.toLowerCase())
-      );
-    }
     if (
       categoryFilter !== "all" &&
       Array.from(categoryFilter).length !== categoryOptions?.length
     ) {
-      console.log(categoryFilter);
       filteredProducts = filteredProducts.filter((product) =>
-        Array.from(categoryFilter).includes(product.category.id)
+        Array.from(categoryFilter).includes(product.category?.id || "")
       );
     }
     return filteredProducts;
-  }, [
-    products,
-    hasSearchFilter,
-    categoryFilter,
-    categoryOptions?.length,
-    filterValue,
-  ]);
+  }, [products, categoryFilter, categoryOptions?.length, filterValue]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
-
-  const sortedItems = useMemo(() => {
-    const sorted = [...filteredItems].sort((a: Product, b: Product) => {
-      const first = a[sortDescriptor?.column as keyof Product] as number;
-      const second = b[sortDescriptor?.column as keyof Product] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor?.direction === "descending" ? -cmp : cmp;
-    });
-
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    return sorted.slice(start, end);
-  }, [
-    filteredItems,
-    page,
-    rowsPerPage,
-    sortDescriptor?.column,
-    sortDescriptor?.direction,
-  ]);
+  const pages = Math.ceil(data?.metaData.totalPages || 1);
 
   const formatearFecha = (isoString: string) => {
     const meses = [
@@ -190,16 +156,9 @@ export default function ProductTable() {
   };
 
   const handleDelete = (id: string) => {
-    deleteProductRequest(id)
+    deleteProduct(id)
       .then(() => {
         toast.success("Producto eliminado con exito");
-        setProducts((prev) => {
-          return prev
-            ? prev.filter((product) => {
-                return product.id !== id;
-              })
-            : null;
-        });
       })
       .catch((err) => {
         console.log(err);
@@ -246,7 +205,7 @@ export default function ProductTable() {
       case "sede":
         return (
           <User
-            avatarProps={{ radius: "lg", src: product.Sede.image }}
+            avatarProps={{ radius: "lg", src: product.Sede?.image }}
             description={
               <span
                 style={{
@@ -257,7 +216,7 @@ export default function ProductTable() {
                   whiteSpace: "nowrap",
                 }}
               >
-                {product.Sede.phone}
+                {product.Sede?.phone}
               </span>
             }
             name={
@@ -270,16 +229,16 @@ export default function ProductTable() {
                   whiteSpace: "nowrap",
                 }}
               >
-                {product.Sede.direction}
+                {product.Sede?.direction}
               </span>
             }
           />
         );
       case "category":
         return (
-          <div className="flex flex-col">
+          <div className="flex flex-col w-max">
             <p className="text-bold text-small capitalize">
-              {product.category.name}
+              {product.category?.name}
             </p>
           </div>
         );
@@ -293,25 +252,25 @@ export default function ProductTable() {
           return diferenciaMeses;
         };
 
-        const mesesDiferencia = calcularMesesDiferencia(product.createdAt);
+        const mesesDiferencia = calcularMesesDiferencia(product.createdAt!);
         const textoColor =
           mesesDiferencia > 3 ? "text-red-500" : "text-green-700"; // Cambia a rojo si tiene más de 3 meses
 
         return (
-          <div className="flex justify-center">
+          <div className="flex justify-center w-max">
             <p className={`text-bold text-small capitalize  ${textoColor}`}>
-              {formatearFecha(product.createdAt)}
+              {formatearFecha(product.createdAt!)}
             </p>
           </div>
         );
       }
       case "price":
         return (
-          <div className="flex flex-col ml-2">
+          <div className="flex flex-col ml-2 w-max">
             <p className="text-bold text-small capitalize">${product.price}</p>
           </div>
         );
-      case "invertments":
+      case "investments":
         return (
           <div className="flex flex-col ml-2">
             <p className="text-bold text-small capitalize">
@@ -321,14 +280,14 @@ export default function ProductTable() {
         );
       case "ratingAverage":
         return (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-2 w-max">
             <div className="flex items-center">
               <div className="flex text-yellow-500">
                 {[...Array(5)].map((_, index) => (
                   <svg
                     key={index}
                     className={`h-5 w-5 fill-current ${
-                      product.rating - 0.5 > index
+                      product.ratingAverage! - 0.5 > index
                         ? "text-yellow-500"
                         : "text-gray-300"
                     }`}
@@ -339,11 +298,11 @@ export default function ProductTable() {
                   </svg>
                 ))}
               </div>
-              <span className="text-gray-600 ml-2">{product.rating} de 5</span>
+              <span className="text-gray-600 ml-2">{product.ratingAverage} de 5</span>
             </div>
           </div>
         );
-      case "quantity":
+      case "inventoryCount":
         return (
           <Chip
             className="capitalize"
@@ -354,13 +313,13 @@ export default function ProductTable() {
             {String(product.inventoryCount)}
           </Chip>
         );
-      case "inicial_quantity":
+      case "inicialInventory":
         return (
           <Chip
             className="capitalize"
             size="sm"
             variant="dot"
-            color={product.inicialInventory <= 3 ? "danger" : "success"}
+            color={product.inicialInventory! <= 3 ? "danger" : "success"}
           >
             {String(product.inicialInventory)}
           </Chip>
@@ -379,7 +338,7 @@ export default function ProductTable() {
             <Tooltip color="danger" content="Delete product">
               <button
                 onClick={() => {
-                  handleDelete(product.id);
+                  handleDelete(product.id!);
                 }}
                 className="text-lg text-danger cursor-pointer active:opacity-50"
               >
@@ -436,14 +395,10 @@ export default function ProductTable() {
     []
   );
 
-  const onSearchChange = useCallback((value?: string) => {
-    if (value) {
-      setFilterValue(value);
-      setPage(1);
-    } else {
-      setFilterValue("");
-    }
-  }, []);
+  const debounced = useDebouncedCallback((value: string) => {
+    setFilterValue(value);
+    setPage(1);
+  }, 500);
 
   const onClear = useCallback(() => {
     setFilterValue("");
@@ -460,9 +415,8 @@ export default function ProductTable() {
             className="w-full sm:max-w-[44%]"
             placeholder="Búsqueda... "
             startContent={<SearchIcon />}
-            value={filterValue}
             onClear={() => onClear()}
-            onValueChange={onSearchChange}
+            onValueChange={debounced}
           />
           <div className="flex gap-3 w-full justify-center sm:w-auto ">
             <Dropdown>
@@ -483,12 +437,11 @@ export default function ProductTable() {
                 selectionMode="multiple"
                 onSelectionChange={setcategoryFilter}
               >
-                {categoryOptions &&
-                  categoryOptions.map((category) => (
-                    <DropdownItem key={category.id} className="capitalize">
-                      {Capitalize(category.name)}
-                    </DropdownItem>
-                  ))}
+                {(categoryOptions || []).map((category) => (
+                  <DropdownItem key={category.id!} className="capitalize">
+                    {Capitalize(category.name)}
+                  </DropdownItem>
+                ))}
               </DropdownMenu>
             </Dropdown>
             <Dropdown>
@@ -528,7 +481,7 @@ export default function ProductTable() {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {products?.length} productos
+            Total {data?.metaData.totalProduct} productos
           </span>
           <label className="flex items-center text-default-400 text-small">
             Filas por páginas:
@@ -546,8 +499,8 @@ export default function ProductTable() {
     );
   }, [
     filterValue,
-    onSearchChange,
     categoryFilter,
+    debounced,
     categoryOptions,
     visibleColumns,
     products?.length,
@@ -594,14 +547,16 @@ export default function ProductTable() {
 
   return (
     <>
-      {error && error.map((err) => toast.error(err))}
+      {isError && toast.error(error.message)}
+      {isErrorCategory && toast.error(errorCategory.message)}
+
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         classNames={{
-          wrapper: "max-h-[600px]",
+          wrapper: "h-[700px]",
         }}
         sortDescriptor={sortDescriptor}
         topContent={topContent}
@@ -626,10 +581,10 @@ export default function ProductTable() {
           )}
         </TableHeader>
         <TableBody
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={<Spinner color="success" />}
           emptyContent={"No products found"}
-          items={sortedItems}
+          items={filteredItems}
         >
           {(item) => (
             <TableRow key={item.id}>
@@ -640,12 +595,6 @@ export default function ProductTable() {
           )}
         </TableBody>
       </Table>
-      <ModalAddProduct
-        isOpen={isOpen}
-        onClose={onClose}
-        setProducts={setProducts}
-        {...selectedProduct}
-      />
     </>
   );
 }

@@ -30,6 +30,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
             notification: true,
             sede: {
               select: {
+                id: true,
                 direction: true
               }
             }
@@ -64,6 +65,7 @@ export const loginAdmin = async (req: Request, res: Response) => {
       userId: baseUser.administrator.id,
       image: baseUser.image,
       role: baseUser.administrator.role,
+      sedeId: baseUser.administrator.sede?.id,
       notifications: baseUser.administrator.notification.reverse(),
       sede: baseUser.administrator.sede?.direction
     });
@@ -94,6 +96,7 @@ export const verifyTokenAdmin = async (req: Request, res: Response) => {
         role: true,
         sede: {
           select: {
+            id: true,
             direction: true
           }
         }
@@ -109,6 +112,7 @@ export const verifyTokenAdmin = async (req: Request, res: Response) => {
       userId: administrator.id,
       image: administrator.baseUser.image,
       role: administrator.role,
+      sedeId: administrator.sede?.id,
       notifications: administrator.notification.reverse(),
       sede: administrator.sede?.direction
     });

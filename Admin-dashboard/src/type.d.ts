@@ -1,3 +1,5 @@
+import { SortDescriptor } from "@heroui/react";
+
 export interface UserLogin {
   userName: string;
   password: string;
@@ -25,6 +27,7 @@ export interface User {
   status: boolean;
   createdAt: string;
   sede: string;
+  sedeId: string;
   role: "OWNER" | "MODERATOR";
   orderCount: number;
 }
@@ -96,36 +99,81 @@ interface Count {
 }
 
 export interface Products {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   price: number;
-  rating: number;
-  inicialInventory: number;
-  imagen: string;
-  createdAt: string;
+  isPending: boolean;
+  rating?: number;
+  ratingAverage?: number;
+  inicialInventory?: number;
+  imagen?: string;
+  createdAt?: string;
   inventoryCount: number;
   investments: number;
-  battery: number;
-  ram: number;
-  storage: number;
-  mpxCameraFront: number;
-  mpxCameraBack: number;
-  category: Category;
-  Sede: {
+  battery?: number;
+  ram?: number;
+  storage?: number;
+  mpxCameraFront?: number;
+  mpxCameraBack?: number;
+  category?: Category;
+  sedeId?: string;
+  categoryId?: string;
+  Sede?: {
     direction: string;
     image: string;
     phone: string;
   };
 }
+
+export interface PropsGetTable {
+  filterValue: string;
+  sortDescriptor: SortDescriptor | undefined;
+  rowsPerPage: number;
+  page: number;
+}
+
+export interface MetaData {
+  totalProduct: number;
+  page: number;
+  totalPages: number;
+  pageSize: number;
+}
+
+export interface CreateProductProps {
+  id?: string;
+  name: string;
+  description: string;
+  price: number;
+  rating?: number;
+  ratingAverage?: number;
+  isPending?: boolean;
+  imagenFile?: File;
+  investments: number;
+  inventoryCount: number;
+  categoryId: string;
+  ram?: number;
+  storage?: number;
+  battery?: number;
+  mpxCameraFront?: number;
+  mpxCameraBack?: number;
+  sedeId: string;
+}
+
 export interface Category {
-  id: string;
+  id?: string;
   name: string;
   profitsBySell: number;
-  createdAt: string;
-  _count: {
+  createdAt?: string;
+  _count?: {
     products: number;
   };
+}
+
+export interface CreateCategoryProps {
+  id?: string;
+  name: string;
+  profitsBySell: number;
 }
 
 type Client = {

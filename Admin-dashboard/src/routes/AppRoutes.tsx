@@ -10,6 +10,10 @@ import WorkersForm from "../components/workers/WorkersForm";
 import Sedes from "../pages/Sedes";
 import Products from "../pages/Products";
 import ProductsForm from "../components/products/ProductsForm";
+import Categories from "../pages/Categories";
+import CategoriesForm from "../components/categories/CategoriesForm";
+import Order from "../pages/Order";
+import NewOrderPage from "../components/neworder/NewOrderPage";
 
 // Protected route component
 const ProtectedRoute: React.FC<{
@@ -68,23 +72,25 @@ const AppRoutes: React.FC = () => {
           <Route path="new" element={<ProductsForm />} />
           <Route path=":id/edit" element={<ProductsForm />} />
         </Route>
-{/* 
+ 
         <Route path="categories">
           <Route index element={<Categories />} />
           <Route path="new" element={<CategoriesForm />} />
           <Route path=":id/edit" element={<CategoriesForm />} />
         </Route>
 
+        <Route path="order">
+          <Route index element={<Order />} />
+          <Route path="new" element={<NewOrderPage />} />
+        </Route>
+{/*
         <Route path="payments">
           <Route index element={<Payments />} />
           <Route path="new" element={<PaymentsForm />} />
           <Route path=":id/edit" element={<PaymentsForm />} />
         </Route>
 
-        <Route path="order">
-          <Route index element={<Order />} />
-          <Route path="new" element={<NewOrderPage />} />
-        </Route>*/}
+        */}
 
         <Route path="sedes">
           <Route index element={<Sedes />} />

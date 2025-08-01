@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { SortItem } from "../types";
+import { PrismaSortParams, SortItem, SortParams } from "../types";
 import { SERVER_URL } from "../conf";
 import path from "path";
 import fs from "fs";
@@ -241,7 +241,69 @@ export const searchProduct = async (req: Request, res: Response) => {
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
+    const filterValue = req.query.filterValue as string;
+    const sedeId = req.query.sedeId as string;
+    const sortDescriptor = req.query.sortDescriptor as string;
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.rowsPerPage as string) || 10;
+
+    function convertToPrismaSort(
+      sortDescriptor?: string
+    ): PrismaSortParams | undefined {
+      if (!sortDescriptor || sortDescriptor === "undefined") return undefined;
+
+      const frontendSort = JSON.parse(sortDescriptor) as SortParams;
+
+      return {
+        column: frontendSort.column,
+        direction: frontendSort.direction === "ascending" ? "asc" : "desc",
+      };
+    }
+
+    const skip = (page - 1) * pageSize;
+    const take = pageSize;
+
+    const prismaSortParam = convertToPrismaSort(sortDescriptor);
+
+    const allowedColumns = ["name", "price", "createdAt", "updatedAt"];
+    const defaultSort = { column: "name", direction: "asc" as const };
+
+    const column =
+      prismaSortParam?.column && allowedColumns.includes(prismaSortParam.column)
+        ? prismaSortParam.column
+        : defaultSort.column;
+
+    const direction = prismaSortParam?.direction || defaultSort.direction;
+
     const products = await prisma.product.findMany({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: filterValue,
+              mode: "insensitive",
+            },
+          },
+          {
+            description: {
+              contains: filterValue,
+              mode: "insensitive",
+            },
+          },
+          {
+            category: {
+              name: {
+                contains: filterValue,
+                mode: "insensitive",
+              },
+            },
+          },
+        ],
+        sedeId,
+      },
+      orderBy: {
+        [column]: direction,
+      },
       include: {
         comment: true,
         Rating: true,
@@ -259,6 +321,35 @@ export const getProducts = async (req: Request, res: Response) => {
           },
         },
       },
+      skip: skip,
+      take: take,
+    });
+
+    const totalProduct = await prisma.product.count({
+      where: {
+        OR: [
+          {
+            name: {
+              contains: filterValue,
+              mode: "insensitive",
+            },
+          },
+          {
+            description: {
+              contains: filterValue,
+              mode: "insensitive",
+            },
+          },
+          {
+            category: {
+              name: {
+                contains: filterValue,
+                mode: "insensitive",
+              },
+            },
+          },
+        ],
+      },
     });
 
     const productWithRatings = products.map((product) => ({
@@ -272,8 +363,16 @@ export const getProducts = async (req: Request, res: Response) => {
           : 0,
     }));
 
+    const totalPages = Math.ceil(totalProduct / pageSize);
+
     res.status(200).json({
       data: productWithRatings,
+      meta: {
+        totalProduct,
+        page,
+        totalPages,
+        pageSize,
+      },
     });
   } catch (error) {
     console.log("Error:", error);
@@ -330,6 +429,7 @@ export const createProduct = async (req: Request, res: Response) => {
           price: Number(price),
           imagen,
           originImage,
+          ratingAverage: Number(rating),
           inventoryCount: Number(inventoryCount),
           inicialInventory: Number(inventoryCount),
           ram: Number(ram),
@@ -375,6 +475,7 @@ export const createProduct = async (req: Request, res: Response) => {
           description,
           categoryId,
           price: Number(price),
+          ratingAverage: Number(rating),
           imagen,
           originImage,
           inventoryCount: Number(inventoryCount),
@@ -537,6 +638,7 @@ export const updateProduct = async (req: Request, res: Response) => {
           categoryId,
           price: Number(price),
           imagen,
+          ratingAverage: Number(rating),
           originImage,
           inventoryCount: Number(inventoryCount),
           ram: Number(ram),
@@ -604,6 +706,7 @@ export const updateProduct = async (req: Request, res: Response) => {
           categoryId,
           price: Number(price),
           imagen,
+          ratingAverage: Number(rating),
           originImage,
           inicialInventory: Number(inventoryCount),
           sedeId,

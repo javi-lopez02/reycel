@@ -1,5 +1,8 @@
 import { Router } from "express";
-import { authMiddleware, authModeratorMiddleware } from "../Middlewares/middlewareAdmin";
+import {
+  authMiddleware,
+  authModeratorMiddleware,
+} from "../Middlewares/middlewareAdmin";
 import {
   createProduct,
   deleteProduct,
@@ -12,6 +15,7 @@ import {
   createCategory,
   deleteCategory,
   getCategory,
+  getCategoryById,
   updateCategory,
 } from "../Controllers/category.controller";
 import upload from "../Middlewares/upload.midleware";
@@ -58,11 +62,16 @@ router.get("/products", getProductID);
 
 router.get("/product", authModeratorMiddleware, getProducts);
 
-router.post("/product", upload.single("imagen"), authMiddleware, createProduct);
+router.post(
+  "/product",
+  upload.single("imagenFile"),
+  authMiddleware,
+  createProduct
+);
 
 router.put(
   "/product/:id",
-  upload.single("imagen"),
+  upload.single("imagenFile"),
   authMiddleware,
   updateProduct
 );
@@ -70,6 +79,8 @@ router.put(
 router.delete("/product/:id", authMiddleware, deleteProduct);
 
 router.get("/products/category", getCategory);
+
+router.get("/products/category/:id", authMiddleware, getCategoryById);
 
 router.post("/products/category", authMiddleware, createCategory);
 

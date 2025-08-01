@@ -1,31 +1,33 @@
 import { Button, Input, Spinner, useDisclosure } from "@heroui/react";
-import { useState, useMemo } from "react";
-import useProduct from "../../customHooks/useProduct";
+import { useState, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import NewOrderCard from "./NewOrderCard";
+import InfiniteScroll from "react-infinite-scroll-component";
 import DrawerOrderView from "./DrawerOrderView";
 import { useNewOrderStore } from "../../store/useProductStore";
 import { useAuth } from "../../context/AuthContext";
+import { useProduct } from "../../api/queries/product";
+import { useDebouncedCallback } from "use-debounce";
 
 export default function NewOrderPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { products, loading, error } = useProduct();
+  const { productInfiniteQuery } = useProduct();
+
   const { setOrder } = useNewOrderStore();
   const { user } = useAuth();
-
+  const ref = useRef();
   const [searchFilter, setSearchFilter] = useState("");
 
-  const filteredProducts = useMemo(() => {
-    if (!products) return [];
+  console.log(user?.sedeId);
 
-    if (!searchFilter.trim()) {
-      return products;
-    }
+  const { data, fetchNextPage, hasNextPage, isLoading, isError, error } =
+    productInfiniteQuery({ filterValue: searchFilter, sedeId: user?.sedeId });
 
-    return products.filter((product) =>
-      product.name.toLowerCase().includes(searchFilter.toLowerCase())
-    );
-  }, [products, searchFilter]);
+  const products = data?.pages.flatMap((page) => page.products) ?? [];
+
+  const debounced = useDebouncedCallback((value: string) => {
+    setSearchFilter(value);
+  }, 500);
 
   return (
     <>
@@ -36,8 +38,7 @@ export default function NewOrderPage() {
               <Input
                 type="text"
                 placeholder="Buscar productos por nombre..."
-                value={searchFilter}
-                onChange={(e) => setSearchFilter(e.target.value)}
+                onValueChange={debounced}
                 variant="bordered"
                 color="primary"
                 className="w-2/3"
@@ -69,7 +70,7 @@ export default function NewOrderPage() {
 
         <div className="flex-1 overflow-y-auto scrollbar-hide">
           <div className="px-10 py-6">
-            {filteredProducts?.length === 0 && !loading && (
+            {products?.length === 0 && !isLoading && !isError && (
               <div className="w-full flex justify-center pt-4">
                 <span className="text-gray-700 font-bold text-lg">
                   {searchFilter.trim()
@@ -79,39 +80,52 @@ export default function NewOrderPage() {
               </div>
             )}
 
-            {loading && (
+            {isLoading && (
               <div className="w-full flex justify-center py-4">
                 <Spinner />
               </div>
             )}
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
-              {filteredProducts?.map((product) => {
-                if(user?.role === "OWNER") {
-                  return (
-                    <NewOrderCard
-                      product={product}
-                      setOrder={setOrder}
-                      key={product.id}
-                    />
-                  );
+            <div>
+              <InfiniteScroll
+                dataLength={products.length}
+                next={fetchNextPage}
+                loader={
+                  <div className="w-full flex justify-center py-4">
+                    <Spinner />
+                  </div>
                 }
-                else if (product.Sede.direction === user?.sede) {
-                  return (
-                    <NewOrderCard
-                      product={product}
-                      setOrder={setOrder}
-                      key={product.id}
-                    />
-                  );
+                hasMore={hasNextPage}
+                scrollableTarget={ref.current}
+                endMessage={
+                  <div className="w-full flex justify-center py-5">
+                    {products.length !== 0 && (
+                      <span className="text-lg text-gray-600 font-bold">
+                        No hay más Productos para cargar
+                      </span>
+                    )}
+                  </div>
                 }
-              })}
+              >
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6">
+                  {products.map((product) => {
+                    return (
+                      <NewOrderCard
+                        product={product}
+                        setOrder={setOrder}
+                        key={product.id}
+                      />
+                    );
+                  })}
+                </div>
+              </InfiniteScroll>
             </div>
           </div>
+          <div ref={ref.current}></div>
         </div>
 
         <DrawerOrderView isOpen={isOpen} onClose={onClose} />
-        {error && toast.error("Error al cargar los productos")}
+        {isError && toast.error(error.message)}
       </div>
     </>
   );

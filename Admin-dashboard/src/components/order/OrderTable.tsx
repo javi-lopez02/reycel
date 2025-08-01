@@ -32,10 +32,11 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { ChevronDownIcon, EyeIcon, PlusIcon, SearchIcon } from "../Icons";
-import useOrder from "../../customHooks/useOrder";
 import { toast } from "sonner";
 import { Order } from "../../type";
 import { useNavigate } from "react-router-dom";
+import { useOrderQuery } from "../../api/queries/order";
+import { useDebouncedCallback } from "use-debounce";
 const ModalProductsView = lazy(() => import("./ModalProductsView"));
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
@@ -47,11 +48,11 @@ export function Capitalize(s: string) {
 }
 
 const columns = [
-  { name: "USUARIO", uid: "username", sortable: true },
+  { name: "USUARIO", uid: "username" },
   { name: "PRECIO TOTAL", uid: "totalAmount", sortable: true },
-  { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
+  { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity" },
   { name: "ESTADO", uid: "pending", sortable: true },
-  { name: "FECHA", uid: "createdAt" },
+  { name: "FECHA", uid: "createdAt", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -75,7 +76,6 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 export default function OrderTable() {
-  const { error, loading, orders } = useOrder();
   const navigate = useNavigate();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -89,14 +89,19 @@ export default function OrderTable() {
   );
   const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: "name",
-    direction: "ascending",
-  });
-
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>();
   const [page, setPage] = useState(1);
 
-  const hasSearchFilter = Boolean(filterValue);
+  const { orderQuery } = useOrderQuery();
+
+  const { data, isLoading, isError, error } = orderQuery({
+    filterValue,
+    page,
+    rowsPerPage,
+    sortDescriptor,
+  });
+
+  const orders = data?.order;
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -113,21 +118,6 @@ export default function OrderTable() {
 
     let filteredOrders = [...orders];
 
-    if (hasSearchFilter) {
-      filteredOrders = filteredOrders.filter(
-        (order) =>
-          order.client?.baseUser?.username
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          order.admin?.baseUser?.username
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          order.totalAmount
-            .toString()
-            .toLowerCase()
-            .includes(filterValue.toLowerCase())
-      );
-    }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
@@ -138,30 +128,9 @@ export default function OrderTable() {
     }
 
     return filteredOrders;
-  }, [orders, hasSearchFilter, statusFilter, filterValue]);
+  }, [orders, statusFilter, filterValue]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
-
-  const sortedItems = useMemo(() => {
-    const sorted = [...filteredItems].sort((a: Order, b: Order) => {
-      const first = a[sortDescriptor.column as keyof Order] as number;
-      const second = b[sortDescriptor.column as keyof Order] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return sorted.slice(start, end);
-  }, [
-    filteredItems,
-    page,
-    rowsPerPage,
-    sortDescriptor.column,
-    sortDescriptor.direction,
-  ]);
+  const pages = data?.metaData.totalPages;
 
   const formatearFecha = (isoString: string) => {
     const meses = [
@@ -263,7 +232,7 @@ export default function OrderTable() {
   );
 
   const onNextPage = useCallback(() => {
-    if (page < pages) {
+    if (page < pages!) {
       setPage(page + 1);
     }
   }, [page, pages]);
@@ -282,14 +251,10 @@ export default function OrderTable() {
     []
   );
 
-  const onSearchChange = useCallback((value?: string) => {
-    if (value) {
-      setFilterValue(value);
-      setPage(1);
-    } else {
-      setFilterValue("");
-    }
-  }, []);
+  const debounced = useDebouncedCallback((value: string) => {
+    setFilterValue(value);
+    setPage(1);
+  }, 500);
 
   const onClear = useCallback(() => {
     setFilterValue("");
@@ -298,7 +263,7 @@ export default function OrderTable() {
 
   const topContent = useMemo(() => {
     const handleNavigate = () => {
-      navigate("/neworder");
+      navigate("new");
     };
     return (
       <div className="flex flex-col gap-4">
@@ -309,13 +274,12 @@ export default function OrderTable() {
             className="w-full sm:max-w-[44%]"
             placeholder="Búsqueda..."
             startContent={<SearchIcon />}
-            value={filterValue}
             onClear={() => onClear()}
-            onValueChange={onSearchChange}
+            onValueChange={debounced}
           />
           <div className="flex gap-3 w-full justify-center sm:w-auto ">
             <Dropdown>
-              <DropdownTrigger >
+              <DropdownTrigger>
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
@@ -392,7 +356,7 @@ export default function OrderTable() {
     );
   }, [
     filterValue,
-    onSearchChange,
+    debounced,
     statusFilter,
     visibleColumns,
     orders?.length,
@@ -410,7 +374,7 @@ export default function OrderTable() {
           showShadow
           color="warning"
           page={page}
-          total={pages}
+          total={pages!}
           onChange={setPage}
         />
         <div className=" justify-end gap-2">
@@ -440,7 +404,7 @@ export default function OrderTable() {
 
   return (
     <>
-      {error && error.map((err) => toast.error(err))}
+      {isError && toast.error(error.message)}
       {isOpen && (
         <Suspense
           fallback={
@@ -458,7 +422,7 @@ export default function OrderTable() {
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         classNames={{
-          wrapper: "max-h-[600px]",
+          wrapper: "h-[600px]",
         }}
         sortDescriptor={sortDescriptor}
         topContent={topContent}
@@ -483,10 +447,10 @@ export default function OrderTable() {
           )}
         </TableHeader>
         <TableBody
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={<Spinner color="warning" />}
           emptyContent={"No se encontraron ordenes"}
-          items={sortedItems}
+          items={filteredItems}
         >
           {(item) => (
             <TableRow key={item.id}>
