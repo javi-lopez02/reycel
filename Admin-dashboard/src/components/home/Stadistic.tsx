@@ -27,6 +27,7 @@ export default function Stadistic() {
     sedeWithLeastSales,
   } = useAnalytics({ value: dateRange });
 
+
   return (
     <>
       {error && toast.error(error)}

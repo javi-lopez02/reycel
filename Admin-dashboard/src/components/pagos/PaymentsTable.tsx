@@ -31,10 +31,11 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { ChevronDownIcon, EyeIcon, SearchIcon } from "../Icons";
-import usePayments from "../../customHooks/usePayments";
 import { Payment } from "../../type";
 import { toast } from "sonner";
 import ModalPayDetails from "./ModalPayDetails";
+import { usePaymentQuery } from "../../api/queries/payment";
+import { useDebouncedCallback } from "use-debounce";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -45,13 +46,13 @@ export function Capitalize(s: string) {
 }
 
 const columns = [
-  { name: "USUARIO", uid: "user", sortable: true },
-  { name: "PRECIO TOTAL", uid: "price", sortable: true },
+  { name: "USUARIO", uid: "user" },
+  { name: "PRECIO TOTAL", uid: "amount", sortable: true },
   { name: "FAST DELIVERY", uid: "fastDelivery", sortable: true },
-  { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
+  { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity" },
   { name: "METODO DE PAGO", uid: "paymentMethod" },
-  { name: "STATUS", uid: "status", sortable: true },
-  { name: "FECHA", uid: "date" },
+  { name: "STATUS", uid: "paymentStatus", sortable: true },
+  { name: "FECHA", uid: "date", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -70,17 +71,17 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 const INITIAL_VISIBLE_COLUMNS = [
   "user",
   "fastDelivery",
-  "price",
+  "amount",
   "productquantity",
   "paymentMethod",
   "date",
   "idorder",
-  "status",
+  "paymentStatus",
   "actions",
 ];
 
 export default function PaymentsTable() {
-  const { error, loading, payments } = usePayments();
+  const { paymentQuery } = usePaymentQuery();
 
   const [orderId, setOrderId] = useState<string>("");
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -93,8 +94,16 @@ export default function PaymentsTable() {
   const [statusFilter, setStatusFilter] = useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>();
-
   const [page, setPage] = useState(1);
+
+  const { data, isLoading, isError, error } = paymentQuery({
+    filterValue,
+    page,
+    rowsPerPage,
+    sortDescriptor,
+  });
+
+  const payments = data?.payment;
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -111,21 +120,6 @@ export default function PaymentsTable() {
       return [];
     }
     let filteredPayments = [...payments];
-
-    if (hasSearchFilter) {
-      filteredPayments = filteredPayments.filter(
-        (payment) =>
-          payment.client.baseUser.username
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          payment.PaymentMethod.paymentOptions
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
-          payment.paymentStatus
-            .toLowerCase()
-            .includes(filterValue.toLowerCase())
-      );
-    }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
@@ -138,28 +132,8 @@ export default function PaymentsTable() {
     return filteredPayments;
   }, [payments, hasSearchFilter, statusFilter, filterValue]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const sortedItems = useMemo(() => {
-    const sorted = [...filteredItems].sort((a: Payment, b: Payment) => {
-      const first = a[sortDescriptor?.column as keyof Payment] as number;
-      const second = b[sortDescriptor?.column as keyof Payment] as number;
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-
-      return sortDescriptor?.direction === "descending" ? -cmp : cmp;
-    });
-
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    return sorted.slice(start, end);
-  }, [
-    filteredItems,
-    page,
-    rowsPerPage,
-    sortDescriptor?.column,
-    sortDescriptor?.direction,
-  ]);
+  const pages = data?.metaData.totalPages;
 
   const formatearFecha = (isoString: string) => {
     const meses = [
@@ -194,7 +168,10 @@ export default function PaymentsTable() {
         case "user":
           return payments.client ? (
             <User
-              avatarProps={{ radius: "lg", src: payments.client.baseUser.image }}
+              avatarProps={{
+                radius: "lg",
+                src: payments.client.baseUser.image,
+              }}
               name={payments.client?.baseUser.username}
             />
           ) : (
@@ -223,7 +200,7 @@ export default function PaymentsTable() {
           return (
             <div className="flex flex-col">
               <p className="text-bold text-small capitalize">
-                {payments.PaymentMethod.paymentOptions}
+                {payments.PaymentMethod.label}
               </p>
             </div>
           );
@@ -269,7 +246,7 @@ export default function PaymentsTable() {
   );
 
   const onNextPage = useCallback(() => {
-    if (page < pages) {
+    if (page < pages!) {
       setPage(page + 1);
     }
   }, [page, pages]);
@@ -288,14 +265,10 @@ export default function PaymentsTable() {
     []
   );
 
-  const onSearchChange = useCallback((value?: string) => {
-    if (value) {
-      setFilterValue(value);
-      setPage(1);
-    } else {
-      setFilterValue("");
-    }
-  }, []);
+  const debounced = useDebouncedCallback((value: string) => {
+    setFilterValue(value);
+    setPage(1);
+  }, 500);
 
   const onClear = useCallback(() => {
     setFilterValue("");
@@ -312,9 +285,8 @@ export default function PaymentsTable() {
             color="success"
             placeholder="Búsqueda..."
             startContent={<SearchIcon />}
-            value={filterValue}
             onClear={() => onClear()}
-            onValueChange={onSearchChange}
+            onValueChange={debounced}
           />
           <div className="flex gap-3 w-full justify-center sm:w-auto ">
             <Dropdown>
@@ -342,7 +314,7 @@ export default function PaymentsTable() {
               </DropdownMenu>
             </Dropdown>
             <Dropdown>
-              <DropdownTrigger >
+              <DropdownTrigger>
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
@@ -391,7 +363,7 @@ export default function PaymentsTable() {
     );
   }, [
     filterValue,
-    onSearchChange,
+    debounced,
     statusFilter,
     visibleColumns,
     payments?.length,
@@ -408,7 +380,7 @@ export default function PaymentsTable() {
           showShadow
           color="success"
           page={page}
-          total={pages}
+          total={pages!}
           onChange={setPage}
         />
         <div className=" justify-end gap-2">
@@ -439,7 +411,7 @@ export default function PaymentsTable() {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-4xl font-medium text-left">Tabla de Pagos</h1>
-      {error && error.map((err) => toast.error(err))}
+      {isError && toast.error(error.message)}
       {isOpen && (
         <Suspense
           fallback={
@@ -455,9 +427,10 @@ export default function PaymentsTable() {
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
         bottomContent={bottomContent}
+        className="z-0"
         bottomContentPlacement="outside"
         classNames={{
-          wrapper: "max-h-[600px]",
+          wrapper: "h-[500px]",
         }}
         sortDescriptor={sortDescriptor}
         topContent={topContent}
@@ -476,10 +449,10 @@ export default function PaymentsTable() {
           )}
         </TableHeader>
         <TableBody
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={<Spinner color="success" />}
           emptyContent={"No hay pagos aún"}
-          items={sortedItems}
+          items={filteredItems}
         >
           {(item) => (
             <TableRow key={item.id}>

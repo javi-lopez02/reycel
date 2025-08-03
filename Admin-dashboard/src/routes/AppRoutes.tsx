@@ -14,6 +14,8 @@ import Categories from "../pages/Categories";
 import CategoriesForm from "../components/categories/CategoriesForm";
 import Order from "../pages/Order";
 import NewOrderPage from "../components/neworder/NewOrderPage";
+import Payments from "../pages/Payments";
+import PaymentsMethodForm from "../components/pagos/PaymentsMethodForm";
 
 // Protected route component
 const ProtectedRoute: React.FC<{
@@ -53,7 +55,6 @@ const AppRoutes: React.FC = () => {
         path="/"
         element={<ProtectedRoute element={<NavBar />} adminOnly={true} />}
       >
-        <Route index element={<Navigate to="/" />} />
         <Route path="/" element={<Home />} />
 
       
@@ -83,19 +84,19 @@ const AppRoutes: React.FC = () => {
           <Route index element={<Order />} />
           <Route path="new" element={<NewOrderPage />} />
         </Route>
-{/*
+
         <Route path="payments">
           <Route index element={<Payments />} />
-          <Route path="new" element={<PaymentsForm />} />
-          <Route path=":id/edit" element={<PaymentsForm />} />
+          <Route path="new" element={<PaymentsMethodForm />} />
+          <Route path=":id/edit" element={<PaymentsMethodForm />} />
         </Route>
 
-        */}
+        
 
         <Route path="sedes">
           <Route index element={<Sedes />} />
-          {/* <Route path="new" element={<SedesForm />} />
-          <Route path=":id/edit" element={<SedesForm />} /> */}
+          <Route path="new" element={<SedesForm />} />
+          <Route path=":id/edit" element={<SedesForm />} />
         </Route>
 
       {/*   <Route path="trash">

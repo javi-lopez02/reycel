@@ -201,19 +201,12 @@ export interface PaymentMethod {
   cardImage: string;
   cardNumber?: string;
   phoneNumber?: string;
-  createdAt: string;
-  _count: {
+  createdAt?: string;
+  _count?: {
     payment: number;
   };
-  paymentOptions: PaymentOptions;
+  label: string;
 }
-
-export type PaymentOptions =
-  | "TRANSFER_USD"
-  | "TRANSFER_CUP"
-  | "CASH"
-  | "QVAPAY"
-  | "ZELLE";
 
 export interface Payment {
   id: string;
@@ -312,7 +305,7 @@ export interface AddPaymentMethodProps {
   image: string;
   numberCard: string;
   phoneNumber?: string;
-  selected: PaymentOptions;
+  selected: string;
 }
 
 export interface AnalyticsTable {

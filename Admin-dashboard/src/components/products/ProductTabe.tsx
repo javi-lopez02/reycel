@@ -555,6 +555,7 @@ export default function ProductTable() {
         aria-label="Example table with custom cells, pagination and sorting"
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
+        className="z-0"
         classNames={{
           wrapper: "h-[700px]",
         }}

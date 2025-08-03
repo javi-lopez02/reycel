@@ -1,25 +1,37 @@
-import { PaymentOptions } from "../../type";
+import { PaymentMethod } from "../../type";
 import axios from "./axios";
 
-interface PaymentMethod {
-  cardImage: string;
-  cardNumber?: string;
-  phoneNumber?: string;
-  paymentOptions: PaymentOptions;
-}
-
-export const getPaymentMethodRequest = () => {
-  return axios.get(`/paymentMethod`);
+export const getPaymentMethodRequest = async (): Promise<PaymentMethod[]> => {
+  const res = await axios.get(`/paymentMethod`);
+  const paymentMethod = res.data.data;
+  return paymentMethod;
 };
 
-export const createPaymentMethodRequest = (data: PaymentMethod) => {
-  return axios.post(`/paymentMethod`, data);
+export const getPaymentMethodByIdRequest = async (
+  id: string
+): Promise<PaymentMethod> => {
+  const res = await axios.get(`/paymentMethod/${id}`);
+  const paymentMethod = res.data.data;
+  return paymentMethod;
 };
 
-export const updatePaymentMethodRequest = (id: string, data: PaymentMethod) => {
-  return axios.put(`/paymentMethod/${id}`, data);
+export const createPaymentMethodRequest = async (
+  data: Omit<PaymentMethod, "id">
+): Promise<PaymentMethod> => {
+  const res = await axios.post(`/paymentMethod`, data);
+  const paymentMethod = res.data.data;
+  return paymentMethod;
 };
 
-export const deletePaymentMethodRequest = (id: string) => {
+export const updatePaymentMethodRequest = async ({
+  id,
+  ...data
+}: PaymentMethod): Promise<PaymentMethod> => {
+  const res = await axios.put(`/paymentMethod/${id}`, data);
+  const paymentMethod = res.data.data;
+  return paymentMethod;
+};
+
+export const deletePaymentMethodRequest = async (id: string): Promise<void> => {
   return axios.delete(`/paymentMethod/${id}`);
 };

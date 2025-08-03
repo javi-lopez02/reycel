@@ -24,18 +24,44 @@ export const getPaymentMethod = async (req: Request, res: Response) => {
   }
 };
 
+export const getPaymentMethodById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const paymentMethod = await prisma.paymentMethod.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        _count: {
+          select: {
+            payment: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      data: paymentMethod,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 export const createPaymentMethod = async (req: Request, res: Response) => {
   try {
-    const { cardImage, cardNumber, phoneNumber, paymentOptions } = req.body;
+    const { cardImage, cardNumber, phoneNumber, label } = req.body;
 
-    console.table([cardImage, cardNumber, paymentOptions]);
+    console.log(cardImage, cardNumber, phoneNumber, label);
 
     const paymentMethod = await prisma.paymentMethod.create({
       data: {
         cardImage,
-        paymentOptions,
-        cardNumber,
-        phoneNumber: phoneNumber,
+        label,
+        cardNumber: String(cardNumber),
+        phoneNumber: String(phoneNumber),
       },
       include: {
         _count: {
@@ -58,7 +84,7 @@ export const createPaymentMethod = async (req: Request, res: Response) => {
 export const updatePaymentMethod = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { cardImage, cardNumber, phoneNumber, paymentOptions } = req.body;
+    const { cardImage, cardNumber, phoneNumber, label } = req.body;
 
     const paymentMethod = await prisma.paymentMethod.update({
       where: {
@@ -66,9 +92,9 @@ export const updatePaymentMethod = async (req: Request, res: Response) => {
       },
       data: {
         cardImage: cardImage,
-        paymentOptions,
-        cardNumber: cardNumber,
-        phoneNumber: phoneNumber,
+        label,
+        cardNumber: String(cardNumber),
+        phoneNumber: String(phoneNumber),
       },
       include: {
         _count: {

@@ -175,21 +175,13 @@ model Payment {
 }
 
 model PaymentMethod {
-  id             String         @id @default(uuid())
-  cardImage      String?
-  cardNumber     String?
-  phoneNumber    String?
-  createdAt      DateTime       @default(now())
-  payment        Payment[]
-  paymentOptions PaymentOptions
-}
-
-enum PaymentOptions {
-  TRANSFER_USD
-  TRANSFER_CUP
-  CASH
-  QVAPAY
-  ZELLE
+  id          String    @id @default(uuid())
+  cardImage   String?
+  cardNumber  String?
+  phoneNumber String?
+  label       String
+  createdAt   DateTime  @default(now())
+  payment     Payment[]
 }
 
 enum PaymentStatus {

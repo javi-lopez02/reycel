@@ -242,7 +242,6 @@ export const searchProduct = async (req: Request, res: Response) => {
 export const getProducts = async (req: Request, res: Response) => {
   try {
     const filterValue = req.query.filterValue as string;
-    const sedeId = req.query.sedeId as string;
     const sortDescriptor = req.query.sortDescriptor as string;
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.rowsPerPage as string) || 10;
@@ -259,6 +258,14 @@ export const getProducts = async (req: Request, res: Response) => {
         direction: frontendSort.direction === "ascending" ? "asc" : "desc",
       };
     }
+
+    const sedeId = () => {
+      const id = req.query.sedeId as string | undefined;
+      if (id === "undefined") {
+        return undefined;
+      }
+      return id;
+    };
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -299,7 +306,7 @@ export const getProducts = async (req: Request, res: Response) => {
             },
           },
         ],
-        sedeId,
+        sedeId: sedeId(),
       },
       orderBy: {
         [column]: direction,

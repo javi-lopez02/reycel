@@ -39,7 +39,6 @@ app.use(
       "http://localhost:5174",
       "http://localhost:8000",
       "http://192.168.12.1:5173",
-      "http://192.168.12.1:5174",
     ],
     credentials: true,
   })

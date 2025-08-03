@@ -429,6 +429,7 @@ export default function TableSedes() {
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
         bottomContent={bottomContent}
+        className="z-0"
         bottomContentPlacement="outside"
         classNames={{
           wrapper: "max-h-[600px]",

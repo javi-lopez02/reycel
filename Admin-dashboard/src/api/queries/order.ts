@@ -4,10 +4,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import {
-  Order,
-  PropsGetTable,
-} from "../../type";
+import { Order, PropsGetTable } from "../../type";
 
 import { toast } from "sonner";
 
@@ -44,9 +41,11 @@ export const useOrderQuery = () => {
   const orderItemsQuery = (id: string | undefined) => {
     const isEditMode = Boolean(id);
     return useQuery({
-      queryKey: ["order", id], // La clave de consulta incluye el ID
+      queryKey: ["order", { id }], // La clave de consulta incluye el ID
       queryFn: () => getOrderItemsRequest(id!),
       enabled: isEditMode, // Solo ejecuta la consulta si itemId existe
+      staleTime: 1000 * 5 ,
+      retry: 2,
     });
   };
 
