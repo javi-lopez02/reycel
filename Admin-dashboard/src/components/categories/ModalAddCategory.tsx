@@ -129,7 +129,7 @@ const ModalAddCategory: FC<Props> = ({
                     endContent={
                       <BiMoney className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                     }
-                    label="Ganancias del Moderador por Venta"
+                    label="Ganancias del Trabajador por Venta"
                     placeholder="Inserte la ganancia"
                     variant="bordered"
                     labelPlacement="outside"

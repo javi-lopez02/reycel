@@ -202,7 +202,7 @@ enum PaymentStatus {
 
 model Sede {
   id          String               @id @default(uuid())
-  image       String
+  image       String?
   phone       Int                  @unique
   direction   String
   rent        Int

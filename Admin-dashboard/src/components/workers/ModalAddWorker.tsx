@@ -35,7 +35,7 @@ interface Props {
 
 const roles = [
   { key: "OWNER", label: "Admin" },
-  { key: "MODERATOR", label: "Moderador" },
+  { key: "MODERATOR", label: "Trabajador" },
 ];
 
 const ModalAddWorker: FC<Props> = ({
@@ -104,12 +104,12 @@ const ModalAddWorker: FC<Props> = ({
       return;
     }
     if (selectedRole === "MODERATOR" && !selectedSede) {
-      toast.error("Debe elegir una sede para el moderador.");
+      toast.error("Debe elegir una sede para el trabajador.");
       setLoading(false);
       return;
     }
     if (selectedRole === "MODERATOR" && !inputSalary) {
-      toast.error("Debe escribir el salario del moderador.");
+      toast.error("Debe escribir el salario del trabajador.");
       setLoading(false);
       return;
     }

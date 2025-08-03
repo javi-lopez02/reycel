@@ -9,7 +9,7 @@ const PaymentsTable = lazy(() => import("../components/pagos/PaymentsTable"));
 
 export default function Payments() {
   return (
-    <div className="pt-20 p-2 lg:p-16 flex flex-col gap-y-7 bg-neutral-100 h-full">
+    <div className="pt-14 p-2 lg:p-6 lg:pt-16 bg-neutral-100 h-screen">
       <Suspense
         fallback={
           <div className="w-full h-full flex justify-center items-center">

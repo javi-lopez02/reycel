@@ -53,7 +53,7 @@ const columns = [
   { name: "CANTIDAD DE PRODUCTOS", uid: "productquantity", sortable: true },
   { name: "GANACIA POR PRODUCTO", uid: "profitsBySell", sortable: true },
   { name: "FECHA DE CREACION", uid: "createdAt", sortable: true },
-  { name: "GANANCIA POR VENTA DEL MODERADOR", uid: "profits" },
+  { name: "GANANCIA POR VENTA DEL TRABAJADOR", uid: "profits" },
   { name: "ACTIONS", uid: "actions" },
 ];
 

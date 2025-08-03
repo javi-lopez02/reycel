@@ -54,7 +54,7 @@ export function Capitalize(s: string) {
 const columns = [
   { name: "NOMBRE", uid: "username", sortable: true },
   { name: "SALARIO BASICO", uid: "salary" },
-  { name: "SALARIO DEL MES", uid: "mouthSalary" },
+  { name: "SALARIO SEMANAL", uid: "mouthSalary" },
   { name: "CREADO EL ", uid: "createdAt", sortable: true },
   { name: "STATUS", uid: "status", sortable: true },
   { name: "# ORDENES", uid: "order" },
