@@ -11,7 +11,6 @@ import {
 import { FC, useEffect, useState } from "react";
 import { BiLock, BiUser } from "react-icons/bi";
 import { toast } from "sonner";
-import { editUsersRequest } from "../api/services/user";
 
 interface Props {
   id?: string;
@@ -46,50 +45,7 @@ const ModalEditUser: FC<Props> = ({
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setLoading(true);
-    const data = Object.fromEntries(new FormData(event.currentTarget));
-
-    const inputImage = data["image"] as string;
-    const inputUser = data["user"] as string;
-    const inputPassword = data["password"] as string;
-    const inputPasswordConfirm = data["passwordConfirm"] as string;
-
-    // Validaciones
-    if (!inputUser) {
-      toast.error("El nombre del usuario es requerido.");
-      setLoading(false);
-      return;
-    }
-    if (!inputPassword) {
-      toast.error("La contraseña es requerida.");
-      setLoading(false);
-      return;
-    }
-    if (!inputPasswordConfirm || inputPasswordConfirm !== inputPassword) {
-      toast.error("Las contraseñas no coinciden.");
-      setLoading(false);
-      return;
-    }
-
-    if (id) {
-      editUsersRequest(id, {
-        image: inputImage,
-        password: inputPassword,
-        username: inputUser,
-      })
-        .then(() => {
-          toast.success("Usuario editado con exito");
-        })
-        .catch((err) => {
-          console.log(err);
-          toast.error("Error al editar el usuario");
-        })
-        .finally(() => {
-          setLoading(false);
-          onClose();
-        });
-    }
+    
   };
 
   return (

@@ -1,25 +1,18 @@
+import { User } from "../../type";
 import axios from "./axios";
 
-export const getUsersRequest = () => {
-  return axios.get(`/users`);
+export const getUsersRequest = async (): Promise<User[]> => {
+  const res = await axios.get(`/users`);
+  const user = res.data;
+  return user;
 };
 
-interface UserRequest {
-  username: string;
-  password: string;
-  image: string;
-  sedeId?: string;
-  role?: "USER" | "MODERADOR" | "ADMIN";
-}
-
-export const createUsersRequest = (user: UserRequest) => {
-  return axios.post(`/user`, user);
+export const getUsersByIdRequest = async (id: string): Promise<User> => {
+  const res = await axios.get(`/user/${id}`);
+  const user = res.data.data;
+  return user;
 };
 
-export const editUsersRequest = (id: string, user: UserRequest) => {
-  return axios.put(`/worker/${id}`, user);
-};
-
-export const deleteUsersRequest = (id: string) => {
+export const deleteUsersRequest = async (id: string): Promise<void> => {
   return axios.delete(`/user/${id}`);
 };

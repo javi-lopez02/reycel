@@ -71,3 +71,4 @@ export const addLosses = async (req: Request, res: Response) => {
     });
   }
 };
+

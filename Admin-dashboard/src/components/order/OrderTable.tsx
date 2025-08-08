@@ -367,7 +367,7 @@ export default function OrderTable() {
 
   const bottomContent = useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
+      <div className="py-2 sm:px-2 flex sm:flex-row flex-col sm:justify-between justify-center items-center gap-2">
         <Pagination
           isCompact
           showControls
@@ -423,7 +423,7 @@ export default function OrderTable() {
         bottomContentPlacement="outside"
         className="z-0"
         classNames={{
-          wrapper: "h-[600px]",
+          wrapper: "h-[500px]",
         }}
         sortDescriptor={sortDescriptor}
         topContent={topContent}

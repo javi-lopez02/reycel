@@ -3,7 +3,6 @@ import {
   Key,
   SVGProps,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -24,14 +23,14 @@ import {
   Pagination,
   Selection,
   SortDescriptor,
-  useDisclosure,
   Spinner,
 } from "@heroui/react";
 import { ChevronDownIcon, PlusIcon, SearchIcon } from "../Icons";
 import { toast } from "sonner";
 import { Investments } from "../../type";
-import useInvestments from "../../customHooks/useInvestments";
-import ModalAddInvestments from "./ModalAddInvestments";
+;
+import { useInvestmentQuery } from "../../api/queries/investements";
+import { useNavigate } from "react-router-dom";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -50,10 +49,10 @@ const columns = [
 const INITIAL_VISIBLE_COLUMNS = ["image", "description", "price"];
 
 export default function TableInvestments() {
-  const { investments, error, getInvestments, addInvestments, loading } =
-    useInvestments();
+ const {investmentQuery } = useInvestmentQuery();
+ const {data: investments, isLoading, isError, error} = investmentQuery;
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+ const navigate = useNavigate();
 
   const [filterValue, setFilterValue] = useState("");
 
@@ -69,14 +68,6 @@ export default function TableInvestments() {
   const [page, setPage] = useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
-
-  const handleAddInvestments = useCallback(() => {
-    onOpen();
-  }, [onOpen]);
-
-  useEffect(() => {
-    getInvestments();
-  }, [getInvestments]);
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -237,7 +228,7 @@ export default function TableInvestments() {
             <Button
               color="success"
               endContent={<PlusIcon />}
-              onPress={handleAddInvestments}
+              onPress={() => navigate("new")}
             >
               Nueva Investments
             </Button>
@@ -265,7 +256,7 @@ export default function TableInvestments() {
     filterValue,
     onSearchChange,
     visibleColumns,
-    handleAddInvestments,
+    navigate,
     investments?.length,
     onRowsPerPageChange,
     onClear,
@@ -273,7 +264,7 @@ export default function TableInvestments() {
 
   const bottomContent = useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
+      <div className="py-2 sm:px-2 flex sm:flex-row flex-col sm:justify-between justify-center items-center gap-2">
         <Pagination
           isCompact
           showControls
@@ -309,10 +300,11 @@ export default function TableInvestments() {
 
   return (
     <>
-      {error && toast.error(error)}
+      {isError && toast.error(error.message)}
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
+        className="z-0"
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         classNames={{
@@ -335,7 +327,7 @@ export default function TableInvestments() {
           )}
         </TableHeader>
         <TableBody
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={<Spinner color="success" />}
           emptyContent={"No investments found"}
           items={sortedItems}
@@ -349,11 +341,6 @@ export default function TableInvestments() {
           )}
         </TableBody>
       </Table>
-      <ModalAddInvestments
-        isOpen={isOpen}
-        onClose={onClose}
-        addInvestment={addInvestments}
-      />
     </>
   );
 }

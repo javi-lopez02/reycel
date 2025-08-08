@@ -7,12 +7,12 @@ import {
   Spinner,
 } from "@heroui/react";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { BiDollar, BiLock, BiUser } from "react-icons/bi";
 import { toast } from "sonner";
-import { getSedesRequest } from "../../api/services/sedes";
 import { useNavigate, useParams } from "react-router-dom";
 import { useWorker } from "../../api/queries/workers";
+import { useSedeQuery } from "../../api/queries/sede";
 
 interface WorkerForm {
   username: string;
@@ -24,11 +24,12 @@ interface WorkerForm {
 
 const WorkersForm = () => {
   const { id } = useParams();
-  const [sedes, setSedes] = useState<{ id: string; direction: string }[]>([]);
   const navigate = useNavigate();
   const { workerById, createWorker, updateWorker, isCreating, isUpdating } =
     useWorker();
   const { data: workerData, isLoading } = workerById(id);
+  const { sedeQuery } = useSedeQuery();
+  const { data: sedes } = sedeQuery;
 
   const {
     register,
@@ -36,12 +37,6 @@ const WorkersForm = () => {
     reset,
     formState: { errors },
   } = useForm<WorkerForm>();
-
-  useEffect(() => {
-    getSedesRequest().then((res) => {
-      setSedes(res.data.data);
-    });
-  }, [id, isLoading]);
 
   useEffect(() => {
     if (!isLoading && workerData) {
@@ -209,7 +204,7 @@ const WorkersForm = () => {
                 required: "La sede es requerida",
               })}
             >
-              {sedes.map((sede) => (
+              {(sedes ?? []).map((sede) => (
                 <SelectItem key={sede.id}>{sede.direction}</SelectItem>
               ))}
             </Select>

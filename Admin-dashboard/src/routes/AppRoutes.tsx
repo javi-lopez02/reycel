@@ -16,12 +16,15 @@ import Order from "../pages/Order";
 import NewOrderPage from "../components/neworder/NewOrderPage";
 import Payments from "../pages/Payments";
 import PaymentsMethodForm from "../components/pagos/PaymentsMethodForm";
+import SedesForm from "../components/sedes/SedesForm";
+import Investments from "../pages/Investments";
+import InvestmentsForm from "../components/investments/InvestmentsForm";
+import PricingForm from "../components/navbar/PricingForm";
 
 // Protected route component
 const ProtectedRoute: React.FC<{
   element: React.ReactElement;
-  adminOnly?: boolean;
-}> = ({ element, adminOnly = false }) => {
+}> = ({ element }) => {
   const { isAuth, loading } = useAuth();
 
   // Show loading state
@@ -51,13 +54,9 @@ const AppRoutes: React.FC = () => {
     <Routes>
       <Route path="/login" element={<Login />} />
       {/* Admin Routes */}
-      <Route
-        path="/"
-        element={<ProtectedRoute element={<NavBar />} adminOnly={true} />}
-      >
+      <Route path="/" element={<ProtectedRoute element={<NavBar />} />}>
         <Route path="/" element={<Home />} />
 
-      
         <Route path="users">
           <Route index element={<User />} />
         </Route>
@@ -73,7 +72,7 @@ const AppRoutes: React.FC = () => {
           <Route path="new" element={<ProductsForm />} />
           <Route path=":id/edit" element={<ProductsForm />} />
         </Route>
- 
+
         <Route path="categories">
           <Route index element={<Categories />} />
           <Route path="new" element={<CategoriesForm />} />
@@ -91,20 +90,21 @@ const AppRoutes: React.FC = () => {
           <Route path=":id/edit" element={<PaymentsMethodForm />} />
         </Route>
 
-        
-
         <Route path="sedes">
           <Route index element={<Sedes />} />
           <Route path="new" element={<SedesForm />} />
           <Route path=":id/edit" element={<SedesForm />} />
         </Route>
 
-      {/*   <Route path="trash">
+        <Route path="trash">
           <Route index element={<Investments />} />
           <Route path="new" element={<InvestmentsForm />} />
           <Route path=":id/edit" element={<InvestmentsForm />} />
-        </Route> 
- */}
+        </Route>
+
+        <Route path="currency">
+          <Route index element={<PricingForm/>} />
+        </Route>
       </Route>
     </Routes>
   );

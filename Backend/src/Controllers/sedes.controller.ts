@@ -46,7 +46,7 @@ export const getSedes = async (req: Request, res: Response) => {
 
 export const getSedeId = async (req: Request, res: Response) => {
   try {
-    const id = req.query.idSede as string;
+    const {id} = req.params;
 
     if (!id) {
       return res.status(404).json("Id no encontrada.");
@@ -61,6 +61,7 @@ export const getSedeId = async (req: Request, res: Response) => {
         direction: true,
         image: true,
         phone: true,
+        rent: true,
         workers: {
           select: {
             baseUser: {

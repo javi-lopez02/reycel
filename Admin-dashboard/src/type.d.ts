@@ -32,6 +32,14 @@ export interface User {
   orderCount: number;
 }
 
+export interface UserRequest {
+  username?: string;
+  password?: string;
+  image?: string;
+  sedeId?: string;
+  role?: "USER" | "MODERADOR" | "ADMIN";
+}
+
 export interface Worker {
   id?: string;
   username: string;
@@ -73,28 +81,44 @@ export interface Users {
   _count: Count;
 }
 
-interface Sede {
-  id: string;
-  image: string;
+export interface Sede {
+  id?: string;
+  image?: string;
   phone: string;
   direction: string;
-  workers: Workers[];
-  _count: {
+  workers?: Workers[];
+  _count?: {
     producto: number;
   };
   rent: number;
-  netProfits: number;
-  finalLosses: number;
+  netProfits?: number;
+  finalLosses?: number;
 }
 
-interface Investments {
-  id: string;
+export interface SedeRequest {
+  id?: string;
+  direction: string;
+  phone: string;
+  isPending?: boolean;
+  rent: number;
+}
+
+export interface Investments {
+  id?: string;
   description: string;
   price: number;
-  Sede: Sede;
+  sedeId?: string;
+  Sede?: Sede;
 }
 
-interface Count {
+export interface InvestmentRequest {
+  price: number;
+  description: string;
+  sedeId: string;
+}
+
+
+export interface Count {
   orders: number;
 }
 
@@ -312,4 +336,27 @@ export interface AnalyticsTable {
   name: string;
   total_sold: number;
   total_revenue: number;
+}
+
+export interface CurrencyExchange {
+  id?: string;
+  cup: number;
+  eur: number;
+  cad: number;
+  zelle: number;
+  gbp: number;
+  cupTransfer: number;
+  mlcTransfer: number;
+  updatedAt?: string;
+}
+
+export interface CurrencyRequest {
+  id?: string;
+  cup: number;
+  eur: number;
+  cad: number;
+  gbp: number;
+  zelle: number;
+  cupTransfer: number;
+  mlcTransfer: number;
 }

@@ -1,25 +1,20 @@
+import { CurrencyExchange, CurrencyRequest } from "../../type";
 import axios from "./axios";
 
-interface Currency {
-  cup: number;
-  eur: number;
-  cad: number;
-  gbp: number;
-  zelle: number;
-  cupTransfer: number;
-  mlcTransfer: number;
-}
-
-export const editCurrency = (id: string, currency: Currency) => {
-  console.log("editando");
-  return axios.put(`/editCurrency/${id}`, currency);
+export const editCurrencyRequest = async ({id, ...currency}: CurrencyRequest) :Promise<CurrencyExchange> => {
+  const res = await axios.put(`/editCurrency/${id}`, currency);
+  const currencyExchange = res.data.data;
+  return currencyExchange;
 };
 
-export const addCurrency = (currency: Currency) => {
-  console.log("creando");
-  return axios.post(`/addCurrency`, currency);
+export const addCurrencyRequest = async (currency: CurrencyRequest): Promise<CurrencyExchange> => {
+  const res = await axios.post(`/addCurrency`, currency);
+  const currencyExchange = res.data.data;
+  return currencyExchange;
 };
 
-export const getCurrency = () => {
-  return axios.get("/currency");
+export const getCurrencyRequest = async (): Promise<CurrencyExchange[]> => {
+  const res = await axios.get("/currency");
+  const currencyExchange = res.data.data;
+  return currencyExchange;
 };

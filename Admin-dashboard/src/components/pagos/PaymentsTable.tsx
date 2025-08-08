@@ -373,7 +373,7 @@ export default function PaymentsTable() {
 
   const bottomContent = useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
+      <div className="py-2 sm:px-2 flex sm:flex-row flex-col sm:justify-between justify-center items-center gap-2">
         <Pagination
           isCompact
           showControls
@@ -383,7 +383,7 @@ export default function PaymentsTable() {
           total={pages!}
           onChange={setPage}
         />
-        <div className=" justify-end gap-2">
+        <div className=" justify-end sm:gap-2">
           <Button
             isDisabled={pages === 1}
             size="md"

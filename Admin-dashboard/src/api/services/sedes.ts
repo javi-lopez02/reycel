@@ -1,37 +1,36 @@
 import axios from "./axios";
+import { Sede, SedeRequest } from "../../type";
 
-interface Sede {
-  image: string;
-  direction: string;
-  phone: string;
-  rent: number;
-}
-
-export const getSedesRequest = () => {
-  return axios.get(`/sedes`);
+export const getSedesRequest = async (): Promise<Sede[]> => {
+  const res = await axios.get(`/sedes`);
+  const sedes = res.data.data;
+  return sedes;
 };
 
-export const getWorkersRequest = () => {
-  return axios.get(`/workers`);
+export const getSedeIdRequest = async (id: string): Promise<Sede> => {
+  const res = await axios.get(`/sedes/${id}`);
+  const sede = res.data.data;
+  return sede;
 };
 
-export const getSedeIdRequest = (id: string) => {
-  return axios.get(`/sedes/${id}`);
+export const createSedeRequest = async (data: SedeRequest): Promise<Sede> => {
+  const res = await axios.post(`/sedes`, data);
+  const sede = res.data.data;
+  return sede;
 };
 
-export const createSedeRequest = (data: Sede) => {
-  return axios.post(`/sedes`, data);
+export const updateSedeRequest = async ({id, ...data}: SedeRequest): Promise<Sede> => {
+  const res = await axios.put(`/sedes/${id}`, data);
+  const sede = res.data.data;
+  return sede;
 };
 
-export const updateSedeRequest = (id: string, data: Sede) => {
-  return axios.put(`/sedes/${id}`, data);
+export const addLossesRequest = async (id: string, monto: number): Promise<Sede> => {
+  const res = await axios.put(`/losses/${id}`, { monto });
+  const sede = res.data.data;
+  return sede;
 };
 
-export const addLossesRequest = (id: string, monto: number) => {
-  console.log(monto)
-  return axios.put(`/losses/${id}`, {monto});
-};
-
-export const deleteSedeRequest = (id: string) => {
+export const deleteSedeRequest = async (id: string): Promise<void> => {
   return axios.delete(`/sedes/${id}`);
 };

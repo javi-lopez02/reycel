@@ -10,12 +10,12 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import Rating from "./Rating";
 import { toast } from "sonner";
-import { getSedesRequest } from "../../api/services/sedes";
 import { BiUpload, BiX } from "react-icons/bi";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useProduct } from "../../api/queries/product";
 import { useCategory } from "../../api/queries/categgories";
+import { useSedeQuery } from "../../api/queries/sede";
 
 interface ProductForm {
   name: string;
@@ -39,7 +39,6 @@ const ProductsForm = () => {
   const [selectedFile, setSelectedFile] = useState<File | undefined>();
 
   const [ratingValue, setRatingValue] = useState(0);
-  const [sedes, setSedes] = useState<{ id: string; direction: string }[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -49,6 +48,9 @@ const ProductsForm = () => {
   const { data, isLoading } = productById(id);
 
   const { categoryQuery } = useCategory();
+
+  const { sedeQuery } = useSedeQuery();
+  const { data: sedes } = sedeQuery;
   const {
     data: category,
     isError: isErrorCategory,
@@ -62,11 +64,6 @@ const ProductsForm = () => {
     formState: { errors },
   } = useForm<ProductForm>();
 
-  useEffect(() => {
-    getSedesRequest().then((res) => {
-      setSedes(res.data.data);
-    });
-  }, []);
 
   useEffect(() => {
     if (!isLoading && data) {
@@ -338,8 +335,8 @@ const ProductsForm = () => {
                       required: "La sede es requerida",
                     })}
                   >
-                    {sedes.map((sede) => (
-                      <SelectItem key={sede.id}>{sede.direction}</SelectItem>
+                    {(sedes ?? []).map((sede) => (
+                        <SelectItem key={sede.id}>{sede.direction}</SelectItem>
                     ))}
                   </Select>
                 </div>
