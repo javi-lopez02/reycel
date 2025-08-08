@@ -78,7 +78,7 @@ export const getUsers = async (req: Request, res: Response) => {
       },
     });
 
-    res.json(
+    res.status(200).json(
       clients.map((client) => ({
         userId: client.id,
         username: client.baseUser.username,

@@ -1,3 +1,5 @@
+import { SortDescriptor } from "@heroui/react";
+
 export interface UserLogin {
   userName: string;
   password: string;
@@ -25,21 +27,38 @@ export interface User {
   status: boolean;
   createdAt: string;
   sede: string;
+  sedeId: string;
   role: "OWNER" | "MODERATOR";
   orderCount: number;
 }
 
+export interface UserRequest {
+  username?: string;
+  password?: string;
+  image?: string;
+  sedeId?: string;
+  role?: "USER" | "MODERADOR" | "ADMIN";
+}
+
 export interface Worker {
-  id: string;
+  id?: string;
   username: string;
-  email: string;
-  image: string;
-  status: boolean;
-  orderCount: number;
-  createdAt: string;
+  image?: string;
+  orderCount?: number;
+  createdAt?: string;
   salary: number;
-  mouthSalary: number;
-  role: "OWNER" | "MODERATOR";
+  sedeId: string;
+  mouthSalary?: number;
+  role?: "OWNER" | "MODERATOR";
+}
+
+export interface WorkerRequest
+  extends Omit<
+    Worker,
+    "image" | "orderCount" | "createdAt" | "mouthSalary" | "role"
+  > {
+  password?: string;
+  isPending?: boolean;
 }
 
 export interface AuthContextType {
@@ -62,62 +81,123 @@ export interface Users {
   _count: Count;
 }
 
-interface Sede {
-  id: string;
-  image: string;
+export interface Sede {
+  id?: string;
+  image?: string;
   phone: string;
   direction: string;
-  workers: Workers[];
-  _count: {
+  workers?: Workers[];
+  _count?: {
     producto: number;
   };
   rent: number;
-  netProfits: number;
-  finalLosses: number;
+  netProfits?: number;
+  finalLosses?: number;
 }
 
-interface Investments {
-  id: string;
+export interface SedeRequest {
+  id?: string;
+  direction: string;
+  phone: string;
+  isPending?: boolean;
+  rent: number;
+}
+
+export interface Investments {
+  id?: string;
   description: string;
   price: number;
-  Sede: Sede;
+  sedeId?: string;
+  Sede?: Sede;
 }
 
-interface Count {
+export interface InvestmentRequest {
+  price: number;
+  description: string;
+  sedeId: string;
+}
+
+
+export interface Count {
   orders: number;
 }
 
 export interface Products {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   price: number;
-  rating: number;
-  inicialInventory: number;
-  imagen: string;
-  createdAt: string;
+  isPending: boolean;
+  rating?: number;
+  ratingAverage?: number;
+  inicialInventory?: number;
+  imagen?: string;
+  createdAt?: string;
   inventoryCount: number;
   investments: number;
-  battery: number;
-  ram: number;
-  storage: number;
-  mpxCameraFront: number;
-  mpxCameraBack: number;
-  category: Category;
-  Sede: {
+  battery?: number;
+  ram?: number;
+  storage?: number;
+  mpxCameraFront?: number;
+  mpxCameraBack?: number;
+  category?: Category;
+  sedeId?: string;
+  categoryId?: string;
+  Sede?: {
     direction: string;
     image: string;
     phone: string;
   };
 }
+
+export interface PropsGetTable {
+  filterValue: string;
+  sortDescriptor: SortDescriptor | undefined;
+  rowsPerPage: number;
+  page: number;
+}
+
+export interface MetaData {
+  totalProduct: number;
+  page: number;
+  totalPages: number;
+  pageSize: number;
+}
+
+export interface CreateProductProps {
+  id?: string;
+  name: string;
+  description: string;
+  price: number;
+  rating?: number;
+  ratingAverage?: number;
+  isPending?: boolean;
+  imagenFile?: File;
+  investments: number;
+  inventoryCount: number;
+  categoryId: string;
+  ram?: number;
+  storage?: number;
+  battery?: number;
+  mpxCameraFront?: number;
+  mpxCameraBack?: number;
+  sedeId: string;
+}
+
 export interface Category {
-  id: string;
+  id?: string;
   name: string;
   profitsBySell: number;
-  createdAt: string;
-  _count: {
+  createdAt?: string;
+  _count?: {
     products: number;
   };
+}
+
+export interface CreateCategoryProps {
+  id?: string;
+  name: string;
+  profitsBySell: number;
 }
 
 type Client = {
@@ -145,19 +225,12 @@ export interface PaymentMethod {
   cardImage: string;
   cardNumber?: string;
   phoneNumber?: string;
-  createdAt: string;
-  _count: {
+  createdAt?: string;
+  _count?: {
     payment: number;
   };
-  paymentOptions: PaymentOptions;
+  label: string;
 }
-
-export type PaymentOptions =
-  | "TRANSFER_USD"
-  | "TRANSFER_CUP"
-  | "CASH"
-  | "QVAPAY"
-  | "ZELLE";
 
 export interface Payment {
   id: string;
@@ -245,8 +318,10 @@ export interface Growth {
 }
 
 export interface PaymentAnalytics {
-  date: string;
-  total: number;
+  GananciasBrutas: number;
+  Invercion: number;
+  Monto_en_Ventas: number;
+  month: string;
 }
 
 export interface AddPaymentMethodProps {
@@ -254,5 +329,34 @@ export interface AddPaymentMethodProps {
   image: string;
   numberCard: string;
   phoneNumber?: string;
-  selected: PaymentOptions;
+  selected: string;
+}
+
+export interface AnalyticsTable {
+  name: string;
+  total_sold: number;
+  total_revenue: number;
+}
+
+export interface CurrencyExchange {
+  id?: string;
+  cup: number;
+  eur: number;
+  cad: number;
+  zelle: number;
+  gbp: number;
+  cupTransfer: number;
+  mlcTransfer: number;
+  updatedAt?: string;
+}
+
+export interface CurrencyRequest {
+  id?: string;
+  cup: number;
+  eur: number;
+  cad: number;
+  gbp: number;
+  zelle: number;
+  cupTransfer: number;
+  mlcTransfer: number;
 }

@@ -14,10 +14,9 @@ import {
   TableRow,
   User,
 } from "@heroui/react";
-import React, { FC, useEffect, useMemo, useState } from "react";
-import { getOrderItemsRequest } from "../../services/order";
+import React, { FC, useMemo } from "react";
 import { OrderItem } from "../../type";
-import { toast } from "sonner";
+import { useOrderQuery } from "../../api/queries/order";
 
 interface Props {
   id: string;
@@ -32,23 +31,9 @@ const columns = [
 ];
 
 const ModalPayDetails: FC<Props> = ({ id, isOpen, onClose }) => {
-  const [items, setItems] = useState<OrderItem[] | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { orderItemsQuery } = useOrderQuery();
 
-  useEffect(() => {
-    setLoading(true);
-    getOrderItemsRequest(id)
-      .then((res) => {
-        setItems(res.data.data.orderItems);
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Error al cargar los productos");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [id]);
+  const { data: items, isLoading: loading } = orderItemsQuery(id);
 
   const itemsFilter = useMemo((): OrderItem[] => {
     if (!items) {

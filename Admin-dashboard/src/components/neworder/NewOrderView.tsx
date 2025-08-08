@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import {
   deleteOrderItemRequest,
   updateOrderItemRequest,
-} from "../../services/neworder";
+} from "../../api/services/neworder";
 
 interface Product {
   quantity: number;

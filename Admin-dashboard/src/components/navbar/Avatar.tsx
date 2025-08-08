@@ -91,7 +91,7 @@ const Avatar = () => {
               variant="light"
               size="md"
               color="danger"
-              onClick={logout}
+              onPress={logout}
             >
               Log Out
             </Button>

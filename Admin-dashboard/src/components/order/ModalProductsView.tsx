@@ -14,10 +14,10 @@ import {
   TableRow,
   User,
 } from "@heroui/react";
-import React, { FC, useEffect, useMemo, useState } from "react";
-import { getOrderItemsRequest } from "../../services/order";
+import React, { FC, useMemo } from "react";
 import { OrderItem } from "../../type";
 import { toast } from "sonner";
+import { useOrderQuery } from "../../api/queries/order";
 
 interface Props {
   id: string;
@@ -32,24 +32,15 @@ const columns = [
 ];
 
 const ModalProductsView: FC<Props> = ({ id, isOpen, onClose }) => {
-  const [items, setItems] = useState<OrderItem[] | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { orderItemsQuery } = useOrderQuery();
 
-  useEffect(() => {
-    setLoading(true);
-    getOrderItemsRequest(id)
-      .then((res) => {
-        setItems(res.data.data.orderItems);
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Error al cargar los productos");
-      }).finally(()=>{
-        setLoading(false)
-      });
-  }, [id]);
+  const { data: items, isLoading, isError, error } = orderItemsQuery(id);
 
-  const itemsFilter = useMemo(():OrderItem[] => {
+  if (isError) {
+    toast.error(error.message);
+  }
+
+  const itemsFilter = useMemo((): OrderItem[] => {
     if (!items) {
       return [];
     }
@@ -112,66 +103,72 @@ const ModalProductsView: FC<Props> = ({ id, isOpen, onClose }) => {
 
   return (
     <>
-      <Modal
-        classNames={{ body: "px-1" }}
-        backdrop={"opaque"}
-        isOpen={isOpen}
-        onClose={onClose}
-        size="xl"
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex items-end  space-x-2 gap-1 font-[sans-serif] ">
-                <img src="./logo.webp" alt="Logo reycel" className="w-10 h-8" />
-                <h1 className="text-2xl font-bold">Productos de la Orden</h1>
-              </ModalHeader>
-              <ModalBody>
-                <Table
-                  aria-label="Example table with custom cells"
-                  shadow="none"
-                  isHeaderSticky
-                  classNames={{ wrapper: "max-h-[500px] max-w-full" }}
-                >
-                  <TableHeader columns={columns}>
-                    {(column) => (
-                      <TableColumn
-                        key={column.uid}
-                        align={
-                          column.uid === "quantity" ||
-                          column.uid === "totalPrice"
-                            ? "center"
-                            : "start"
-                        }
-                      >
-                        {column.name}
-                      </TableColumn>
-                    )}
-                  </TableHeader>
-                  <TableBody
-                    items={itemsFilter}
-                    isLoading={loading}
-                    loadingContent={<Spinner color="warning" />}
+      {!isLoading && (
+        <Modal
+          classNames={{ body: "px-1" }}
+          backdrop={"opaque"}
+          isOpen={isOpen}
+          onClose={onClose}
+          size="xl"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex items-end  space-x-2 gap-1 font-[sans-serif] ">
+                  <img
+                    src="./logo.webp"
+                    alt="Logo reycel"
+                    className="w-10 h-8"
+                  />
+                  <h1 className="text-2xl font-bold">Productos de la Orden</h1>
+                </ModalHeader>
+                <ModalBody>
+                  <Table
+                    aria-label="Example table with custom cells"
+                    shadow="none"
+                    isHeaderSticky
+                    classNames={{ wrapper: "max-h-[500px] max-w-full" }}
                   >
-                    {(item) => (
-                      <TableRow key={item.id}>
-                        {(columnKey) => (
-                          <TableCell>{renderCell(item, columnKey)}</TableCell>
-                        )}
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </ModalBody>
-              <ModalFooter className="flex min-w-full justify-end gap-3">
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Cancelar
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+                    <TableHeader columns={columns}>
+                      {(column) => (
+                        <TableColumn
+                          key={column.uid}
+                          align={
+                            column.uid === "quantity" ||
+                            column.uid === "totalPrice"
+                              ? "center"
+                              : "start"
+                          }
+                        >
+                          {column.name}
+                        </TableColumn>
+                      )}
+                    </TableHeader>
+                    <TableBody
+                      items={itemsFilter}
+                      isLoading={isLoading}
+                      loadingContent={<Spinner color="warning" />}
+                    >
+                      {(item) => (
+                        <TableRow key={item.id}>
+                          {(columnKey) => (
+                            <TableCell>{renderCell(item, columnKey)}</TableCell>
+                          )}
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </ModalBody>
+                <ModalFooter className="flex min-w-full justify-end gap-3">
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Cancelar
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      )}
     </>
   );
 };

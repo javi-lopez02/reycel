@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import path from "path";
 import { io, server, app } from "./Libs/socketServer";
-import { startReservationCleanup } from "./Utils/cleanReservations";
+import { startReservationCleanup, startSalesFactsRefresh } from "./Utils/cleanReservations";
 
 import auth from "./Routes/auth.routes";
 import product from "./Routes/product.routes";
@@ -39,7 +39,6 @@ app.use(
       "http://localhost:5174",
       "http://localhost:8000",
       "http://192.168.12.1:5173",
-      "http://192.168.12.1:5174",
     ],
     credentials: true,
   })
@@ -74,4 +73,5 @@ server.listen(port, () => {
   // Iniciar el programador de limpieza de reservas
   startReservationCleanup();
   resetSalaryMouth()
+  startSalesFactsRefresh()
 });

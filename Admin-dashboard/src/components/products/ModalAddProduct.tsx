@@ -19,10 +19,10 @@ import Rating from "./Rating";
 import {
   createProductRequest,
   updateProductRequest,
-} from "../../services/product";
+} from "../../api/services/product";
 import { toast } from "sonner";
 import { Category, Products } from "../../type";
-import { getSedesRequest } from "../../services/sedes";
+import { getSedesRequest } from "../../api/services/sedes";
 import { BiUpload, BiX } from "react-icons/bi";
 
 interface Props {

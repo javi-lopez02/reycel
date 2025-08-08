@@ -3,7 +3,6 @@ import {
   Key,
   SVGProps,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -25,7 +24,6 @@ import {
   Selection,
   SortDescriptor,
   Tooltip,
-  useDisclosure,
   Spinner,
 } from "@heroui/react";
 import {
@@ -35,11 +33,11 @@ import {
   PlusIcon,
   SearchIcon,
 } from "../Icons";
-import ModalAddSede from "./ModalAddSede";
-import useSede from "../../customHooks/useSede";
 import { Sede } from "../../type";
 import { toast } from "sonner";
 import { useAuth } from "../../context/AuthContext";
+import { useSedeQuery } from "../../api/queries/sede";
+import { useNavigate } from "react-router-dom";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -70,14 +68,13 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 export default function TableSedes() {
-  const { sedes, loading, error, addSede, deleteSede, updateSede, getSedes } =
-    useSede();
+  const {sedeQuery, deleteSede} = useSedeQuery()
+
+  const {data: sedes, isLoading, isError, error} = sedeQuery
 
   const { user } = useAuth();
 
-  const [selectSede, setSelectSede] = useState<Sede | undefined>(undefined);
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate()
 
   const [filterValue, setFilterValue] = useState("");
 
@@ -94,22 +91,16 @@ export default function TableSedes() {
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const handleEditSede = useCallback(
-    (sede: Sede) => () => {
-      onOpen();
-      setSelectSede(sede);
-    },
-    [onOpen]
-  );
+  const handleAddSede = () => {
+    navigate("new");
+  };
 
-  const handleAddSede = useCallback(() => {
-    setSelectSede(undefined);
-    onOpen();
-  }, [onOpen]);
-
-  useEffect(() => {
-    getSedes();
-  }, [getSedes]);
+  const handleEditSede = (id: string | undefined) => {
+    if (id) {
+      navigate(`${id}/edit`);
+    }
+  };
+;
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -205,7 +196,7 @@ export default function TableSedes() {
               content={
                 <div className=" flex flex-col items-start gap-2 p-4">
                   <span className="font-semibold pb-2">Trabajadores </span>
-                  {sede.workers.map((worker) => {
+                  {sede.workers?.map((worker) => {
                     return (
                       <User
                         key={worker.id}
@@ -220,7 +211,7 @@ export default function TableSedes() {
                 </div>
               }
             >
-              {sede.workers.length}
+              {sede.workers?.length}
             </Tooltip>
           );
         case "actions":
@@ -228,16 +219,16 @@ export default function TableSedes() {
             <div className="relative flex justify-center items-center gap-2">
               <Tooltip content="Edit Sede" color="success">
                 <button
-                  onClick={handleEditSede(sede)}
+                  onClick={() => handleEditSede(sede.id)}
                   className="text-lg text-success cursor-pointer active:opacity-50"
                 >
                   <EditIcon />
                 </button>
               </Tooltip>
-              {sede._count.producto === 0 && sede.workers.length === 0 && (
+              {sede._count?.producto === 0 && sede.workers?.length === 0 && (
                 <Tooltip color="danger" content="Delete Sede">
                   <button
-                    onClick={handleDelete(sede.id)}
+                    onClick={handleDelete(sede.id!)}
                     className="text-lg text-danger cursor-pointer active:opacity-50"
                   >
                     <DeleteIcon />
@@ -387,7 +378,7 @@ export default function TableSedes() {
 
   const bottomContent = useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
+      <div className="py-2 sm:px-2 flex sm:flex-row flex-col sm:justify-between justify-center items-center gap-2">
         <Pagination
           isCompact
           showControls
@@ -424,11 +415,12 @@ export default function TableSedes() {
 
   return (
     <>
-      {error && toast.error(error)}
+      {isError && toast.error(error?.message)}
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
         bottomContent={bottomContent}
+        className="z-0"
         bottomContentPlacement="outside"
         classNames={{
           wrapper: "max-h-[600px]",
@@ -450,7 +442,7 @@ export default function TableSedes() {
           )}
         </TableHeader>
         <TableBody
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={<Spinner color="success" />}
           emptyContent={"No users found"}
           items={sortedItems}
@@ -464,13 +456,6 @@ export default function TableSedes() {
           )}
         </TableBody>
       </Table>
-      <ModalAddSede
-        isOpen={isOpen}
-        onClose={onClose}
-        sede={selectSede}
-        addSede={addSede}
-        updateSede={updateSede}
-      />
     </>
   );
 }

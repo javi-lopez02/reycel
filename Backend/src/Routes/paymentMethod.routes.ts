@@ -5,11 +5,14 @@ import {
   createPaymentMethod,
   deletePaymentMethod,
   getPaymentMethod,
+  getPaymentMethodById,
   updatePaymentMethod,
 } from "../Controllers/paymentMethod.controller";
 const router = Router();
 
 router.get("/paymentMethod", middleware, getPaymentMethod);
+
+router.get("/paymentMethod/:id", middleware, getPaymentMethodById);
 
 router.post("/paymentMethod", authMiddleware, createPaymentMethod);
 

@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import NewOrderView from "./NewOrderView";
 import useNewOrder from "../../customHooks/useNewOrder";
 import { useAuth } from "../../context/AuthContext";
-import { confirmOrderRequest } from "../../services/neworder";
+import { confirmOrderRequest } from "../../api/services/neworder";
 
 interface Props {
   onClose: () => void;

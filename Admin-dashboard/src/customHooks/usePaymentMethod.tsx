@@ -5,7 +5,7 @@ import {
   deletePaymentMethodRequest,
   getPaymentMethodRequest,
   updatePaymentMethodRequest,
-} from "../services/paymentMethod";
+} from "../api/services/paymentMethod";
 import { toast } from "sonner";
 
 function usePaymentMethod() {

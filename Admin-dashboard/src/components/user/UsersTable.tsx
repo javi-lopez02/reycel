@@ -30,10 +30,9 @@ import {
 } from "@heroui/react";
 import { type User as Users } from "../../type";
 import { ChevronDownIcon, DeleteIcon, SearchIcon } from "../Icons";
-import useUser from "../../customHooks/useUser";
 import { toast } from "sonner";
-import { deleteUsersRequest } from "../../services/user";
 import { useAuth } from "../../context/AuthContext";
+import { useUserQuery } from "../../api/queries/user";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -65,7 +64,8 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 export default function UsersTable() {
-  const { users, error, loading, setUsers } = useUser();
+  const { userQuery,deleteUser } = useUserQuery();
+  const { data: users, isLoading, isError, error} = userQuery;
   const { user } = useAuth();
 
   const [filterValue, setFilterValue] = useState("");
@@ -150,16 +150,9 @@ export default function UsersTable() {
   ]);
 
   const handleDelete = (id: string) => {
-    deleteUsersRequest(id)
+    deleteUser(id)
       .then(() => {
         toast.success("Usuario eliminado con exito");
-        setUsers((prev) => {
-          return prev
-            ? prev.filter((user) => {
-                return user.userId !== id;
-              })
-            : null;
-        });
       })
       .catch((err) => {
         console.log(err);
@@ -362,7 +355,7 @@ export default function UsersTable() {
 
   const bottomContent = useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
+      <div className="py-2 sm:px-2 flex sm:flex-row flex-col sm:justify-between justify-center items-center gap-2">
         <Pagination
           isCompact
           showControls
@@ -399,13 +392,14 @@ export default function UsersTable() {
 
   return (
     <>
-      {error && error.map((err) => toast.error(err))}
+      {isError && toast.error(error.message)}
 
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
+        className="z-0"
         classNames={{
           wrapper: "max-h-[670px]",
         }}
@@ -434,7 +428,7 @@ export default function UsersTable() {
           )}
         </TableHeader>
         <TableBody
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={<Spinner color="white" />}
           emptyContent={"No users found"}
           items={sortedItems}

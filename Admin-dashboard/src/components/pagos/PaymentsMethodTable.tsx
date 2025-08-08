@@ -25,7 +25,6 @@ import {
   Selection,
   SortDescriptor,
   Tooltip,
-  useDisclosure,
   Spinner,
 } from "@heroui/react";
 import {
@@ -35,10 +34,10 @@ import {
   PlusIcon,
   SearchIcon,
 } from "../Icons";
-import ModalAddPayment from "./ModalAddPayment";
-import usePaymentMethod from "../../customHooks/usePaymentMethod";
 import { toast } from "sonner";
-import { AddPaymentMethodProps, PaymentMethod } from "../../type";
+import { PaymentMethod } from "../../type";
+import { usePaymentMethodQuery } from "../../api/queries/paymentMethod";
+import { useNavigate } from "react-router-dom";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -67,15 +66,10 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 export default function PaymentsMethodTable() {
-  const {
-    error,
-    loading,
-    paymentMethod,
-    addPaymentMethod,
-    updatePaymentMethod,
-    deletePaymentMethod,
-  } = usePaymentMethod();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { paymentMethodQuery, deletePaymentMethod } = usePaymentMethodQuery();
+
+  const { data: paymentMethod, isLoading, isError, error } = paymentMethodQuery;
+  const navigate = useNavigate();
 
   const [filterValue, setFilterValue] = useState("");
 
@@ -88,9 +82,6 @@ export default function PaymentsMethodTable() {
   const [page, setPage] = useState(1);
 
   const hasSearchFilter = Boolean(filterValue);
-
-  const [selectedPaymantMethod, setSelectedPaymantMethod] =
-    useState<AddPaymentMethodProps | null>(null);
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
@@ -109,9 +100,7 @@ export default function PaymentsMethodTable() {
     if (hasSearchFilter) {
       filteredPayments = filteredPayments.filter(
         (payment) =>
-          payment.paymentOptions
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) ||
+          payment.label.toLowerCase().includes(filterValue.toLowerCase()) ||
           payment.cardNumber
             ?.toString()
             .toLowerCase()
@@ -172,6 +161,16 @@ export default function PaymentsMethodTable() {
     return `${dia} ${mes} ${anio}`;
   };
 
+  const handleAddPaymentMethd = () => {
+    navigate("new");
+  };
+
+  const handleEditPaymentMethd = (id: string | undefined) => {
+    if (id) {
+      navigate(`${id}/edit`);
+    }
+  };
+
   const handleDelete = useCallback(
     (id: string) => () => {
       deletePaymentMethod(id);
@@ -188,8 +187,7 @@ export default function PaymentsMethodTable() {
           return (
             <User
               avatarProps={{ radius: "lg", src: paymentMethod.cardImage }}
-              description={paymentMethod.id}
-              name={paymentMethod.paymentOptions}
+              name={paymentMethod.label}
             />
           );
         case "number":
@@ -200,7 +198,7 @@ export default function PaymentsMethodTable() {
               </p>
             </div>
           );
-          case "movil":
+        case "movil":
           return (
             <div className="flex flex-col">
               <p className="text-bold text-small capitalize">
@@ -217,15 +215,15 @@ export default function PaymentsMethodTable() {
                 size="sm"
                 variant="flat"
               >
-                {paymentMethod._count.payment}
+                {paymentMethod._count?.payment}
               </Chip>
             </div>
           );
         case "createdAt":
           return (
             <div>
-              <p className="text-bold text-small capitalize">
-                {formatearFecha(paymentMethod.createdAt)}
+              <p className="text-bold text-small capitalize w-max">
+                {formatearFecha(paymentMethod.createdAt!)}
               </p>
             </div>
           );
@@ -234,18 +232,7 @@ export default function PaymentsMethodTable() {
             <div className="relative flex justify-center items-center gap-2">
               <Tooltip content="Edit Payment Method" color="warning">
                 <button
-                  onClick={() => {
-                    if (paymentMethod.cardNumber) {
-                      onOpen();
-                      setSelectedPaymantMethod({
-                        image: paymentMethod.cardImage,
-                        numberCard: paymentMethod.cardNumber,
-                        phoneNumber: paymentMethod.phoneNumber,
-                        selected: paymentMethod.paymentOptions,
-                        id: paymentMethod.id,
-                      });
-                    }
-                  }}
+                  onClick={() => handleEditPaymentMethd(paymentMethod.id)}
                   className="text-lg text-warning cursor-pointer active:opacity-50"
                 >
                   <EditIcon />
@@ -265,7 +252,7 @@ export default function PaymentsMethodTable() {
           return String(cellValue);
       }
     },
-    [handleDelete, onOpen]
+    [handleDelete]
   );
 
   const onNextPage = useCallback(() => {
@@ -318,7 +305,7 @@ export default function PaymentsMethodTable() {
           />
           <div className="flex gap-3 w-full justify-center sm:w-auto">
             <Dropdown>
-              <DropdownTrigger >
+              <DropdownTrigger>
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
@@ -344,10 +331,7 @@ export default function PaymentsMethodTable() {
             <Button
               color="success"
               endContent={<PlusIcon />}
-              onPress={() => {
-                onOpen();
-                setSelectedPaymantMethod(null);
-              }}
+              onPress={handleAddPaymentMethd}
             >
               Nuevo metodo de pago
             </Button>
@@ -375,7 +359,6 @@ export default function PaymentsMethodTable() {
     filterValue,
     onSearchChange,
     visibleColumns,
-    onOpen,
     paymentMethod?.length,
     onRowsPerPageChange,
     onClear,
@@ -383,7 +366,7 @@ export default function PaymentsMethodTable() {
 
   const bottomContent = useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center">
+      <div className="py-2 sm:px-2 flex sm:flex-row flex-col sm:justify-between justify-center items-center gap-2">
         <Pagination
           isCompact
           showControls
@@ -421,11 +404,12 @@ export default function PaymentsMethodTable() {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-4xl font-medium text-left">Metodos de Pago</h1>
-      {error && error.map((err) => toast.error(err))}
+      {isError && toast.error(error.message)}
 
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells, pagination and sorting"
+        className="z-0"
         bottomContent={bottomContent}
         bottomContentPlacement="outside"
         classNames={{
@@ -452,7 +436,7 @@ export default function PaymentsMethodTable() {
           )}
         </TableHeader>
         <TableBody
-          isLoading={loading}
+          isLoading={isLoading}
           loadingContent={<Spinner color="white" />}
           emptyContent={"No users found"}
           items={sortedItems}
@@ -466,13 +450,6 @@ export default function PaymentsMethodTable() {
           )}
         </TableBody>
       </Table>
-      <ModalAddPayment
-        isOpen={isOpen}
-        onClose={onClose}
-        updatePaymentMethod={updatePaymentMethod}
-        addPaymentMethod={addPaymentMethod}
-        {...selectedPaymantMethod}
-      />
     </div>
   );
 }

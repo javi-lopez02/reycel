@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { SERVER_URL } from "../conf";
 
 const prisma = new PrismaClient();
 
@@ -45,7 +46,7 @@ export const getSedes = async (req: Request, res: Response) => {
 
 export const getSedeId = async (req: Request, res: Response) => {
   try {
-    const id = req.query.idSede as string;
+    const {id} = req.params;
 
     if (!id) {
       return res.status(404).json("Id no encontrada.");
@@ -60,6 +61,7 @@ export const getSedeId = async (req: Request, res: Response) => {
         direction: true,
         image: true,
         phone: true,
+        rent: true,
         workers: {
           select: {
             baseUser: {
@@ -88,10 +90,10 @@ export const getSedeId = async (req: Request, res: Response) => {
 };
 
 export const createSede = async (req: Request, res: Response) => {
-  const { phone, image, direction, rent } = req.body;
+  const { phone, direction, rent } = req.body;
 
   try {
-    if (!phone || !direction || !image) {
+    if (!phone || !direction ) {
       console.log("Datos inválidos o incompletos");
       return res.status(400).json({ error: "Datos inválidos o incompletos" });
     }
@@ -99,12 +101,35 @@ export const createSede = async (req: Request, res: Response) => {
     const newSede = await prisma.sede.create({
       data: {
         phone: parseInt(phone),
-        image,
+        image:  `${SERVER_URL}/public/logo.webp`,
         direction,
         rent,
       },
-      include: {
-        workers: true,
+      select: {
+        id: true,
+        direction: true,
+        image: true,
+        phone: true,
+        netProfits: true,
+        losses: true,
+        _count:{
+          select:{
+            producto: true
+          }
+        },
+        finalLosses: true,
+        rent: true,
+        workers: {
+          select: {
+            baseUser: {
+              select: {
+                username: true,
+                image: true,
+              },
+            },
+            id: true,
+          },
+        },
       },
     });
 
@@ -121,7 +146,7 @@ export const createSede = async (req: Request, res: Response) => {
 
 export const updateSede = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { phone, image, direction, rent } = req.body;
+  const { phone, direction, rent } = req.body;
 
   try {
     const existingSede = await prisma.sede.findUnique({ where: { id } });
@@ -133,12 +158,34 @@ export const updateSede = async (req: Request, res: Response) => {
       where: { id },
       data: {
         phone: parseInt(phone),
-        image,
         direction,
         rent,
       },
-      include: {
-        workers: true,
+      select: {
+        id: true,
+        direction: true,
+        image: true,
+        phone: true,
+        netProfits: true,
+        losses: true,
+        _count:{
+          select:{
+            producto: true
+          }
+        },
+        finalLosses: true,
+        rent: true,
+        workers: {
+          select: {
+            baseUser: {
+              select: {
+                username: true,
+                image: true,
+              },
+            },
+            id: true,
+          },
+        },
       },
     });
 

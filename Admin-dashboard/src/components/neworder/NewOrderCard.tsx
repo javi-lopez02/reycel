@@ -1,7 +1,7 @@
 import { Button } from "@heroui/react";
 import { OrderAdd, Products } from "../../type";
 import { toast } from "sonner";
-import { addItemOrderRequest } from "../../services/neworder";
+import { addItemOrderRequest } from "../../api/services/neworder";
 
 interface Props {
   product: Products;

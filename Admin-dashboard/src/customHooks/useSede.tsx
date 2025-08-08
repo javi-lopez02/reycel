@@ -5,7 +5,7 @@ import {
   deleteSedeRequest,
   getSedesRequest,
   updateSedeRequest,
-} from "../services/sedes";
+} from "../api/services/sedes";
 
 function useSede() {
   const [sedes, setSedes] = useState<Sede[] | null>([]);
