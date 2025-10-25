@@ -97,6 +97,7 @@ export interface Sede {
 
 export interface SedeRequest {
   id?: string;
+  image?: string;
   direction: string;
   phone: string;
   isPending?: boolean;

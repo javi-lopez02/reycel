@@ -140,7 +140,7 @@ export default function DrawerOrderView({ onClose, isOpen }: Props) {
                                 setSelectedId(method.id);
                               }}
                             >
-                              {method.paymentOptions}
+                              {method.label}
                             </SelectItem>
                           ))}
                         </Select>

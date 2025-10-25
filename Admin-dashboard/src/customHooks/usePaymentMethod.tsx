@@ -20,7 +20,7 @@ function usePaymentMethod() {
     setLoading(true);
     getPaymentMethodRequest()
       .then((res) => {
-        setPaymentMethod(res.data.data);
+        setPaymentMethod(res);
       })
       .catch((err) => {
         console.log(err);
@@ -54,15 +54,15 @@ function usePaymentMethod() {
       createPaymentMethodRequest({
         cardImage: image,
         cardNumber: numberCard,
-        paymentOptions: selected,
+        label: selected,
         phoneNumber: phoneNumber,
       })
         .then((res) => {
           if (paymentMethod) {
-            setPaymentMethod([...paymentMethod, res.data.data]);
+            setPaymentMethod([...paymentMethod, res]);
           }
           if (!paymentMethod) {
-            setPaymentMethod([res.data.data]);
+            setPaymentMethod([res]);
           }
           resolve();
         })
@@ -77,17 +77,18 @@ function usePaymentMethod() {
     { image, numberCard, selected, phoneNumber }: AddPaymentMethodProps
   ): Promise<void> => {
     return new Promise((resolve, reject) => {
-      updatePaymentMethodRequest(id, {
+      updatePaymentMethodRequest({
+        id,
         cardImage: image,
         cardNumber: numberCard,
-        paymentOptions: selected,
+        label: selected,
         phoneNumber: phoneNumber,
       })
         .then((res) => {
           setPaymentMethod((prevState) => {
             return prevState?.map((prev) => {
               if (prev.id === id) {
-                return res.data.data;
+                return res;
               }
               return prev;
             });

@@ -16,7 +16,7 @@ function useSede() {
     setLoading(true);
     getSedesRequest()
       .then((res) => {
-        setSedes(res.data.data);
+        setSedes(res);
       })
       .catch((err) => {
         setError(err);
@@ -35,10 +35,10 @@ function useSede() {
     createSedeRequest({ image, direction, phone, rent })
       .then((res) => {
         if (!sedes) {
-          setSedes(res.data.data);
+          setSedes([res]);
           return;
         }
-        setSedes([...sedes, res.data.data]);
+        setSedes([...sedes, res]);
       })
       .catch((err) => {
         console.log(err);
@@ -53,10 +53,10 @@ function useSede() {
     phone: string,
     rent: number
   ) => {
-    updateSedeRequest(id, { image, direction, phone, rent })
+    updateSedeRequest({ id, image, direction, phone, rent })
       .then((res) => {
         const index = sedes?.findIndex((sede) => sede.id === id);
-        sedes?.splice(index as number, 1, res.data.sede);
+        sedes?.splice(index as number, 1, res);
         setSedes([...(sedes as Sede[])]);
       })
       .catch((err) => {

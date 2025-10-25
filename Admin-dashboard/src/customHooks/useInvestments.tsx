@@ -14,7 +14,7 @@ function useInvestments() {
     setLoading(true);
     getInvestmentsRequest()
       .then((res) => {
-        setInvestments(res.data.data);
+        setInvestments(res);
       })
       .catch((err) => {
         setError(err);
@@ -25,13 +25,13 @@ function useInvestments() {
   }, []);
 
   const addInvestments = async (id: string, description: string, price: number) => {
-    createInvestmentsRequest(id, { description, price })
+    createInvestmentsRequest({ sedeId: id, description, price })
       .then((res) => {
         if (!investments) {
-          setInvestments(res.data.data);
+          setInvestments([res]);
           return;
         }
-        setInvestments([...investments, res.data.data]);
+        setInvestments([...investments, res]);
       })
       .catch((err) => {
         console.log(err);

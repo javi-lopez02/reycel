@@ -8,9 +8,14 @@ function usePayments() {
   const [error, setError] = useState<Array<string> | null>(null);
 
   useEffect(() => {
-    getPaymentsRequest()
+    getPaymentsRequest({
+      filterValue: "",
+      sortDescriptor: { column: "", direction: "ascending" },
+      rowsPerPage: 10,
+      page: 1,
+    })
       .then((res) => {
-        setPayments(res.data.data);
+        setPayments(res.payment);
       })
       .catch((err) => {
         console.log(err);

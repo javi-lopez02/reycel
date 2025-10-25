@@ -455,10 +455,10 @@ const ProductsForm = () => {
                 <Button
                   color="primary"
                   type="submit"
-                  disabled={isCreating && isUpdating}
+                  disabled={isCreating || isUpdating}
                   onPress={() => console.log("s")}
                 >
-                  {isCreating && isUpdating && <Spinner color="default" />}
+                  {(isCreating || isUpdating) && <Spinner color="default" />}
                   {!isCreating && !isUpdating && "Guardar"}
                 </Button>
               </div>
